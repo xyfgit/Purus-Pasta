@@ -100,7 +100,7 @@ public class StatusWdg extends Widget {
     private void updatepingtime() {
         String ping = "?";
 
-        java.util.List<String> command = new ArrayList<>();
+        java.util.List<String> command = new ArrayList<String>();
         command.add("ping");
         command.add(Config.iswindows ? "-n" : "-c");
         command.add("1");
@@ -152,7 +152,7 @@ public class StatusWdg extends Widget {
             HttpsURLConnection conn = (HttpsURLConnection)url.openConnection();
             conn.setSSLSocketFactory(sslfactory);
 
-            Map<String,Object> params = new LinkedHashMap<>();
+            Map<String,Object> params = new LinkedHashMap<String,Object>();
             params.put("username", username);
             params.put("password", pass);
 
@@ -299,7 +299,7 @@ public class StatusWdg extends Widget {
     @Override
     public void draw(GOut g) {
         synchronized (StatusWdg.class) {
-            java.util.List<Tex> texturesToDisplay = new ArrayList<>(3);
+            java.util.List<Tex> texturesToDisplay = new ArrayList<Tex>(3);
             texturesToDisplay.add(this.hearthlingsplaying);
             texturesToDisplay.add(this.pingtime);
             texturesToDisplay.add(this.accountstatus);

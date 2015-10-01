@@ -173,8 +173,8 @@ public class Equipory extends Widget implements DTarget {
                     for (ItemInfo info : itm.item.info()) {
                         if (info.getClass().getSimpleName().equals("Wear")) {
                             try {
-                                h += (int) info.getClass().getDeclaredField("hard").get(info);
-                                s += (int) info.getClass().getDeclaredField("soft").get(info);
+                                h += (Integer) info.getClass().getDeclaredField("hard").get(info);
+                                s += (Integer) info.getClass().getDeclaredField("soft").get(info);
                             } catch (Exception ex) { // ignore everything
                             }
                         }
