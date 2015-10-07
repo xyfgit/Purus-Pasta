@@ -106,9 +106,12 @@ public class Config {
     public static boolean servertime = Utils.getprefb("servertime", false);
     public static boolean showplayerpaths = Utils.getprefb("showplayerpaths", false);
     public static boolean showanimalpaths = Utils.getprefb("showanimalpaths", false);
+    public static boolean showstudylefttime = Utils.getprefb("showstudylefttime", false);
     public static boolean autopick = Utils.getprefb("autopick", false);
     public static Coord chatsz = Utils.getprefc("chatsz", Coord.z);
     public static boolean alternmapctrls = Utils.getprefb("alternmapctrls", false);
+    public static boolean autostudy = Utils.getprefb("autostudy", true);
+    public static boolean hwcursor = false;
     public static byte[] authck = null;
     public static String prefspec = "hafen";
     public static String version;
@@ -138,10 +141,13 @@ public class Config {
             "spindlytaproot", "stingingnettle", "dragonfly", "toad", "bram", "rowboat"};
     public static String[] iconssel = Utils.getprefsa("iconssel", null);
 
-    public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(3) {{
+    public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(6) {{
         put("gfx/terobjs/vehicle/bram", Resource.loadtex("gfx/icons/bram"));
         put("gfx/kritter/toad/toad", Resource.loadtex("gfx/icons/toad"));
         put("gfx/terobjs/vehicle/rowboat", Resource.loadtex("gfx/icons/rowboat"));
+        put("gfx/kritter/chicken/chicken", Resource.loadtex("gfx/icons/deadhen"));
+        put("gfx/kritter/chicken/rooster", Resource.loadtex("gfx/icons/deadrooster"));
+        put("gfx/kritter/rabbit/rabbit", Resource.loadtex("gfx/icons/deadrabbit"));
     }};
     
     static {
@@ -227,6 +233,7 @@ public class Config {
         out.println("  -d                 Display debug text");
         out.println("  -P                 Enable profiling");
         out.println("  -G                 Enable GPU profiling");
+        out.println("  -c                 Force hardware cursor");
         out.println("  -U URL             Use specified external resource URL");
         out.println("  -r DIR             Use specified resource directory (or HAVEN_RESDIR)");
         out.println("  -A AUTHSERV[:PORT] Use specified authentication server");
@@ -235,7 +242,7 @@ public class Config {
     }
 
     public static void cmdline(String[] args) {
-        PosixArgs opt = PosixArgs.getopt(args, "hdPGU:r:A:u:C:");
+        PosixArgs opt = PosixArgs.getopt(args, "hdPGcU:r:A:u:C:");
         if (opt == null) {
             usage(System.err);
             System.exit(1);
@@ -280,6 +287,9 @@ public class Config {
                     break;
                 case 'C':
                     authck = Utils.hex2byte(opt.arg);
+                    break;
+                case 'c':
+                    hwcursor = true;
                     break;
             }
         }

@@ -239,14 +239,6 @@ public class OptWnd extends Window {
                         a = val;
                     }
                 }, new Coord(0, y));
-
-                add(new Button(200, "Reset to defaults") {
-                    public void click() {
-                        cf.cfg.resetprefs();
-                        curcf.destroy();
-                        curcf = null;
-                    }
-                }, new Coord(270, 320));
                 pack();
             }
         }
@@ -536,11 +528,12 @@ public class OptWnd extends Window {
         }, new Coord(0, y));
         y += 20;
         display.add(new Label("High"), new Coord(0, y));
-        display.add(new Label("Avg of E/S/V"), new Coord(40, y));
-        display.add(new Label("All"), new Coord(130, y));
-        display.add(new Label("Avg of S/V"), new Coord(160, y));
+        display.add(new Label("Avg E/S/V"), new Coord(35, y));
+        display.add(new Label("All"), new Coord(100, y));
+        display.add(new Label("Avg S/V"), new Coord(135, y));
+        display.add(new Label("Low"), new Coord(190, y));
         y += 10;
-        display.add(new HSlider(210, 0, 3, 0) {
+        display.add(new HSlider(210, 0, 4, 0) {
             protected void attach(UI ui) {
                 super.attach(ui);
                 val = Config.showqualitymode;
@@ -693,6 +686,18 @@ public class OptWnd extends Window {
             public void set(boolean val) {
                 Utils.setprefb("showanimalpaths", val);
                 Config.showanimalpaths = val;
+                a = val;
+            }
+        }, new Coord(260, y));
+        y += 35;
+        display.add(new CheckBox("Show study remaining time") {
+            {
+                a = Config.showstudylefttime;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("showstudylefttime", val);
+                Config.showstudylefttime = val;
                 a = val;
             }
         }, new Coord(260, y));

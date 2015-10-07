@@ -42,7 +42,8 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
     boolean inited = false;
     public static int w, h;
     public boolean bgmode = false;
-    long fd = 10, bgfd = 200, fps = 0;
+    public static long bgfd = Utils.getprefi("bghz", 200);
+    long fd = 10, fps = 0;
     double uidle = 0.0, ridle = 0.0;
     Queue<InputEvent> events = new LinkedList<InputEvent>();
     private String cursmode = "tex";
@@ -75,7 +76,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
         setSize(this.w = w, this.h = h);
         newui(null);
         initgl();
-        if (Toolkit.getDefaultToolkit().getMaximumCursorColors() >= 256)
+        if (Toolkit.getDefaultToolkit().getMaximumCursorColors() >= 256 || Config.hwcursor)
             cursmode = "awt";
         setCursor(Toolkit.getDefaultToolkit().createCustomCursor(TexI.mkbuf(new Coord(1, 1)), new java.awt.Point(), ""));
     }
@@ -617,6 +618,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
         cmdmap.put("bghz", new Console.Command() {
             public void run(Console cons, String[] args) {
                 bgfd = 1000 / Integer.parseInt(args[1]);
+                Utils.setprefi("bghz", (int) bgfd);
             }
         });
     }

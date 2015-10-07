@@ -27,7 +27,9 @@
 package haven;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -214,8 +216,8 @@ public class WItem extends Widget implements DTarget {
                 }
             }
 
+            GItem.Quality quality = item.quality();
             if (Config.showquality) {
-                GItem.Quality quality = item.quality();
                 if (quality != null && quality.max != 0) {
                     if (Config.showqualitymode == 2) {
                         g.image(quality.etex, new Coord(0, sz.y - 32));
@@ -227,16 +229,42 @@ public class WItem extends Widget implements DTarget {
                         g.image(quality.maxtex, new Coord(0, sz.y - 12));
                     } else if (Config.showqualitymode == 1) {
                         g.image(Config.qualitywhole ? quality.avgwholetex : quality.avgtex, new Coord(0, sz.y - 12));
-                    } else {
+                    } else if (Config.showqualitymode == 3) {
                         g.image(Config.qualitywhole ? quality.avgsvwholetex : quality.avgsvtex, new Coord(0, sz.y - 12));
+                    } else {
+                        g.image(quality.mintex, new Coord(0, sz.y - 12));
                     }
                 }
             }
 
-            if (item.meter > 0 && Config.itempercentage && item.metertex != null)
+            boolean studylefttimedisplayed = false;
+            if (Config.showstudylefttime && quality != null && quality.curio && item.meter > 0) {
+                if (item.timelefttex == null) {
+                    item.updatetimelefttex();
+                }
+
+                if (item.timelefttex != null) {
+                    g.image(item.timelefttex, Coord.z);
+                    studylefttimedisplayed = true;
+                }
+            }
+
+            if (!studylefttimedisplayed && item.meter > 0 && Config.itempercentage && item.metertex != null) {
                 g.image(item.metertex, Coord.z);
+            }
         } else {
             g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
+        }
+    }
+
+    private void openwebpage(String url) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(new URL(url).toURI());
+            } catch (Exception e) {
+                // NOP
+            }
         }
     }
 
@@ -246,6 +274,10 @@ public class WItem extends Widget implements DTarget {
                 wdgmsg("drop-identical", this.item);
             else if (ui.modshift && ui.modmeta) {
                 wdgmsg("transfer-identical", this.item);
+            } else if (ui.modctrl && ui.modshift) {
+                String name = ItemInfo.find(ItemInfo.Name.class, item.info()).str.text;
+                String url = String.format("http://ringofbrodgar.com/wiki/%s", name.replace(' ', '_'));
+                openwebpage(url);
             }
             else if (ui.modshift)
                 item.wdgmsg("transfer", c);
@@ -274,6 +306,7 @@ public class WItem extends Widget implements DTarget {
     }
 
     public void destroy() {
+        super.destroy();
         Curiosity ci = null;
         try {
             ci = ItemInfo.find(Curiosity.class, item.info());
@@ -281,13 +314,35 @@ public class WItem extends Widget implements DTarget {
                 Resource.Tooltip tt = item.resource().layer(Resource.Tooltip.class);
                 if (tt != null)
                     gameui().syslog.append(tt.t + " LP: " + ci.exp, Color.LIGHT_GRAY);
+
+                if (Config.autostudy) {
+                    Window invwnd = gameui().getwnd("Inventory");
+                    Resource res = item.resource();
+                    if (res != null) {
+                        for (Widget invwdg = invwnd.lchild; invwdg != null; invwdg = invwdg.prev) {
+                            if (invwdg instanceof Inventory) {
+                                Inventory inv = (Inventory) invwdg;
+                                for (Widget witm = inv.lchild; witm != null; witm = witm.prev) {
+                                    if (witm instanceof WItem) {
+                                        GItem ngitm = ((WItem) witm).item;
+                                        Resource nres = ngitm.resource();
+                                        if (nres != null && nres.name.equals(res.name)) {
+                                            ngitm.wdgmsg("take", witm.c);
+                                            ((Inventory) parent).drop(Coord.z, c);
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         } catch (Loading l) {
         }
 
         if (Config.studyalarm && ci != null && item.meter >= 99)
             Audio.play(studyalarmsfx, Config.studyalarmvol);
-
-        super.destroy();
     }
 }
