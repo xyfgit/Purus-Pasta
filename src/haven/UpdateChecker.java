@@ -3,6 +3,8 @@ package haven;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.net.URL;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class UpdateChecker extends Thread {
@@ -11,10 +13,17 @@ public class UpdateChecker extends Thread {
     public void run() {
         try {
             JSONObject json = getjson();
+
             String latestver = json.getString("tag_name");
-            String latesturl = json.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
-            if (isnewer(Config.version, latestver) && HavenPanel.lui != null && HavenPanel.lui.root != null) {
-                Window updwnd = new UpdateWnd(latesturl, latestver);
+            String currentver = Config.version;
+            int j6 = currentver.indexOf("_");
+            if (j6 > 0)
+                currentver = currentver.substring(0, j6);
+
+            if (isnewer(currentver, latestver) && HavenPanel.lui != null && HavenPanel.lui.root != null) {
+                JSONArray assets = json.getJSONArray("assets");
+                String latesturl =  assets.getJSONObject(j6 > 0 ? 1 : 0).getString("browser_download_url");
+                Window updwnd = new UpdateWnd(latesturl, j6 > 0 ? latestver + "_j6" : latestver);
                 HavenPanel.lui.root.add(updwnd);
                 updwnd.show();
                 updwnd.raise();
