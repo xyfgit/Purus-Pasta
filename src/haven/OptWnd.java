@@ -239,6 +239,18 @@ public class OptWnd extends Window {
                         a = val;
                     }
                 }, new Coord(0, y));
+                y += 35;
+                add(new CheckBox("Hide crops") {
+                    {
+                        a = Config.hidecrops;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidecrops", val);
+                        Config.hidecrops = val;
+                        a = val;
+                    }
+                }, new Coord(0, y));
                 pack();
             }
         }
@@ -925,6 +937,18 @@ public class OptWnd extends Window {
             public void set(boolean val) {
                 Utils.setprefb("autopick", val);
                 Config.autopick = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        general.add(new CheckBox("Automatically select 'Harvest' action") {
+            {
+                a = Config.autoharvest;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("autoharvest", val);
+                Config.autoharvest = val;
                 a = val;
             }
         }, new Coord(0, y));
