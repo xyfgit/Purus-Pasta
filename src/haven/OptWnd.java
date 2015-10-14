@@ -251,6 +251,18 @@ public class OptWnd extends Window {
                         a = val;
                     }
                 }, new Coord(0, y));
+                y += 35;
+                add(new CheckBox("Show FPS") {
+                    {
+                        a = Config.showfps;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("showfps", val);
+                        Config.showfps = val;
+                        a = val;
+                    }
+                }, new Coord(0, y));
                 pack();
             }
         }
@@ -485,6 +497,21 @@ public class OptWnd extends Window {
                 Utils.setprefd("sfxsqueakvol", vol);
             }
         }, new Coord(250, y));
+        y += 20;
+        audio.add(new Label("Quern sound volume"), new Coord(250, y));
+        y += 15;
+        audio.add(new HSlider(200, 0, 1000, 0) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+                val = (int) (Config.sfxquernvol * 1000);
+            }
+
+            public void changed() {
+                double vol = val / 1000.0;
+                Config.sfxquernvol = vol;
+                Utils.setprefd("sfxquernvol", vol);
+            }
+        }, new Coord(250, y));
 
         audio.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         audio.pack();
@@ -713,6 +740,30 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(260, y));
+        y += 35;
+        display.add(new CheckBox("Show inventory on login") {
+            {
+                a = Config.showinvonlogin;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("showinvonlogin", val);
+                Config.showinvonlogin = val;
+                a = val;
+            }
+        }, new Coord(260, y));
+        y += 35;
+        display.add(new CheckBox("Show contents bars for buckets/flasks") {
+            {
+                a = Config.showcontentsbars;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("showcontentsbars", val);
+                Config.showcontentsbars = val;
+                a = val;
+            }
+        }, new Coord(260, y));
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override
@@ -724,6 +775,12 @@ public class OptWnd extends Window {
                 Utils.delpref("mmapsz");
                 Utils.delpref("quickslotsc");
                 Utils.delpref("chatsz");
+                Utils.delpref("chatvis");
+                Utils.delpref("gui-bl-visible");
+                Utils.delpref("gui-br-visible");
+                Utils.delpref("gui-ul-visible");
+                Utils.delpref("gui-ur-visible");
+                Utils.delpref("menu-visible");
             }
         }, new Coord(260, 320));
         display.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
@@ -949,6 +1006,30 @@ public class OptWnd extends Window {
             public void set(boolean val) {
                 Utils.setprefb("autoharvest", val);
                 Config.autoharvest = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        general.add(new CheckBox("Run on login") {
+            {
+                a = Config.runonlogin;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("runonlogin", val);
+                Config.runonlogin = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        general.add(new CheckBox("Drop any seeds placed into inventory") {
+            {
+                a = Config.dropseeds;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("dropseeds", val);
+                Config.dropseeds = val;
                 a = val;
             }
         }, new Coord(0, y));
