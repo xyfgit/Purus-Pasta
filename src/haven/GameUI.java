@@ -30,6 +30,7 @@ import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
+import java.lang.*;
 
 import static haven.Inventory.invsq;
 
@@ -67,7 +68,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public String polowner;
     public Bufflist buffs;
     public MinimapWnd minimapWnd;
-    public TimersWnd timerswnd;
+    public static TimersWnd timerswnd;
     public QuickSlotsWdg quickslots;
     public StatusWdg statuswindow;
     private boolean updhanddestroyed = false;
@@ -503,6 +504,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             final Widget mkwdg = child;
             makewnd = new Window(Coord.z, "Crafting", true) {
                 public void wdgmsg(Widget sender, String msg, Object... args) {
+                	System.out.println(sender + msg + args);
                     if ((sender == this) && msg.equals("close")) {
                         mkwdg.wdgmsg("close");
                         return;
@@ -618,11 +620,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         }
     }
 
-    public void tick(double dt) {
+    public void tick(double dt) throws InterruptedException {
         super.tick(dt);
-        if (!afk && (System.currentTimeMillis() - ui.lastevent > 300000)) {
+        if (!afk && (System.currentTimeMillis() - ui.lastevent > (300000))) {
             afk = true;
             wdgmsg("afk");
+            if(Config.afklogout)
+                getparent(GameUI.class).act("lo");
+            Thread.sleep(10000);
         } else if (afk && (System.currentTimeMillis() - ui.lastevent < 300000)) {
             afk = false;
         }
@@ -776,6 +781,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             super.draw(g);
         }
     }
+    public static void AvaaTimer () {
+    	
+    	timerswnd.show(!timerswnd.visible);
+        timerswnd.raise();
+    }
 
     public boolean globtype(char key, KeyEvent ev) {
         if (key == ':') {
@@ -928,6 +938,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public void act(String... args) {
         wdgmsg("act", (Object[]) args);
     }
+
 
     public void act(int mods, Coord mc, Gob gob, String... args) {
         int n = args.length;

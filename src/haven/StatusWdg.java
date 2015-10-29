@@ -18,6 +18,8 @@ public class StatusWdg extends Widget {
     public static String username;
     public static String pass;
 
+    public static boolean AlreadyExecuted = false;
+    
     private static ThreadGroup tg = new ThreadGroup("StatusUpdaterThreadGroup");
     private static final String statusupdaterthreadname = "StatusUpdater";
 
@@ -119,7 +121,6 @@ public class StatusWdg extends Widget {
             Pattern pattern;
             if (Config.iswindows) {
                 // Reply from 87.245.198.59: bytes=32 time=2ms TTL=53
-                // Ответ от 213.180.204.3: число байт=32 время=12мс TTL=55
                 pattern = Pattern.compile(".+?=32 .+?=(\\d+).*? TTL=.+");
             } else {
                 // 64 bytes from ansgar.seatribe.se (213.239.201.139): icmp_seq=1 ttl=47 time=71.4 ms
@@ -237,6 +238,15 @@ public class StatusWdg extends Widget {
     private void startupdaterthread() {
         Thread statusupdaterthread = new Thread(tg, new Runnable() {
             public void run() {
+                if (!AlreadyExecuted) {
+                	if (Config.toggletracking) {
+                		getparent(GameUI.class).act("tracking");
+                	}
+                	if (Config.togglecriminalacts) {
+                		getparent(GameUI.class).act("crime");
+                	}
+            	AlreadyExecuted = true;
+                }
                 CookieHandler.setDefault(new CookieManager());
 
                 if (visible) {

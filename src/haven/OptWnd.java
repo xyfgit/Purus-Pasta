@@ -1,5 +1,5 @@
 /*
- *  This file is part of the Haven & Hearth game client.
+  *  This file is part of the Haven & Hearth game client.
  *  Copyright (C) 2009 Fredrik Tolf <fredrik@dolda2000.com>, and
  *                     Björn Johannessen <johannessen.bjorn@gmail.com>
  *
@@ -252,6 +252,19 @@ public class OptWnd extends Window {
                     }
                 }, new Coord(0, y));
                 y += 35;
+                add(new CheckBox("Limit background FPS to 1") {
+                	{
+                		a = Config.limitbgfps;
+                	}
+                
+                	public void set(boolean val) {
+                		Utils.setprefb("limitbgfps", val);
+                		Config.limitbgfps = val;
+                		a = val;
+                		HavenPanel.bgfd = val ? 1000 : 200;
+                	}
+                }, new Coord(0, y));
+                y = 0; //2nd column
                 add(new CheckBox("Show FPS") {
                     {
                         a = Config.showfps;
@@ -262,7 +275,7 @@ public class OptWnd extends Window {
                         Config.showfps = val;
                         a = val;
                     }
-                }, new Coord(0, y));
+                }, new Coord(250, y));
                 pack();
             }
         }
@@ -402,6 +415,33 @@ public class OptWnd extends Window {
                 Utils.setprefd("alarmredvol", vol);
             }
         }, new Coord(0, y));
+        //
+        y += 20;
+        audio.add(new CheckBox("Alarm on Battering Rams") {
+            {
+                a = Config.alarmram;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("alarmram", val);
+                Config.alarmram = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 15;
+        audio.add(new HSlider(200, 0, 1000, 0) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+                val = (int) (Config.alarmramvol * 1000);
+            }
+
+            public void changed() {
+                double vol = val / 1000.0;
+                Config.alarmramvol = vol;
+                Utils.setprefd("alarmramvol", vol);
+            }
+        }, new Coord(0, y));
+        //
         y += 20;
         audio.add(new Label("Timers alarm volume"), new Coord(0, y));
         y += 15;
@@ -1011,6 +1051,32 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(0, y));
+        //
+        y += 35;
+        general.add(new CheckBox("Fast Flower Menu") {
+            {
+                a = Config.fastflower;
+            } 
+
+            public void set(boolean val) {
+                Utils.setprefb("autopick", val);
+                Config.fastflower = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        general.add(new CheckBox("Auto Logout after 5 minutes afking") {
+            {
+                a = Config.afklogout;
+            } 
+
+            public void set(boolean val) {
+                Utils.setprefb("afklogout", val);
+                Config.afklogout = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        //
         y += 35;
         general.add(new CheckBox("Automatically select 'Harvest' action") {
             {
@@ -1024,6 +1090,30 @@ public class OptWnd extends Window {
             }
         }, new Coord(0, y));
         y += 35;
+        general.add(new CheckBox("Toggle Tracking on logon") {
+            {
+                a = Config.toggletracking;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("toggletracking", val);
+                Config.toggletracking = val;
+                a = val;
+            }
+        }, new Coord(500, y));
+        y += 25;
+        general.add(new CheckBox("Toggle Criminal Acts on logon") {
+            {
+                a = Config.togglecriminalacts;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("togglecriminalacts", val);
+                Config.togglecriminalacts = val;
+                a = val;
+            }
+        }, new Coord(500,y));
+        y -= 25;
         general.add(new CheckBox("Run on login") {
             {
                 a = Config.runonlogin;

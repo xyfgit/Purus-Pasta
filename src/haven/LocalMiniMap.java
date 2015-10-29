@@ -32,6 +32,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.util.*;
 import haven.resutil.Ridges;
+import purus.PlayWav;
 
 public class LocalMiniMap extends Widget {
     private static final Tex gridblue = Resource.loadtex("gfx/hud/mmap/gridblue");
@@ -44,7 +45,6 @@ public class LocalMiniMap extends Widget {
     private UI.Grab dragging;
     private Coord doff = Coord.z;
     private Coord delta = Coord.z;
-	private static final Resource alarmplayersfx = Resource.local().loadwait("sfx/alarmplayer");
 	private final HashSet<Long> sgobs = new HashSet<Long>();
     private final HashMap<Coord, BufferedImage> maptiles = new HashMap<Coord, BufferedImage>(28, 0.75f);
     private final Map<Coord, Defer.Future<Coord>> cache = new LinkedHashMap<Coord, Defer.Future<Coord>>(7, 0.75f, true) {
@@ -277,21 +277,34 @@ public class LocalMiniMap extends Widget {
                                     if ((Config.alarmunknown || Config.autohearth) && kininfo == null) {
                                         if (!sgobs.contains(gob.id)) {
                                             sgobs.add(gob.id);
-                                            Audio.play(alarmplayersfx, Config.alarmunknownvol);
+                                            PlayWav.Play("custom_wav/whiteFound.wav");
                                             if (Config.autohearth)
                                                 gameui().menu.wdgmsg("act", new Object[]{"travel", "hearth"});
                                         }
                                     } else if (Config.alarmred && kininfo != null && kininfo.group == 2) {
                                         if (!sgobs.contains(gob.id)) {
                                             sgobs.add(gob.id);
-                                            Audio.play(alarmplayersfx, Config.alarmredvol);
-                                        }
+                                            PlayWav.Play("custom_wav/redFound.wav");
                                     }
+                                  }
                                 }
                             }
                         } catch (Exception e) {
                         }
                     }
+                    if (Config.alarmram) {
+                    	 try {
+                             Resource res = gob.getres();
+                             if (res != null && "bram".equals(res.basename())) {
+                                 if (!sgobs.contains(gob.id)) {
+                                     sgobs.add(gob.id);
+                                     PlayWav.Play("custom_wav/ramFound.wav");
+                                 }
+                             }
+                    } 
+                    	 catch (Exception e) { 
+                    	 }
+                    	 }
                 } catch (Loading l) {
                 }
             }

@@ -67,6 +67,8 @@ public class Config {
     public static boolean chattimestamp = Utils.getprefb("chattimestamp", false);
     public static boolean alarmunknown = Utils.getprefb("alarmunknown", false);
     public static double alarmunknownvol = Utils.getprefd("alarmunknownvol", 0.32);
+    public static boolean alarmram = Utils.getprefb("alarmram", false);
+    public static double alarmramvol = Utils.getprefd("alarmramvol", 0.32);
     public static boolean alarmred = Utils.getprefb("alarmred", false);
     public static double alarmredvol = Utils.getprefd("alarmredvol", 0.32);
     public static boolean showquality = Utils.getprefb("showquality", false);
@@ -113,11 +115,17 @@ public class Config {
     public static boolean showstudylefttime = Utils.getprefb("showstudylefttime", false);
     public static boolean showinvonlogin = Utils.getprefb("showinvonlogin", false);
     public static boolean autopick = Utils.getprefb("autopick", false);
+    public static boolean fastflower = Utils.getprefb("fastflower", false);
+    public static boolean afklogout = Utils.getprefb("afklogout", false);
     public static boolean autoharvest = Utils.getprefb("autoharvest", false);
+    public static boolean toggletracking = Utils.getprefb("toggletracking", false);
+    public static boolean togglecriminalacts = Utils.getprefb("togglecriminalacts", false);
     public static boolean runonlogin = Utils.getprefb("runonlogin", false);
     public static Coord chatsz = Utils.getprefc("chatsz", Coord.z);
     public static boolean alternmapctrls = Utils.getprefb("alternmapctrls", false);
     public static boolean autostudy = Utils.getprefb("autostudy", true);
+    public static boolean limitbgfps = Utils.getprefb("limitbgfps", false);
+    public static boolean showfillamount = Utils.getprefb("showfillamount", false);
     public static boolean showcontentsbars = Utils.getprefb("showcontentsbars", false);
     public static boolean dropseeds = Utils.getprefb("dropseeds", false);
     public static boolean showdmgop = Utils.getprefb("showdmgop", false);
