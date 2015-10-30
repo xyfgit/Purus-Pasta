@@ -84,8 +84,20 @@
     <get src="http://game.havenandhearth.com/java/hafen-res.jar" dest="lib/hafen-res.jar"
 	 usetimestamp="true" />
   </target>
+	
+	  <target name="custom-encode" depends="build-env">
+	    <java jar="lib/LayerUtil.jar" fork="true">
+	      <arg line="-re custom-res build/custom-res" />
+	    </java>
+	  </target>
+
+	  <target name="custom-jar" depends="custom-encode">
+	    <jar basedir="build/custom-res" destfile="build/lib/pasta-res.jar"/>
+	    <delete dir="build/custom-res" />
+	  </target>
+
   
-  <target name="jars" depends="build-env, jar, res-jar">
+  <target name="jars" depends="build-env, jar, res-jar, custom-jar">
     <copy todir="build/lib">
       <fileset dir="lib">
 	<include name="jogl.jar" />
@@ -93,7 +105,6 @@
 	<include name="hafen-res.jar" />
 	<include name="builtin-res.jar" />
 	<include name="amber-res.jar" />
-    <include name="pasta-res.jar" />
       	
       </fileset>
       <fileset dir="lib/jogl-natives" includes="*.jar">
