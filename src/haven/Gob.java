@@ -286,10 +286,18 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             if (Config.hidegobs) {
                 try {
                     Resource res = getres();
-                    if (res != null && res.name.startsWith("gfx/terobjs/trees")
-                            && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) {
-                        hide = true;
-                        rl.add(new Overlay(new GobHitbox(this)), null);
+                    if (Config.hidetrees && res != null) {
+                        if (res != null && res.name.startsWith("gfx/terobjs/trees")
+                                && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) {
+                            hide = true;
+                            rl.add(new Overlay(new GobHitbox(this)), null);
+                        }
+                    }
+                    if (Config.hidecrops && res != null) {
+                        if (res.name.startsWith("gfx/terobjs/plants") && !res.name.equals("gfx/terobjs/plants/trellis")) {
+                            hide = true;
+                            rl.add(new Overlay(new GobHitbox(this)), null);
+                        }
                     }
                 } catch (Loading le) {
                 }

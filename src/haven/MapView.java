@@ -572,6 +572,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     };
 
     void addgob(RenderList rl, final Gob gob) {
+    	/* 
+    	// At least temporarily disabling this as I added new thing in gob.java
         try {
             Resource res = gob.getres();
             if (Config.hidecrops && res != null) {
@@ -581,6 +583,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
             }
         } catch (Loading le) {
         }
+        */
 
         GLState xf;
         try {

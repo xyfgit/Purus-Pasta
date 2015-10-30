@@ -27,7 +27,7 @@
 package haven;
 
 public class OptWnd extends Window {
-    public final Panel main, video, audio, display, map, general, combat;
+    public final Panel main, video, audio, display, map, general, combat, hide;
     public Panel current;
 
     public void chpanel(Panel p) {
@@ -240,18 +240,6 @@ public class OptWnd extends Window {
                     }
                 }, new Coord(0, y));
                 y += 35;
-                add(new CheckBox("Hide crops") {
-                    {
-                        a = Config.hidecrops;
-                    }
-
-                    public void set(boolean val) {
-                        Utils.setprefb("hidecrops", val);
-                        Config.hidecrops = val;
-                        a = val;
-                    }
-                }, new Coord(0, y));
-                y += 35;
                 add(new CheckBox("Limit background FPS to 1") {
                 	{
                 		a = Config.limitbgfps;
@@ -301,6 +289,7 @@ public class OptWnd extends Window {
         map = add(new Panel());
         general = add(new Panel());
         combat = add(new Panel());
+        hide = add(new Panel());
 
         int y;
 
@@ -310,6 +299,7 @@ public class OptWnd extends Window {
         main.add(new PButton(200, "Map settings", 'm', map), new Coord(0, 90));
         main.add(new PButton(200, "General settings", 'g', general), new Coord(210, 0));
         main.add(new PButton(200, "Combat settings", 'c', combat), new Coord(210, 30));
+        main.add(new PButton(200, "Hide settings", 'h', hide), new Coord(210, 60));
 
         if (gopts) {
             main.add(new Button(200, "Switch character") {
@@ -1157,7 +1147,34 @@ public class OptWnd extends Window {
 
         combat.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         combat.pack();
+        // -------------------- HIDE SETTINGS
+        y = 0;
+        hide.add(new Label("Ctrl + h to toggle hide"), new Coord(0, y));
+        y += 35;
+        hide.add(new CheckBox("Hide Trees") {
+            {
+                a = Config.hidetrees;
+            }
 
+            public void set(boolean val) {
+                Utils.setprefb("hidetrees", val);
+                Config.hidetrees = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        hide.add(new CheckBox("Hide Crops") {
+            {
+                a = Config.hidecrops;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("hidecrops", val);
+                Config.hidecrops = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        hide.pack();
         chpanel(main);
     }
 
