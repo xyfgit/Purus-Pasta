@@ -1,6 +1,11 @@
 ## Changelog
 
-### 2.1.0
+### 2.0.0
+	- Curio Tooltip that shows remaining time calculates it using time between % changes
+	- Attention meter (From bdew)
+	- Hide menu, ctrl + h now hides everything selected in hide menu
+
+### 1.4.0
 	- Timer thing on right hand side bottom menu
 	- Number on title
 	- Critical changes due recent updates
