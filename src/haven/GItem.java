@@ -46,6 +46,10 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     private double studytime = 0.0;
     public Tex timelefttex;
     private String name = "";
+    
+    public long finishedTime = -1;
+    public int lmeter1 = -1, lmeter2 = -1, lmeter3 = -1;
+    private long meterTime;
 
     public static class Quality {
         private static final DecimalFormat shortfmt = new DecimalFormat("#.#");
@@ -249,6 +253,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
             meter = (Integer) args[0];
             metertex = Text.renderstroked(String.format("%d%%", meter), Color.WHITE, Color.BLACK).tex();
             timelefttex = null;
+            updateMeter(meter);
         }
     }
 
@@ -283,4 +288,21 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
             qualityCalc();
         return quality;
     }
+    private void updateMeter(int val) {
+		if (val > lmeter1) {
+			lmeter3 = lmeter2;
+			lmeter2 = lmeter1;
+			lmeter1 = val;
+			long prevTime = meterTime;
+			meterTime = System.currentTimeMillis();
+			if (lmeter3 >= 0) {
+				finishedTime = System.currentTimeMillis()+(long)((100.0-lmeter1)*(meterTime - prevTime)/(lmeter1-lmeter2));
+			}
+		} else if (val < lmeter1) {
+			lmeter3 = lmeter2 = -1;
+			lmeter1 = val;
+			meterTime = System.currentTimeMillis();
+			finishedTime = -1;
+		}
+	}
 }
