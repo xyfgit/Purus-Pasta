@@ -43,6 +43,8 @@ public class LocalMiniMap extends Widget {
     private Coord cc = null;
     private Coord cur = null;
     private UI.Grab dragging;
+    private static final Resource ramalarmsfx = Resource.local().loadwait("sfx/alarmram");
+    private static final Resource playeralarmsfx = Resource.local().loadwait("sfx/alarmplayeri");
     private Coord doff = Coord.z;
     private Coord delta = Coord.z;
 	private final HashSet<Long> sgobs = new HashSet<Long>();
@@ -277,14 +279,14 @@ public class LocalMiniMap extends Widget {
                                     if ((Config.alarmunknown || Config.autohearth) && kininfo == null) {
                                         if (!sgobs.contains(gob.id)) {
                                             sgobs.add(gob.id);
-                                            PlayWav.Play("custom_wav/whiteFound.wav");
+                                            Audio.play(playeralarmsfx, Config.timersalarmvol);
                                             if (Config.autohearth)
                                                 gameui().menu.wdgmsg("act", new Object[]{"travel", "hearth"});
                                         }
                                     } else if (Config.alarmred && kininfo != null && kininfo.group == 2) {
                                         if (!sgobs.contains(gob.id)) {
                                             sgobs.add(gob.id);
-                                            PlayWav.Play("custom_wav/redFound.wav");
+                                            Audio.play(playeralarmsfx, Config.timersalarmvol);
                                     }
                                   }
                                 }
@@ -298,7 +300,7 @@ public class LocalMiniMap extends Widget {
                              if (res != null && "bram".equals(res.basename())) {
                                  if (!sgobs.contains(gob.id)) {
                                      sgobs.add(gob.id);
-                                     PlayWav.Play("custom_wav/ramFound.wav");
+                                     Audio.play(ramalarmsfx, Config.timersalarmvol);
                                  }
                              }
                     } 

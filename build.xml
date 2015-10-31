@@ -72,7 +72,7 @@
       <fileset dir="build/classes-lib" />
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="lib/jogl.jar lib/gluegen-rt.jar lib/builtin-res.jar lib/hafen-res.jar lib/amber-res.jar lib/pasta-res.jar" />
+	<attribute name="Class-Path" value="jogl.jar gluegen-rt.jar builtin-res.jar hafen-res.jar amber-res.jar pasta-res.jar" />
       </manifest>
     </jar>
     <chmod file="build/hafen.jar" perm="a+x" />
@@ -92,13 +92,13 @@
 	  </target>
 
 	  <target name="custom-jar" depends="custom-encode">
-	    <jar basedir="build/custom-res" destfile="build/lib/pasta-res.jar"/>
+	    <jar basedir="build/custom-res" destfile="build/pasta-res.jar"/>
 	    <delete dir="build/custom-res" />
 	  </target>
 
   
   <target name="jars" depends="build-env, jar, res-jar, custom-jar">
-    <copy todir="build/lib">
+    <copy todir="build">
       <fileset dir="lib">
 	<include name="jogl.jar" />
 	<include name="gluegen-rt.jar" />
@@ -114,7 +114,6 @@
   	<fileset dir="etc">
   	    		<include name="run.bat" />
   	    		<include name="run_debug.bat" />
-  	    		<include name="custom_wav/*" />
   	    	</fileset>
   		</copy>
   </target>
