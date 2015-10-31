@@ -40,13 +40,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private static final int blpw = 142, brpw = 142;
     public final String chrid;
     public final long plid;
-    public static Hidepanel ulpanel, urpanel, brpanel, menupanel;
+    private final Hidepanel ulpanel, urpanel, brpanel, menupanel;
     public Avaview portrait;
     public MenuGrid menu;
     public MapView map;
     public Fightview fv;
     private List<Widget> meters = new LinkedList<Widget>();
-    private List<Widget> cmeters = new LinkedList<Widget>();
     private Text lastmsg;
     private long msgtime;
     public Window invwnd, equwnd, makewnd;
@@ -73,7 +72,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public QuickSlotsWdg quickslots;
     public StatusWdg statuswindow;
     private boolean updhanddestroyed = false;
-    public GameUI gui = null;
 
     public abstract class Belt extends Widget {
         public Belt(Coord sz) {
@@ -165,12 +163,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         add(statuswindow, new Coord(HavenPanel.w / 2, 5));
     }
 
-    @Override
-    protected void attach(UI ui) {
-    	super.attach(ui);
-    	ui.gui = this;
-    }
-    
     /* Ice cream */
     private final IButton[] fold_br = new IButton[4];
 
@@ -469,45 +461,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             }
         }
     }
-    public void addcmeter(Widget meter) {
-		ulpanel.add(meter);
-		cmeters.add(meter);
-		updcmeters();
-	}
-
-	public <T extends Widget> void delcmeter(Class<T> cl) {
-		Widget widget = null;
-		for (Widget meter : cmeters) {
-			if (cl.isAssignableFrom(meter.getClass())) {
-				widget = meter;
-				break;
-			}
-		}
-		if (widget != null) {
-			cmeters.remove(widget);
-			widget.destroy();
-			updcmeters();
-		}
-	}
-
-
-	private Coord getMeterPos(int x, int y) {
-		return new Coord(portrait.c.x + portrait.sz.x + 10 + x * (IMeter.fsz.x + 5), portrait.c.y + y * (IMeter.fsz.y + 2));
-	}
-
-	public void addMeterAt(Widget m, int x, int y) {
-		ulpanel.add(m, getMeterPos(x, y));
-		ulpanel.pack();
-	}
-
-	private void updcmeters() {
-		int x = (meters.size() % 3);
-		int y = (meters.size() / 3);
-		for (Widget meter : cmeters) {
-			meter.c = getMeterPos(x++, y);
-		}
-		ulpanel.pack();
-	}
 
     public void addchild(Widget child, Object... args) {
         String place = ((String) args[0]).intern();

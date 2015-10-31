@@ -58,7 +58,7 @@ public class CharWnd extends Window {
     public int exp, enc;
     private int scost;
     private final Tabs.Tab sattr, fgt;
-    
+
     public static class FoodMeter extends Widget {
         public static final Tex frame = Resource.loadtex("gfx/hud/chr/foodm");
         public static final Coord marg = new Coord(5, 5), trmg = new Coord(10, 10);
@@ -678,7 +678,7 @@ public class CharWnd extends Window {
             add(new Label("Learning points:"), 2, sz.y - 32);
         }
 
-        public void upd() {
+        private void upd() {
             int texp = 0, tw = 0, tenc = 0;
             for (GItem item : study.children(GItem.class)) {
                 try {
@@ -1438,8 +1438,7 @@ public class CharWnd extends Window {
         if (place == "study") {
             sattr.add(child, new Coord(260, 35).add(wbox.btloff()));
             Frame.around(sattr, Collections.singletonList(child));
-      		StudyInfo inf = sattr.add(new StudyInfo(new Coord(attrw - 150, child.sz.y), child), new Coord(260 + 150, child.c.y).add(wbox.btloff().x, 0));
-      		ui.gui.addMeterAt(new AttnMeter(inf), 3, 0);
+            Widget inf = sattr.add(new StudyInfo(new Coord(attrw - 150, child.sz.y), child), new Coord(260 + 150, child.c.y).add(wbox.btloff().x, 0));
             sattr.add(new CheckBox("Lock") {
                 {
                     a = Config.studylock;
