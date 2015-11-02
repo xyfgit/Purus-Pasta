@@ -1,5 +1,9 @@
 ## Changelog
 
+### 2.0.1
+
+	- Various bugfixes
+
 ### 2.0.0
 	- Curio Tooltip that shows remaining time calculates it using time between % changes
 	- Attention meter (From bdew)
