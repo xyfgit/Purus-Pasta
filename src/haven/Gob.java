@@ -307,7 +307,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                         }
                     }
                     if (Config.hidewalls && res != null) {
-                    	 if (res.name.startsWith("gfx/terobjs/arch") && !res.name.equals("gfx/terobjs/arch/palisadegate") && !res.name.equals("gfx/terobjs/arch/brickwallgate") && !res.name.equals("gfx/terobjs/arch/polegate")) {
+                    	 if (res.name.startsWith("gfx/terobjs/arch/pali") &&  !res.name.equals("gfx/terobjs/arch/palisadegate") || res.name.startsWith("gfx/terobjs/arch/brick") && !res.name.equals("gfx/terobjs/arch/brickwallgate") || res.name.startsWith("gfx/terobjs/arch/pole") && !res.name.equals("gfx/terobjs/arch/polegate")) {
                              hide = true;
                              rl.add(new Overlay(new CustomHitbox(this, 10)), null);
                          }
