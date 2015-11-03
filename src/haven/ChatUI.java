@@ -105,6 +105,7 @@ public class ChatUI extends Widget {
         }
 
         public static final Attribute HYPERLINK = new ChatAttribute("hyperlink");
+        public static final Attribute HEARTH_SECRET = new ChatAttribute("hearth-secret");
     }
 
     public static class FuckMeGentlyWithAChainsaw {
@@ -124,6 +125,7 @@ public class ChatUI extends Widget {
         public static final Pattern urlpat = Pattern.compile("\\b((https?://)|(www\\.[a-z0-9_.-]+\\.[a-z0-9_.-]+))[a-z0-9/_.~#%+?&:*=-]*", Pattern.CASE_INSENSITIVE);
         public static final Map<? extends Attribute, ?> urlstyle = RichText.fillattrs(TextAttribute.FOREGROUND, new Color(64, 64, 255),
                 TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        private static final Pattern hspat = Pattern.compile("\\bhs: ?([^ ]+)", Pattern.CASE_INSENSITIVE);
 
         public ChatParser(Object... args) {
             super(args);
@@ -133,35 +135,47 @@ public class ChatUI extends Widget {
             RichText.Part ret = null;
             int p = 0;
             while (true) {
-                Matcher m = urlpat.matcher(text);
-                if (!m.find(p))
-                    break;
-                URL url;
-                try {
-                    String su = text.substring(m.start(), m.end());
-                    if (su.indexOf(':') < 0)
-                        su = "http://" + su;
-                    url = new URL(su);
-                } catch (java.net.MalformedURLException e) {
+            	Map<Attribute, Object> na = null;
+
+                Matcher m = hspat.matcher(text);
+                if (m.find(p)) {
+                    String hs = m.group(1);
+                    na = new HashMap<Attribute, Object>(attrs);
+                    na.putAll(urlstyle);
+                    na.put(ChatAttribute.HEARTH_SECRET, hs);
                     p = m.end();
-                    continue;
+                } else {
+                    m = urlpat.matcher(text);
+                    if (m.find(p)) {
+                        URL url;
+                        try {
+                            String su = text.substring(m.start(), m.end());
+                            if(su.indexOf(':') < 0)
+                                su = "http://" + su;
+                            url = new URL(su);
+                        } catch(java.net.MalformedURLException e) {
+                            p = m.end();
+                            continue;
+                        }
+                        na = new HashMap<Attribute, Object>(attrs);
+                        na.putAll(urlstyle);
+                        na.put(ChatAttribute.HYPERLINK, new FuckMeGentlyWithAChainsaw(url));
+                        p = m.end();
+                    }
                 }
-                RichText.Part lead = new RichText.TextPart(text.substring(0, m.start()), attrs);
-                if (ret == null) ret = lead;
-                else ret.append(lead);
-                Map<Attribute, Object> na = new HashMap<Attribute, Object>(attrs);
-                na.putAll(urlstyle);
-                na.put(ChatAttribute.HYPERLINK, new FuckMeGentlyWithAChainsaw(url));
-                ret.append(new RichText.TextPart(text.substring(m.start(), m.end()), na));
-                p = m.end();
+                if (na == null)
+                    break;
+        		RichText.Part lead = new RichText.TextPart(text.substring(0, m.start()), attrs);
+        		if(ret == null) ret = lead; else ret.append(lead);
+        		ret.append(new RichText.TextPart(text.substring(m.start(), m.end()), na));
+        	    }
+        	    if(ret == null)
+        		ret = new RichText.TextPart(text, attrs);
+        	    else
+        		ret.append(new RichText.TextPart(text.substring(p), attrs));
+        	    return(ret);
+        	}
             }
-            if (ret == null)
-                ret = new RichText.TextPart(text, attrs);
-            else
-                ret.append(new RichText.TextPart(text.substring(p), attrs));
-            return (ret);
-        }
-    }
 
     public static abstract class Channel extends Widget {
         public final List<Message> msgs = new LinkedList<Message>();
@@ -523,6 +537,11 @@ public class ChatUI extends Widget {
                 } catch (WebBrowser.BrowserException e) {
                     getparent(GameUI.class).error("Could not launch web browser.");
                 }
+            }
+            String hs = (String)inf.getAttribute(ChatAttribute.HEARTH_SECRET);
+            if (hs != null && ui.gui != null && ui.gui.buddies != null) {
+                ui.gui.buddies.show();
+                ui.gui.buddies.wdgmsg("bypwd", hs);
             }
         }
 
