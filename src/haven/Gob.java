@@ -29,6 +29,8 @@ package haven;
 import java.awt.*;
 import java.util.*;
 
+import purus.CropHitbox;
+
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public Coord rc, sc;
     public Coord3f sczu;
@@ -296,7 +298,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                     if (Config.hidecrops && res != null) {
                         if (res.name.startsWith("gfx/terobjs/plants") && !res.name.equals("gfx/terobjs/plants/trellis")) {
                             hide = true;
-                            rl.add(new Overlay(new GobHitbox(this)), null);
+                            rl.add(new Overlay(new CropHitbox(this, 10)), null);
                         }
                     }
                 } catch (Loading le) {
