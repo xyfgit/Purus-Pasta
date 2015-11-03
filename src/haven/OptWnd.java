@@ -1151,6 +1151,18 @@ public class OptWnd extends Window {
                         a = val;
                     }
                 }, new Coord(0, y));
+                y += 35;
+                hide.add(new CheckBox("Hide Walls") {
+                    {
+                        a = Config.hidecrops;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidewalls", val);
+                        Config.hidewalls = val;
+                        a = val;
+                    }
+                }, new Coord(0, y));
                 hide.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
                 hide.pack();
         // -------------------------------------------- control

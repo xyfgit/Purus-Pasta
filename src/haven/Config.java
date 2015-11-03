@@ -108,6 +108,7 @@ public class Config {
     public static boolean simpleforage = Utils.getprefb("simpleforage", false);
     public static boolean hidecrops = Utils.getprefb("hidecrops", false);
     public static boolean hidetrees = Utils.getprefb("hidetrees", false);
+    public static boolean hidewalls = Utils.getprefb("hidewalls", false);
     public static boolean showfps = Utils.getprefb("showfps", false);
     public static boolean autohearth = Utils.getprefb("autohearth", false);
     public static boolean servertime = Utils.getprefb("servertime", false);

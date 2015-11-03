@@ -26,10 +26,15 @@
 
 package haven;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Random;
 
-import purus.CropHitbox;
+import purus.CustomHitbox;
 
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public Coord rc, sc;
@@ -298,8 +303,14 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                     if (Config.hidecrops && res != null) {
                         if (res.name.startsWith("gfx/terobjs/plants") && !res.name.equals("gfx/terobjs/plants/trellis")) {
                             hide = true;
-                            rl.add(new Overlay(new CropHitbox(this, 10)), null);
+                            rl.add(new Overlay(new CustomHitbox(this, 10)), null);
                         }
+                    }
+                    if (Config.hidewalls && res != null) {
+                    	 if (res.name.startsWith("gfx/terobjs/arch") && !res.name.equals("gfx/terobjs/arch/palisadegate") && !res.name.equals("gfx/terobjs/arch/brickwallgate") && !res.name.equals("gfx/terobjs/arch/polegate")) {
+                             hide = true;
+                             rl.add(new Overlay(new CustomHitbox(this, 10)), null);
+                         }
                     }
                 } catch (Loading le) {
                 }

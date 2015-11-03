@@ -12,7 +12,7 @@ import haven.RenderList;
 import haven.Sprite;
 import haven.States;
 
-public class CropHitbox extends Sprite {
+public class CustomHitbox extends Sprite {
     // TODO: make it generic to facilitate different gobs
 	
 	public float size;
@@ -26,7 +26,7 @@ public class CropHitbox extends Sprite {
 
 	private static final int y = -6;
 
-    public CropHitbox(Gob gob, int size) {
+    public CustomHitbox(Gob gob, int size) {
         super(gob, null);
         w = size;
         h = size;
