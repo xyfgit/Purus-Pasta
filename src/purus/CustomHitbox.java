@@ -5,6 +5,7 @@ import java.awt.Color;
 import javax.media.opengl.GL2;
 
 import haven.BGL;
+import haven.Config;
 import haven.Coord3f;
 import haven.GOut;
 import haven.Gob;
@@ -17,7 +18,7 @@ public class CustomHitbox extends Sprite {
 	
 	public float size;
 
-    private static final States.ColState clrstate = new States.ColState(new Color(114, 159, 207, 200));
+    private static States.ColState clrstate = new States.ColState(new Color(114, 159, 207, 200));
     private static int w = 12;
 
 	private static int h = 12;
@@ -26,19 +27,26 @@ public class CustomHitbox extends Sprite {
 
 	private static final int y = -6;
 
+	public int red;
+	public int green;
+	public int blue;
+	
     public CustomHitbox(Gob gob, int size) {
         super(gob, null);
         w = size;
         h = size;
-        
+        red = (int) Config.hidered;
+        green = (int) Config.hidegreen;
+        blue = (int) Config.hideblue;
     }
 
     public boolean setup(RenderList rl) {
-        rl.prepo(clrstate);
+        rl.prepo(new States.ColState(new Color(red, green, blue, 200)));
         return true;
     }
 
     public void draw(GOut g) {
+        g.state(new States.ColState(new Color(red, green, blue, 200)));
         g.apply();
         BGL gl = g.gl;
         gl.glBegin(GL2.GL_QUADS);

@@ -109,6 +109,9 @@ public class Config {
     public static boolean hidecrops = Utils.getprefb("hidecrops", false);
     public static boolean hidetrees = Utils.getprefb("hidetrees", false);
     public static boolean hidewalls = Utils.getprefb("hidewalls", false);
+    public static double hidered = Utils.getprefd("hidered", 155);
+    public static double hidegreen = Utils.getprefd("hidegreen", 155);
+    public static double hideblue = Utils.getprefd("hideblue", 155);
     public static boolean showfps = Utils.getprefb("showfps", false);
     public static boolean autohearth = Utils.getprefb("autohearth", false);
     public static boolean servertime = Utils.getprefb("servertime", false);

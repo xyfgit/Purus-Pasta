@@ -1163,6 +1163,55 @@ public class OptWnd extends Window {
                         a = val;
                     }
                 }, new Coord(0, y));
+                y = 0;
+                hide.add(new Label("Red"), new Coord(550, y));
+                y += 15;
+                hide.add(new HSlider(150, 0, 255, 0) {
+                    protected void attach(UI ui) {
+                        super.attach(ui);
+                        val = (int) (Config.hidered * 1000);
+                    }
+
+                    public void changed() {
+                        double vol = val;
+                        System.out.println(vol);
+                        Config.hidered = vol;
+                        Utils.setprefd("hidered", vol);
+                    }
+                }, new Coord(550, y));
+                y += 20;
+                hide.add(new Label("Green"), new Coord(550, y));
+                y += 15;
+                hide.add(new HSlider(150, 0, 255, 0) {
+                    protected void attach(UI ui) {
+                        super.attach(ui);
+                        val = (int) (Config.hidegreen * 1000);
+                    }
+
+                    public void changed() {
+                        double vol = val;
+                        System.out.println(vol);
+                        Config.hidegreen = vol;
+                        Utils.setprefd("hidegreen", vol);
+                    }
+                }, new Coord(550, y));
+                y += 20;
+                hide.add(new Label("Blue"), new Coord(550, y));
+                y += 15;
+                hide.add(new HSlider(150, 0, 255, 0) {
+                    protected void attach(UI ui) {
+                        super.attach(ui);
+                        val = (int) (Config.hideblue * 1000);
+                    }
+
+                    public void changed() {
+                        double vol = val;
+                        System.out.println(vol);
+                        Config.hideblue = vol;
+                        Utils.setprefd("hideblue", vol);
+                    }
+                }, new Coord(550, y));
+                
                 hide.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
                 hide.pack();
         // -------------------------------------------- control
