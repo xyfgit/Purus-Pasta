@@ -1174,7 +1174,6 @@ public class OptWnd extends Window {
 
                     public void changed() {
                         double vol = val;
-                        System.out.println(vol);
                         Config.hidered = vol;
                         Utils.setprefd("hidered", vol);
                     }
@@ -1190,7 +1189,6 @@ public class OptWnd extends Window {
 
                     public void changed() {
                         double vol = val;
-                        System.out.println(vol);
                         Config.hidegreen = vol;
                         Utils.setprefd("hidegreen", vol);
                     }
@@ -1206,7 +1204,6 @@ public class OptWnd extends Window {
 
                     public void changed() {
                         double vol = val;
-                        System.out.println(vol);
                         Config.hideblue = vol;
                         Utils.setprefd("hideblue", vol);
                     }
