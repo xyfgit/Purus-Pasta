@@ -1,5 +1,10 @@
 ## Changelog
-
+	
+### 2.1.0
+	- New Launcher Please update your launcher!
+	- Hearth secrets on chat now clickable, will automatically add them on your kinlist
+	- Hide highlight color is now customizable
+	- Added option to hide walls and made crop hiding better
 ### 2.0.2
 	- Fixed client to work with latest server update
 ### 2.0.1
