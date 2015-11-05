@@ -1032,6 +1032,8 @@ public class Widget {
         return (true);
     }
 
+    public void bound() {}
+    
     public final Collection<Anim> anims = new LinkedList<Anim>();
     public final Collection<Anim> nanims = new LinkedList<Anim>();
 

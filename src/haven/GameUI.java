@@ -1248,6 +1248,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             beltwdg = add(new NKeyBelt());
         }
     }
+    
+    @Override
+    public void bound() {
+        if (Config.toggletracking)
+            act("tracking");
+        if (Config.togglecriminalacts)
+        	act("crime");
+    }
 
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
 

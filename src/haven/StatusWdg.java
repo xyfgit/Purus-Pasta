@@ -238,15 +238,6 @@ public class StatusWdg extends Widget {
     private void startupdaterthread() {
         Thread statusupdaterthread = new Thread(tg, new Runnable() {
             public void run() {
-                if (!AlreadyExecuted) {
-                	if (Config.toggletracking) {
-                		getparent(GameUI.class).act("tracking");
-                	}
-                	if (Config.togglecriminalacts) {
-                		getparent(GameUI.class).act("crime");
-                	}
-            	AlreadyExecuted = true;
-                }
                 CookieHandler.setDefault(new CookieManager());
 
                 if (visible) {
