@@ -1,5 +1,8 @@
 ## Changelog
-	
+
+### 2.1.1
+	- Latest update stuff from main client
+	- Various bugfixes
 ### 2.1.0
 	- New Launcher Please update your launcher!
 	- Hearth secrets on chat now clickable, will automatically add them on your kinlist
