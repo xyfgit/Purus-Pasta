@@ -910,6 +910,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private int uimode = 1;
 
     public void toggleui(int mode) {
+    	if(Config.toggleuinot){
+    		mode = 0;
+    	}
         Hidepanel[] panels = {brpanel, ulpanel, urpanel, menupanel};
         switch (uimode = mode) {
             case 0:

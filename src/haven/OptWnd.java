@@ -798,6 +798,18 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(260, y));
+        y += 35;
+        display.add(new CheckBox("Remove toggle ui via space") {
+            {
+                a = Config.toggleuinot;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("showcontentsbars", val);
+                Config.toggleuinot = val;
+                a = val;
+            }
+        }, new Coord(520, y));
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override
