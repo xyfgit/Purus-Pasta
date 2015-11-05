@@ -1251,6 +1251,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     
     @Override
     public void bound() {
+        toggleui(0);
         if (Config.toggletracking)
             act("tracking");
         if (Config.togglecriminalacts)
