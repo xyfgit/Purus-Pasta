@@ -798,7 +798,7 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(260, y));
-        y += 35;
+        y = 0;
         display.add(new CheckBox("Remove toggle ui via space") {
             {
                 a = Config.toggleuinot;
