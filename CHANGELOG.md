@@ -5,7 +5,6 @@
 	- Added option to disable UI toggling with space
 	- Toggle criminal acts/tracking on logon is now working in better way
 	- Bugfixes for latest update
-
 ### 2.1.1
 	- Latest update stuff from main client
 	- Various bugfixes
