@@ -114,6 +114,7 @@ public class Config {
     public static double hideblue = Utils.getprefd("hideblue", 155);
     public static boolean showfps = Utils.getprefb("showfps", false);
     public static boolean autohearth = Utils.getprefb("autohearth", false);
+    public static boolean studywndlock = Utils.getprefb("studywndlock", false);
     public static boolean servertime = Utils.getprefb("servertime", false);
     public static boolean showplayerpaths = Utils.getprefb("showplayerpaths", false);
     public static boolean showanimalpaths = Utils.getprefb("showanimalpaths", false);

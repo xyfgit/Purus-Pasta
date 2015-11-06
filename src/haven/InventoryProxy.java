@@ -2,6 +2,8 @@ package haven;
 
 public class InventoryProxy extends Widget implements DTarget {
     private final Inventory target;
+    private boolean locked;
+    
 
     public InventoryProxy(Inventory target) {
 	super(target.sz);
@@ -20,6 +22,8 @@ public class InventoryProxy extends Widget implements DTarget {
 
     @Override
     public boolean mousedown(Coord c, int button) {
+    	if (locked)
+    		return false;
 	return target.mousedown(c, button);
     }
 
@@ -51,6 +55,10 @@ public class InventoryProxy extends Widget implements DTarget {
 	    }
 	}
 	return null;
+    }
+    
+    public void setLocked(boolean value) {
+        locked = value;
     }
 
     @Override
