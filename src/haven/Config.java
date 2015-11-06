@@ -360,4 +360,19 @@ public class Config {
             }
         });
     }
+    public static Coord getStudyPosition() {
+		return Utils.getprefc("haven.study.position", new Coord(100, 100));
+	}
+
+	public static void setStudyPosition(Coord value) {
+		Utils.setprefc("haven.study.position", value);
+	}
+
+	public static boolean getStudyVisible() {
+		return Utils.getprefb("haven.study.visible", false);
+	}
+
+	public static void setStudyVisible(boolean value) {
+		Utils.setprefb("haven.study.visible", value);
+	}
 }

@@ -550,7 +550,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             hand.add(new DraggedItem(g, lc));
             updhand();
         } else if (place == "chr") {
-        	studywnd = add(new StudyWnd());
+        	studywnd = add(new StudyWnd(Coord.z), Config.getStudyPosition());
         	studywnd.hide();
             chrwdg = add((CharWnd) child, new Coord(300, 50));
             chrwdg.hide();

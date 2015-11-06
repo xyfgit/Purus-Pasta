@@ -5,8 +5,16 @@ public class StudyWnd extends GameUI.Hidewnd {
     StudyInfo info;
 
 
-    StudyWnd() {
-	super(Coord.z, "Study");
+    StudyWnd(Coord sz) {
+	super(sz, "Study");
+    }
+    
+    @Override
+    public boolean mouseup(Coord c, int button) {
+        if (ismousegrab()) {
+            Config.setStudyPosition(this.c);
+        }
+        return super.mouseup(c, button);
     }
 
     public void setStudy(Inventory inventory) {
