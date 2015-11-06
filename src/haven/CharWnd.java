@@ -1470,6 +1470,7 @@ public class CharWnd extends Window {
                 }
             }, new Coord(460, 10));
             Frame.around(sattr, Collections.singletonList(inf));
+            getparent(GameUI.class).studywnd.setStudy((Inventory)child);
         } else if (place == "fmg") {
             fgt.add(child, 0, 0);
             if (child instanceof FightWnd)

@@ -122,6 +122,7 @@ public class MenuGrid extends Widget {
     	Glob glob = ui.sess.glob;
     	ObservableCollection<Pagina> p = glob.paginae;
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/timer")));
+    	p.add(glob.paginafor(Resource.local().load("paginae/custom/study")));
     }
     private static Comparator<Pagina> sorter = new Comparator<Pagina>() {
         public int compare(Pagina a, Pagina b) {
@@ -336,6 +337,10 @@ public class MenuGrid extends Widget {
     public void usecustom(String[] ad) {
         if(ad[1].equals("timer")) {
         	gameui.AvaaTimer();
+        } else if (ad[1].equals("study")) {
+    		if(ui.gui!=null){
+		    ui.gui.toggleStudy();
+    		}
         }
     }
 

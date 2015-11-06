@@ -70,6 +70,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Bufflist buffs;
     public MinimapWnd minimapWnd;
     public static TimersWnd timerswnd;
+    public StudyWnd studywnd;
     public QuickSlotsWdg quickslots;
     public StatusWdg statuswindow;
     private boolean updhanddestroyed = false;
@@ -508,6 +509,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		}
 		ulpanel.pack();
 	}
+	
+	public void toggleStudy() {
+		studywnd.show(!studywnd.visible);
+	}
 
     public void addchild(Widget child, Object... args) {
         String place = ((String) args[0]).intern();
@@ -545,6 +550,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             hand.add(new DraggedItem(g, lc));
             updhand();
         } else if (place == "chr") {
+        	studywnd = add(new StudyWnd());
+        	studywnd.hide();
             chrwdg = add((CharWnd) child, new Coord(300, 50));
             chrwdg.hide();
         } else if (place == "craft") {
