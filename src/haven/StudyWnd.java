@@ -18,8 +18,8 @@ public class StudyWnd extends GameUI.Hidewnd {
         invp.setLocked(Config.studywndlock);
         add(new CheckBox("Lock", Config.studywndlock) {
             @Override
-            public void set(boolean val) {
-                super.set(val);
+            public void changed(boolean val) {
+                super.changed(val);
                 invp.setLocked(val);
             }
         }, new Coord(0, 0));
