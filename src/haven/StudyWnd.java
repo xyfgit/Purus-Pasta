@@ -25,12 +25,18 @@ public class StudyWnd extends GameUI.Hidewnd {
         final InventoryProxy invp = new InventoryProxy(inventory);
         invp.setLocked(Config.studywndlock);
         add(new CheckBox("Lock", Config.studywndlock) {
-            @Override
-            public void changed(boolean val) {
-                super.changed(val);
-                invp.setLocked(val);
+        	{
+                a = Config.studywndlock;
             }
-        }, new Coord(0, 0));
+            @Override
+            public void set(boolean val) {
+                super.set(val);
+                invp.setLocked(val);
+                Utils.setprefb("studywndlock", val);
+                Config.studywndlock = val;
+                a = val;
+            }
+        }, new Coord(0, -10));
         study = add(invp, 0, 20);
         info = add(new StudyInfo(new Coord(study.sz.x, 50), inventory), 0, study.c.y + study.sz.y + 5);
 	pack();

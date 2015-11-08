@@ -805,7 +805,7 @@ public class OptWnd extends Window {
             }
 
             public void set(boolean val) {
-                Utils.setprefb("showcontentsbars", val);
+                Utils.setprefb("toggleuinot", val);
                 Config.toggleuinot = val;
                 a = val;
             }
@@ -1039,7 +1039,7 @@ public class OptWnd extends Window {
             } 
 
             public void set(boolean val) {
-                Utils.setprefb("autopick", val);
+                Utils.setprefb("fastflower", val);
                 Config.fastflower = val;
                 a = val;
             }
