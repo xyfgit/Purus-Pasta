@@ -1,5 +1,9 @@
 ## Changelog
 
+### 2.2.1
+	- Added Study Wnd openeable from Menu->Xtended-Study
+	- Fixed some Config stuff
+	- Bugfixes for map/tiles flickering
 ### 2.2.0
 	- UI will now be always visible when starting client
 	- Added option to disable UI toggling with space

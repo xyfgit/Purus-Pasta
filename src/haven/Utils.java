@@ -358,21 +358,6 @@ public class Utils {
             return (def);
         }
     }
-    
-
-    static Coord getprefb(String prefname, Coord def) {
-	try {
-	    String val = prefs().get(prefname, null);
-	    if(val == null)
-		return(def);
-	    int x = val.indexOf('x');
-	    if(x < 0)
-		return(def);
-	    return(new Coord(Integer.parseInt(val.substring(0, x)), Integer.parseInt(val.substring(x + 1))));
-	} catch(SecurityException e) {
-	    return(def);
-	}
-    }
 
     static void setprefb(String prefname, byte[] val) {
         try {
