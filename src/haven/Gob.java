@@ -312,6 +312,12 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                              rl.add(new Overlay(new CustomHitbox(this, 10)), null);
                          }
                     }
+                    if (Config.hidewagons && res != null) {
+                   	 if (res.name.startsWith("gfx/terobjs/vehicle/wagon")) {
+                            hide = true;
+                            rl.add(new Overlay(new CustomHitbox(this, 10)), null);
+                        }
+                   }
                 } catch (Loading le) {
                 }
             }

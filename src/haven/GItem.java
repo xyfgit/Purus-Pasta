@@ -48,8 +48,9 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     private String name = "";
     
     public long finishedTime = -1;
+    public long totalTime = -1;
     public int lmeter1 = -1, lmeter2 = -1, lmeter3 = -1;
-    private long meterTime;
+    public long meterTime;
 
     public static class Quality {
         private static final DecimalFormat shortfmt = new DecimalFormat("#.#");
@@ -303,6 +304,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 			lmeter1 = val;
 			meterTime = System.currentTimeMillis();
 			finishedTime = -1;
+			totalTime = -1;
 		}
 	}
 }

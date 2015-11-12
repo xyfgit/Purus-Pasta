@@ -8,11 +8,10 @@ public class CustomTips {
         ArrayList<BufferedImage> tips = new ArrayList<>();
         tips.add(tip.img);
 
-        if (gi.finishedTime > System.currentTimeMillis())
+        if (gi.finishedTime > System.currentTimeMillis()) 
             tips.add(Text.render("Time Left: " + Utils.timeLeft(gi.finishedTime)).img);
-        else if (gi.lmeter1 > 0)
+        	 else if (gi.lmeter1 > 0)
             tips.add(Text.render("Time Left: Calculating...").img);
-
         // Doesnt display inv object res file name, i dont think this is  needed
            /* try {
                 Resource r = gi.resource();
