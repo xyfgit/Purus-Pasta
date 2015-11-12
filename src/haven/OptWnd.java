@@ -1193,7 +1193,7 @@ public class OptWnd extends Window {
                 hide.add(new HSlider(150, 0, 255, 0) {
                     protected void attach(UI ui) {
                         super.attach(ui);
-                        val = (int) (Config.hidered * 1000);
+                        val = (int) (Config.hidered);
                     }
 
                     public void changed() {
@@ -1208,7 +1208,7 @@ public class OptWnd extends Window {
                 hide.add(new HSlider(150, 0, 255, 0) {
                     protected void attach(UI ui) {
                         super.attach(ui);
-                        val = (int) (Config.hidegreen * 1000);
+                        val = (int) (Config.hidegreen);
                     }
 
                     public void changed() {
@@ -1223,7 +1223,7 @@ public class OptWnd extends Window {
                 hide.add(new HSlider(150, 0, 255, 0) {
                     protected void attach(UI ui) {
                         super.attach(ui);
-                        val = (int) (Config.hideblue * 1000);
+                        val = (int) (Config.hideblue);
                     }
 
                     public void changed() {
