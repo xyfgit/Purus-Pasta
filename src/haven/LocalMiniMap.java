@@ -49,7 +49,8 @@ public class LocalMiniMap extends Widget {
     private MCache.Grid cur = null;
     private UI.Grab dragging;
     private static final Resource ramalarmsfx = Resource.local().loadwait("sfx/alarmram");
-    private static final Resource playeralarmsfx = Resource.local().loadwait("sfx/alarmplayeri");
+    private static final Resource playeralarmWhite = Resource.local().loadwait("sfx/alarmWhite");
+    private static final Resource playeralarmRed = Resource.local().loadwait("sfx/alarmRed");
     private Coord doff = Coord.z;
     private Coord delta = Coord.z;
 	private final HashSet<Long> sgobs = new HashSet<Long>();
@@ -301,14 +302,14 @@ public class LocalMiniMap extends Widget {
                                     if ((Config.alarmunknown || Config.autohearth) && kininfo == null) {
                                         if (!sgobs.contains(gob.id)) {
                                             sgobs.add(gob.id);
-                                            Audio.play(playeralarmsfx, Config.timersalarmvol);
+                                            Audio.play(playeralarmWhite, Config.alarmunknownvol);
                                             if (Config.autohearth)
                                                 gameui().menu.wdgmsg("act", new Object[]{"travel", "hearth"});
                                         }
                                     } else if (Config.alarmred && kininfo != null && kininfo.group == 2) {
                                         if (!sgobs.contains(gob.id)) {
                                             sgobs.add(gob.id);
-                                            Audio.play(playeralarmsfx, Config.timersalarmvol);
+                                            Audio.play(playeralarmRed, Config.alarmredvol);
                                     }
                                   }
                                 }
