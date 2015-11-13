@@ -471,10 +471,20 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         }
     }
     public void addcmeter(Widget meter) {
-		ulpanel.add(meter);
-		cmeters.add(meter);
-		updcmeters();
-	}
+        ulpanel.add(meter);
+        cmeters.add(meter);
+        updcmeters();
+    }
+
+    private void updcmeters() {
+        int i = 0;
+        for (Widget meter : cmeters) {
+            int x = ((meters.size() + i) % 3) * (IMeter.fsz.x + 5);
+            int y = ((meters.size() + i) / 3) * (IMeter.fsz.y + 2);
+            meter.c = new Coord(portrait.c.x + portrait.sz.x + 10 + x, portrait.c.y + y);
+            i++;
+        }
+    }
 
 	public <T extends Widget> void delcmeter(Class<T> cl) {
 		Widget widget = null;
@@ -498,15 +508,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
 	public void addMeterAt(Widget m, int x, int y) {
 		ulpanel.add(m, getMeterPos(x, y));
-		ulpanel.pack();
-	}
-
-	private void updcmeters() {
-		int x = (meters.size() % 3);
-		int y = (meters.size() / 3);
-		for (Widget meter : cmeters) {
-			meter.c = getMeterPos(x++, y);
-		}
 		ulpanel.pack();
 	}
 	
@@ -554,6 +555,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         	studywnd.hide();
             chrwdg = add((CharWnd) child, new Coord(300, 50));
             chrwdg.hide();
+            addcmeter(new HungerMeter(chrwdg.glut));
+            addcmeter(new FepMeter(chrwdg.feps));
         } else if (place == "craft") {
             final Widget mkwdg = child;
             makewnd = new Window(Coord.z, "Crafting", true) {
@@ -590,6 +593,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             int y = (meters.size() / 3) * (IMeter.fsz.y + 2);
             ulpanel.add(child, portrait.c.x + portrait.sz.x + 10 + x, portrait.c.y + y);
             meters.add(child);
+            updcmeters();
         } else if (place == "buff") {
             buffs.addchild(child);
         } else if (place == "misc") {
@@ -621,7 +625,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         } else if (w == chrwdg) {
             chrwdg = null;
         }
-        meters.remove(w);
+	if (meters.remove(w))
+        updcmeters();
+        cmeters.remove(w);
     }
 
     private static final Resource.Anim progt = Resource.local().loadwait("gfx/hud/prog").layer(Resource.animc);
