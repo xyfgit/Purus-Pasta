@@ -810,6 +810,30 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(520, y));
+        y += 35;
+        display.add(new CheckBox("Display Fep Meter (Req. Restart)") {
+            {
+                a = Config.fepmeter;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("fepmeter", val);
+                Config.fepmeter = val;
+                a = val;
+            }
+        }, new Coord(520, y));
+        y += 35;
+        display.add(new CheckBox("Display Hunger Meter (Req. Restart)") {
+            {
+                a = Config.hungermeter;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("hungermeter", val);
+                Config.hungermeter = val;
+                a = val;
+            }
+        }, new Coord(520, y));
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override

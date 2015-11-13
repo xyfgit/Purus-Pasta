@@ -555,7 +555,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         	studywnd.hide();
             chrwdg = add((CharWnd) child, new Coord(300, 50));
             chrwdg.hide();
+            if (Config.hungermeter)
             addcmeter(new HungerMeter(chrwdg.glut));
+            if (Config.fepmeter)
             addcmeter(new FepMeter(chrwdg.feps));
         } else if (place == "craft") {
             final Widget mkwdg = child;

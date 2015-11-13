@@ -1,5 +1,5 @@
 /*
- *  This file is part of the Haven & Hearth game client.
+o *  This file is part of the Haven & Hearth game client.
  *  Copyright (C) 2009 Fredrik Tolf <fredrik@dolda2000.com>, and
  *                     Björn Johannessen <johannessen.bjorn@gmail.com>
  *
@@ -128,6 +128,8 @@ public class Config {
     public static boolean toggletracking = Utils.getprefb("toggletracking", false);
     public static boolean togglecriminalacts = Utils.getprefb("togglecriminalacts", false);
     public static boolean toggleuinot = Utils.getprefb("toggleuinot", false);
+    public static boolean fepmeter = Utils.getprefb("fepmeter", false);
+    public static boolean hungermeter = Utils.getprefb("hungermeter", false);
     public static boolean runonlogin = Utils.getprefb("runonlogin", false);
     public static Coord chatsz = Utils.getprefc("chatsz", Coord.z);
     public static boolean alternmapctrls = Utils.getprefb("alternmapctrls", false);
