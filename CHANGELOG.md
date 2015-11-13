@@ -1,5 +1,10 @@
 ## Changelog
 
+### 2.3.0
+	- Added Hunger and Fep meters (Toggleable from menu)
+	- Added option to hide wagons
+	- Changed alarm on red to use different sound than alarm on whites
+	- Few fixes for hide options menu
 ### 2.2.1
 	- Added Study Wnd openeable from Menu->Xtended-Study
 	- Fixed some Config stuff
