@@ -29,6 +29,7 @@ package haven;
 import java.util.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
 import java.awt.event.InputEvent;
 
 import static haven.Utils.el;
@@ -372,6 +373,12 @@ public class UI {
                 (modctrl ? 2 : 0) |
                 (modmeta ? 4 : 0) |
                 (modsuper ? 8 : 0));
+    }
+    
+    public void message(String str, Color msgColor) {
+	if((cons!=null) && (gui!=null)){
+	    gui.msg(str, msgColor);
+	}
     }
 
     public void destroy() {

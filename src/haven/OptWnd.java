@@ -834,6 +834,18 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(520, y));
+        y += 35;
+        display.add(new CheckBox("Log hunder and FEP gains") {
+            {
+                a = Config.logfoodchanges;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("logfoodchanges", val);
+                Config.logfoodchanges = val;
+                a = val;
+            }
+        }, new Coord(520, y));
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override

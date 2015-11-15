@@ -125,6 +125,7 @@ public class Config {
     public static boolean fastflower = Utils.getprefb("fastflower", false);
     public static boolean afklogout = Utils.getprefb("afklogout", false);
     public static boolean autoharvest = Utils.getprefb("autoharvest", false);
+    public static boolean logfoodchanges = Utils.getprefb("logfoodchanges", false);
     public static boolean toggletracking = Utils.getprefb("toggletracking", false);
     public static boolean togglecriminalacts = Utils.getprefb("togglecriminalacts", false);
     public static boolean toggleuinot = Utils.getprefb("toggleuinot", false);
