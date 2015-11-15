@@ -835,7 +835,7 @@ public class OptWnd extends Window {
             }
         }, new Coord(520, y));
         y += 35;
-        display.add(new CheckBox("Log hunger and FEP gains") {
+        display.add(new CheckBox("Log satiation gain when eating") {
             {
                 a = Config.logfoodchanges;
             }
