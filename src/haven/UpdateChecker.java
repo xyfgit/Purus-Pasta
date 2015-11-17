@@ -9,7 +9,7 @@ public class UpdateChecker extends Thread {
     private final String url = "https://api.github.com/repos/puruscor/purus-pasta/releases/latest";
 
     public void run() { 
-    	/*
+    	
         try {
             JSONObject json = getjson();
             String latestver = json.getString("tag_name");
@@ -26,7 +26,7 @@ public class UpdateChecker extends Thread {
             System.err.println("WARNING: error checking for updates");
             e.printStackTrace();
         }
-        */
+        
     }
 
     private JSONObject getjson() throws IOException {
