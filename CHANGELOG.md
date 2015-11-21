@@ -1,5 +1,12 @@
 ## Changelog
 
+### 2.4.0
+	- Added curios and study to display LPH
+	- Added hunger level timer
+	- Added percentage display to FEP bar
+	- Hunger bar should now display hunger percentage with more accuracy
+	- Fixed Update Checker
+	- Various bugfixes
 ### 2.3.0
 	- Added Hunger and Fep meters (Toggleable from menu)
 	- Added option to hide wagons
