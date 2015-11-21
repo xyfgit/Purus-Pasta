@@ -198,6 +198,14 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     public Resource getres() {
         return (res.get());
     }
+    
+    public String resname(){
+    	Resource res = resource();
+    	if(res != null){
+    	    return res.name;
+    	}
+    	return "";
+        }
 
     public Glob glob() {
         return (ui.sess.glob);
