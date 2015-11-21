@@ -1348,6 +1348,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
         protected void hit(Coord pc, Coord mc, ClickInfo inf) {
             if (inf == null) {
+                if (Config.tilecenter && clickb == 3) {
+                    mc.x = mc.x / 11 * 11 + 5;
+                    mc.y = mc.y / 11 * 11 + 5;
+                }
                 wdgmsg("click", pc, mc, clickb, ui.modflags());
             } else {
                 if (ui.modmeta && clickb == 1) {
@@ -1494,6 +1498,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
         delay(new Hittest(cc) {
             public void hit(Coord pc, Coord mc, ClickInfo inf) {
                 if (inf == null) {
+                    if (Config.tilecenter) {
+                        mc.x = mc.x / 11 * 11 + 5;
+                        mc.y = mc.y / 11 * 11 + 5;
+                    }
                     wdgmsg("itemact", pc, mc, ui.modflags());
                 } else {
                     if (inf.ol == null) {
@@ -1760,6 +1768,38 @@ public class MapView extends PView implements DTarget, Console.Directory {
             Coord tc = cc.div(tilesz);
             lasttc = tc.div(MCache.cmaps);
             gridol.update(tc.sub(MCache.cutsz.mul(view + 1)));
+        }
+    }
+
+    public void aggroclosest() {
+        OCache oc = ui.sess.glob.oc;
+        synchronized (oc) {
+            Gob gobcls = null;
+            double gobclsdist = Double.MAX_VALUE;
+
+            for (Gob gob : oc) {
+                try {
+                    Resource res = gob.getres();
+                    if (res != null && "body".equals(res.basename()) && gob.id != player().id) {
+                        KinInfo kininfo = gob.getattr(KinInfo.class);
+                        if (kininfo == null || kininfo.group == 2) {
+                            double dist = player().rc.dist(gob.rc);
+                            if (dist < gobclsdist) {
+                                gobcls = gob;
+                                gobclsdist = dist;
+                            }
+                        }
+                    }
+                } catch (Loading l) {
+                }
+            }
+
+            if (gobcls != null) {
+                gameui().menu.wdgmsg("act", new Object[]{"aggro"});
+                wdgmsg("click", gobcls.sc, Coord.z, 1, ui.modflags(), 0, (int) gobcls.id, gobcls.rc, 0, 0);
+                Gob pl = player();
+                wdgmsg("click", pl.sc, pl.rc, 3, 0);
+            }
         }
     }
 }

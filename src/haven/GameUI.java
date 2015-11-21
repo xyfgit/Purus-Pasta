@@ -781,6 +781,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         }
 
         public boolean globtype(char key, KeyEvent ev) {
+            if (Config.agroclosest && key == 9)
+                return super.globtype(key, ev);
+
             if ((gkey != -1) && (key == gkey)) {
                 click();
                 return (true);
@@ -909,10 +912,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             Config.hidegobs = !Config.hidegobs;
             Utils.setprefb("hidegobs", Config.hidegobs);
             return true;
-        } else if (ev.isShiftDown() && ev.getKeyCode() == KeyEvent.VK_D) {
-            Config.dropseeds = !Config.dropseeds;
-            Utils.setprefb("dropseeds", Config.dropseeds);
-            info("Seeds auto dropping is " + (Config.dropseeds ? "ON" : "OFF"), Color.WHITE);
+        } else if (ev.getKeyCode() == KeyEvent.VK_TAB && Config.agroclosest) {
+            if (map != null)
+                map.aggroclosest();
             return true;
         }
         return (super.globtype(key, ev));
@@ -1213,6 +1215,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             if (key != 0)
                 return (false);
             int c = ev.getKeyChar();
+            if (Config.userazerty)
+                c = Utils.azerty2qwerty((char) c);
             if ((c < KeyEvent.VK_0) || (c > KeyEvent.VK_9))
                 return (false);
             int i = Utils.floormod(c - KeyEvent.VK_0 - 1, 10);

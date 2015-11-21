@@ -140,7 +140,7 @@
     <delete dir="build" />
   </target>
 
-  <target name="rebuild" depends="clean, jars">   
+  <target name="rebuild" depends="clean, jars">
   </target>
   
   <target name="profile" depends="jars">

@@ -25,7 +25,7 @@ public class StatusWdg extends Widget {
 
     private static final Tex hearthlingsplayingdef = Text.render("Players: ?", Color.WHITE).tex();
     private static final Tex pingtimedef = Text.render("Ping: ?", Color.WHITE).tex();
-    private static final Tex accountstatusdef = Text.render("Account status: ?", Color.WHITE).tex();
+    private static final Tex accountstatusdef = Text.render("Account: ?", Color.WHITE).tex();
     private static final Tex servertimedef = Text.render("Server time: ?", Color.WHITE).tex();
 
     private Tex hearthlingsplaying = hearthlingsplayingdef;
@@ -207,7 +207,7 @@ public class StatusWdg extends Widget {
             status = "?";
 
         synchronized (StatusWdg.class) {
-            accountstatus = Text.render(String.format("Account status: %s", status), Color.WHITE).tex();
+            accountstatus = Text.render(String.format("Account: %s", status), Color.WHITE).tex();
         }
     }
 
