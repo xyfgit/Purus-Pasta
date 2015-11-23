@@ -78,6 +78,9 @@ public class Curiosity extends ItemInfo.Tip {
             } catch (Loading e) {
             }
         }
+        if (customInfo.time < 0)
+        return 0;
+        else
     	return exp / (customInfo.time / 3600.0f);
         }
 }
