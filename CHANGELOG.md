@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.4.1
+	- Amber features
+	- Bugfix for LPH if theres curios on study that arent on curio.config list
 ### 2.4.0
 	- Added curios and study to display LPH
 	- Added hunger level timer
