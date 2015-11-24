@@ -92,6 +92,14 @@ public class MCache {
                 this.c2 = c2;
             }
         }
+
+        public Coord getc1() {
+            return c1;
+        }
+
+        public Coord getc2() {
+            return c2;
+        }
     }
 
     public class Grid {

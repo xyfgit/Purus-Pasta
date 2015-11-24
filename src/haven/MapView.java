@@ -68,6 +68,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }};
     private long lastmmhittest = System.currentTimeMillis();
     private Coord lasthittestc = Coord.z;
+    public AreaMine areamine;
 
     public interface Delayed {
         public void run(GOut g);
@@ -538,6 +539,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
             mats[3] = olmat(128, 0, 255, 32);
             mats[16] = olmat(0, 255, 0, 32);
             mats[17] = olmat(255, 255, 0, 32);
+            mats[18] = olmat(29, 196, 51, 60);
         }
 
         private GLState olmat(int r, int g, int b, int a) {
@@ -1386,6 +1388,23 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     public boolean mousedown(Coord c, int button) {
         parent.setfocus(this);
+
+        synchronized (this) {
+            if (areamine != null) {
+                areamine.terminate();
+                areamine = null;
+            }
+            Resource curs = ui.root.getcurs(c);
+            if (curs != null && curs.name.equals("gfx/hud/curs/mine")) {
+                if (ui.modshift && selection == null) {
+                    selection = new Selector(this);
+                } else if (selection != null) {
+                    selection.destroy();
+                    selection = null;
+                }
+            }
+        }
+
         if (button == 2) {
             if (((Camera) camera).click(c)) {
                 camdrag = ui.grabmouse(this);
@@ -1616,6 +1635,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         UI.Grab mgrab;
         int modflags;
         Text tt;
+        MapView mv;
         final GrabXL xl = new GrabXL(this) {
             public boolean mmousedown(Coord cc, int button) {
                 if (button != 1)
@@ -1627,6 +1647,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
                 return (false);
             }
         };
+
+        public Selector() {
+        }
+
+        public Selector(MapView mv) {
+            this.mv = mv;
+        }
 
         {
             grab(xl);
@@ -1658,7 +1685,16 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     tt = null;
                     ol.destroy();
                     mgrab.remove();
-                    wdgmsg("sel", sc, ec, modflags);
+                    if (mv != null) {
+                        areamine = new AreaMine(ol.getc1(), ol.getc2(), mv);
+                        new Thread(areamine, "areamine").start();
+                        if (selection != null) {
+                            selection.destroy();
+                            selection = null;
+                        }
+                    } else {
+                        wdgmsg("sel", sc, ec, modflags);
+                    }
                     sc = null;
                 }
                 return (true);

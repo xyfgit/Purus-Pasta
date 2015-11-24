@@ -1035,6 +1035,38 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         return null;
     }
 
+    public List<IMeter.Meter> getmeters(String name) {
+        for (Widget meter : meters) {
+            if (meter instanceof IMeter) {
+                IMeter im = (IMeter) meter;
+                try {
+                    Resource res = im.bg.get();
+                    if (res != null && res.basename().equals(name))
+                        return im.meters;
+                } catch (Loading l) {
+                }
+            }
+        }
+        return null;
+    }
+
+    public IMeter.Meter getmeter(String name, int midx) {
+        List<IMeter.Meter> meters = getmeters(name);
+        if (meters != null || midx < meters.size())
+            return meters.get(midx);
+        return null;
+    }
+
+    public Equipory getequipory() {
+        if (equwnd != null) {
+            for (Widget w = equwnd.lchild; w != null; w = w.prev) {
+                if (w instanceof Equipory)
+                    return (Equipory) w;
+            }
+        }
+        return null;
+    }
+
     public class FKeyBelt extends Belt implements DTarget, DropTarget {
         public final int beltkeys[] = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4,
                 KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8,
