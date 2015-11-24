@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.4.5
+	- Some updates to client from latest server side update
+	- Latest Amber changes
 ### 2.4.1
 	- Amber features
 	- Bugfix for LPH if theres curios on study that arent on curio.config list
