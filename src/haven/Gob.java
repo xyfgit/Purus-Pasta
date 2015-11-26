@@ -62,6 +62,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     };
     private PView.Draw2D[] cropstgd = new PView.Draw2D[4];
     private Overlay gobpath = null;
+    private static final Map<String, Tex> plantTex = new  HashMap<>();
     private static final Tex[] treestg = new Tex[90];
 
     public static class Overlay implements Rendered {
@@ -329,15 +330,29 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 try {
                     Resource res = getres();
                     if (res != null && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
-                        GAttrib rd = getattr(ResDrawable.class);
-                        if (rd != null) {
-                            try {
-                                int stage = ((ResDrawable) rd).sdt.peekrbuf(0);
-                                if (stage > 0 && stage < 5)
-                                    rl.add(cropstgd[stage-1], null);
-                            } catch (ArrayIndexOutOfBoundsException e) { // ignored
-                            }
-                        }
+                    	GAttrib rd = getattr(ResDrawable.class);
+                    	final int stage = ((ResDrawable) rd).sdt.peekrbuf(0);
+                    	int maxStage = 0;
+                    	for (FastMesh.MeshRes layer : getres().layers(FastMesh.MeshRes.class)) {
+                    		if (layer.id / 10 > maxStage) {
+                    			maxStage = layer.id / 10;
+                    		}
+                    	}
+									final int stageMax = maxStage;
+									PView.Draw2D staged = new PView.Draw2D() {
+										@Override
+										public void draw2d(GOut g) {
+											if (sc != null) {
+												String str = String.format("%d/%d", new Object[]{stage, stageMax});
+												if (!plantTex.containsKey(str)) {
+													plantTex.put(str, Text.renderstroked(str, stage >= stageMax ? Color.GREEN : Color.RED, Color.BLACK, gobhpf).tex());
+												}
+												Tex tex = plantTex.get(str);
+												g.image(tex, sc.sub(tex.sz().div(2)));
+											}
+										}
+									};
+									rl.add(staged, null);
                     }
 
                     if (res != null && (res.name.startsWith("gfx/terobjs/trees") || res.name.startsWith("gfx/terobjs/bushes"))) {
