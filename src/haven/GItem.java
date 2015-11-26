@@ -85,7 +85,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
             } else if (e <= s && e <= v) {
                 min = e;
                 colormin = essenceclr;
-            } else if (s <= e && s <=v) {
+            } else if (s <= e && s <= v) {
                 min = s;
                 colormin = substanceclr;
             } else {
