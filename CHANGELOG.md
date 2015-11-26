@@ -1,5 +1,7 @@
 ## Changelog
 
+### 2.4.6
+	- Fixes for latest server update
 ### 2.4.5
 	- Some updates to client from latest server side update
 	- Latest Amber changes
