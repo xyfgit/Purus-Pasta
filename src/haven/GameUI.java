@@ -163,7 +163,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         statuswindow = new StatusWdg();
         if (!Config.statuswdgvisible)
             statuswindow.hide();
-        add(statuswindow, new Coord(HavenPanel.w / 2, 5));
+        add(statuswindow, new Coord(HavenPanel.w / 2, 20));
     }
 
     @Override
@@ -525,6 +525,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             if (minimapWnd != null)
                 ui.destroy(minimapWnd);
             minimapWnd = minimap();
+            if (Config.enabletracking && menu != null)
+                menu.wdgmsg("act", new Object[]{"tracking"});
+            if (Config.enablecrime && menu != null)
+                menu.wdgmsg("act", new Object[]{"crime"});
         } else if (place == "fight") {
             fv = urpanel.add((Fightview) child, 0, 0);
         } else if (place == "fsess") {
@@ -695,10 +699,28 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         }
     }
 
+    private void togglebuff(String err, String name, Resource res) {
+        if (err.endsWith("on.") && buffs.gettoggle(name) == null) {
+            buffs.addchild(new BuffToggle(name, res));
+        } else if (err.endsWith("off.")) {
+            BuffToggle tgl = buffs.gettoggle(name);
+            if (tgl != null)
+                tgl.reqdestroy();
+        }
+    }
+
     public void uimsg(String msg, Object... args) {
         if (msg == "err") {
             String err = (String) args[0];
             error(err);
+            if (Config.showtoggles) {
+                if (err.startsWith("Swimming is now turned"))
+                    togglebuff(err, "swim", Bufflist.buffswim);
+                else if (err.startsWith("Tracking is now turned"))
+                    togglebuff(err, "track", Bufflist.bufftrack);
+                else if (err.startsWith("Criminal acts are now turned"))
+                    togglebuff(err, "crime", Bufflist.buffcrime);
+            }
         } else if (msg == "msg") {
             String text = (String) args[0];
             msg(text);
@@ -967,7 +989,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         if (map != null)
             map.resize(sz);
         beltwdg.c = new Coord(blpw + 10, sz.y - beltwdg.sz.y - 5);
-        statuswindow.c = new Coord(HavenPanel.w / 2, 5);
+        statuswindow.c = new Coord(HavenPanel.w / 2, 20);
         super.resize(sz);
     }
 

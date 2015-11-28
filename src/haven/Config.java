@@ -117,6 +117,7 @@ public class Config {
     public static boolean autohearth = Utils.getprefb("autohearth", false);
     public static boolean studywndlock = Utils.getprefb("studywndlock", true);
     public static boolean servertime = Utils.getprefb("servertime", false);
+    public static boolean servertimesyslog = Utils.getprefb("servertimesyslog", false);
     public static boolean showplayerpaths = Utils.getprefb("showplayerpaths", false);
     public static boolean showanimalpaths = Utils.getprefb("showanimalpaths", false);
     public static boolean showstudylefttime = Utils.getprefb("showstudylefttime", false);
@@ -152,6 +153,8 @@ public class Config {
     public static double ponyalarmvol = Utils.getprefd("ponyalarmvol", 1.0);
     public static boolean reversebadcamx = Utils.getprefb("reversebadcamx", false);
     public static boolean reversebadcamy = Utils.getprefb("reversebadcamy", false);
+    public static boolean showservertime = Utils.getprefb("showservertime", false);
+    public static boolean showtoggles = Utils.getprefb("showtoggles", false);
     public static boolean hwcursor = false;
     public static String playerposfile;
     public static byte[] authck = null;

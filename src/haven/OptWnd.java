@@ -1084,12 +1084,12 @@ public class OptWnd extends Window {
         y += 35;
         general.add(new CheckBox("Print server time to System log") {
             {
-                a = Config.servertime;
+                a = Config.servertimesyslog;
             }
 
             public void set(boolean val) {
-                Utils.setprefb("servertime", val);
-                Config.servertime = val;
+                Utils.setprefb("servertimesyslog", val);
+                Config.servertimesyslog = val;
                 a = val;
             }
         }, new Coord(0, y));
@@ -1191,6 +1191,31 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(0, y));
+        y += 35;
+        general.add(new CheckBox("Show server time") {
+            {
+                a = Config.showservertime;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("showservertime", val);
+                Config.showservertime = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        // -------------------------------------------- general 2nd column
+        y = 0;
+        general.add(new CheckBox("Show swimming/tracking/crime buffs (req. logout)") {
+            {
+                a = Config.showtoggles;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("showtoggles", val);
+                Config.showtoggles = val;
+                a = val;
+            }
+        }, new Coord(260, y));
 
         general.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         general.pack();
