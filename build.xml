@@ -35,6 +35,8 @@
 	<pathelement path="lib/jogg.jar" />
 	<pathelement path="lib/jglob.jar" />
     <pathelement path="lib/commons-io-2.4.jar" />
+    <pathelement path="lib/gson-2.3.1.jar" />
+      	
       </classpath>
       <compilerarg value="-Xlint:unchecked" />
       <compilerarg value="-Xlint:-options" />
@@ -73,6 +75,7 @@
       <fileset dir="build/classes" />
       <fileset dir="build/classes-lib" />
     	<zipgroupfileset dir="lib" includes="commons-io-2.4.jar"/>
+    	<zipgroupfileset dir="lib" includes="gson-2.3.1.jar"/>
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
 	<attribute name="Class-Path" value="jogl.jar gluegen-rt.jar builtin-res.jar hafen-res.jar amber-res.jar pasta-res.jar " />
