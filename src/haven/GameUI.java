@@ -136,7 +136,17 @@ public class GameUI extends ConsoleHost implements Console.Directory {
                 return (new Coord(GameUI.this.sz.x, Math.min(brpanel.c.y - 79, GameUI.this.sz.y - menupanel.sz.y)));
             }
         }, new Coord(1, 0)));
-        menu = brpanel.add(new MenuGrid(), 20, 34);
+        menu = brpanel.add(new MenuGrid() {
+            // HACK:
+            // intercept menu item usage and notify craft window about it to be able
+            // to determine which crafting receipt caused creation of Makewindow
+            @Override
+            public boolean use(Glob.Pagina pagina) {
+                boolean result = super.use(pagina);
+                if (result)
+                    makewnd.setLastAction(pagina);
+                return result;
+            }}, 20, 34);
         brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), 0, 0);
         menupanel.add(new MainMenu(), 0, 0);
         foldbuttons();
@@ -564,7 +574,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             if (Config.fepmeter)
             addcmeter(new FepMeter(chrwdg.feps));
         } else if (place == "craft") {
-	    makewnd.add(child, Coord.z);
+	    makewnd.add(child);
         makewnd.pack();
         makewnd.show();
         } else if (place == "buddy") {
