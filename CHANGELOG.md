@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.5.0
+	- Ctrl + P shows max stage of crop
+	-  Latest Amber changes
 ### 2.4.6
 	- Fixes for latest server update
 ### 2.4.5
