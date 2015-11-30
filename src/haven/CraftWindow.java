@@ -36,11 +36,11 @@ public class CraftWindow extends Window {
 
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
-        if ((sender == this) && msg.equals("close")) {
-            if (makeWidget != null)
-                makeWidget.wdgmsg("close");
+        if (sender == cbtn) {
+            hide();
+        } else {
+            super.wdgmsg(sender, msg, args);
         }
-        super.wdgmsg(sender, msg, args);
     }
 
     @Override
