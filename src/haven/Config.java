@@ -135,7 +135,7 @@ public class Config {
     public static boolean autoeat = Utils.getprefb("autoeat", false);
     public static boolean runonlogin = Utils.getprefb("runonlogin", false);
     public static Coord chatsz = Utils.getprefc("chatsz", Coord.z);
-    public static boolean alternmapctrls = Utils.getprefb("alternmapctrls", false);
+    public static boolean alternmapctrls = Utils.getprefb("alternmapctrls", true);
     public static boolean autostudy = Utils.getprefb("autostudy", true);
     public static boolean limitbgfps = Utils.getprefb("limitbgfps", false);
     public static boolean showfillamount = Utils.getprefb("showfillamount", false);
@@ -155,6 +155,9 @@ public class Config {
     public static boolean reversebadcamy = Utils.getprefb("reversebadcamy", false);
     public static boolean showservertime = Utils.getprefb("showservertime", false);
     public static boolean showtoggles = Utils.getprefb("showtoggles", false);
+    public static boolean enabletracking = Utils.getprefb("enabletracking", false);
+    public static boolean enablecrime = Utils.getprefb("enablecrime", false);
+    public static boolean nometallicsfx = Utils.getprefb("nometallicsfx", false);
     public static boolean hwcursor = false;
     public static String playerposfile;
     public static byte[] authck = null;
@@ -183,10 +186,10 @@ public class Config {
     public static String[] treessel = Utils.getprefsa("treessel", null);
 
     public final static String[] icons = new String[]{"dandelion", "chantrelle", "blueberry", "rat", "chicken", "chick",
-            "spindlytaproot", "stingingnettle", "dragonfly", "toad", "bram", "rowboat", "arrow", "boarspear"};
+            "spindlytaproot", "stingingnettle", "dragonfly", "toad", "bram", "rowboat", "arrow", "boarspear", "frog"};
     public static String[] iconssel = Utils.getprefsa("iconssel", null);
 
-    public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(8) {{
+    public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(9) {{
         put("gfx/terobjs/vehicle/bram", Resource.loadtex("gfx/icons/bram"));
         put("gfx/kritter/toad/toad", Resource.loadtex("gfx/icons/toad"));
         put("gfx/terobjs/vehicle/rowboat", Resource.loadtex("gfx/icons/rowboat"));
@@ -195,6 +198,7 @@ public class Config {
         put("gfx/kritter/rabbit/rabbit", Resource.loadtex("gfx/icons/deadrabbit"));
         put("gfx/terobjs/items/arrow", Resource.loadtex("gfx/icons/arrow"));
         put("gfx/terobjs/items/boarspear", Resource.loadtex("gfx/icons/arrow"));
+        put("gfx/kritter/frog/frog", Resource.loadtex("gfx/icons/frog"));
     }};
 
     public final static Set<String> dangerousgobres = new HashSet<String>(Arrays.asList(
