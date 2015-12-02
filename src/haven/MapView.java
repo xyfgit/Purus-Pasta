@@ -28,14 +28,22 @@ package haven;
 
 import static haven.MCache.tilesz;
 
-import haven.GLProgram.VarID;
-import haven.resutil.BPRadSprite;
-
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.util.*;
-import java.lang.reflect.*;
-import javax.media.opengl.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.media.opengl.GL;
+
+import haven.GLProgram.VarID;
+import haven.resutil.BPRadSprite;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     public static long plgob = -1;
@@ -68,6 +76,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }};
     private long lastmmhittest = System.currentTimeMillis();
     private Coord lasthittestc = Coord.z;
+    private final PartyHighlight partyHighlight;
     public AreaMine areamine;
 
     public interface Delayed {
@@ -486,6 +495,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         this.cc = cc;
         this.plgob = plgob;
         this.gridol = new TileOutline(glob.map, MCache.cutsz.mul(2 * (view + 1)));
+        this.partyHighlight = new PartyHighlight(glob.party, plgob);
         setcanfocus(true);
     }
 
@@ -1109,6 +1119,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
         if (placing != null)
             placing.ctick((int) (dt * 1000));
+        	partyHighlight.update();
     }
 
     public void resize(Coord sz) {

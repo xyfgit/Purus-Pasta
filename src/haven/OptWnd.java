@@ -893,6 +893,18 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(520, y));
+        y += 35;
+        display.add(new CheckBox("Highlight party members") {
+            {
+                a = Config.highlightParty;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("highlightParty", val);
+                Config.highlightParty = val;
+                a = val;
+            }
+        }, new Coord(520, y));
         // -------------------------------------------- display 3rd column
         y = 0;
 

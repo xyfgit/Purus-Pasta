@@ -26,15 +26,24 @@ o *  This file is part of the Haven & Hearth game client.
 
 package haven;
 
-import haven.error.ErrorHandler;
+import static haven.Utils.getprop;
+
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-
-import static haven.Utils.getprop;
+import haven.error.ErrorHandler;
 
 public class Config {
     public static final boolean iswindows = System.getProperty("os.name").startsWith("Windows");
@@ -159,6 +168,7 @@ public class Config {
     public static boolean enabletracking = Utils.getprefb("enabletracking", false);
     public static boolean enablecrime = Utils.getprefb("enablecrime", false);
     public static boolean nometallicsfx = Utils.getprefb("nometallicsfx", false);
+    public static boolean highlightParty = Utils.getprefb("highlightParty", false);
     public static boolean hwcursor = false;
     public static String playerposfile;
     public static byte[] authck = null;
