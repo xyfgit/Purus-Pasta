@@ -29,10 +29,8 @@ package haven;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.awt.font.TextAttribute;
 import java.util.*;
 
-import static haven.Window.wbox;
 import static haven.PUtils.*;
 
 import haven.resutil.FoodInfo;

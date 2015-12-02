@@ -34,7 +34,6 @@ import java.util.*;
 import java.util.List;
 
 import haven.resutil.Ridges;
-import purus.PlayWav;
 
 public class LocalMiniMap extends Widget {
     private static final Tex gridblue = Resource.loadtex("gfx/hud/mmap/gridblue");

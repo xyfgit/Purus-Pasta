@@ -27,7 +27,6 @@
 package haven;
 
 import java.util.*;
-import java.awt.Font;
 import java.awt.Color;
 
 public class Makewindow extends Widget {

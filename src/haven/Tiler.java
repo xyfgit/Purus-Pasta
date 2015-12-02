@@ -30,7 +30,6 @@ import java.util.*;
 import java.lang.reflect.*;
 import java.lang.annotation.*;
 
-import haven.Resource.Tile;
 import haven.Surface.Vertex;
 import haven.Surface.MeshVertex;
 

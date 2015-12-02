@@ -26,7 +26,6 @@
 
 package haven;
 
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.lang.ref.*;
 
