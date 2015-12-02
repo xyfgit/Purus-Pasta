@@ -489,7 +489,8 @@ public class VertexBuf {
         public VertexRes(Resource res, Message buf) {
             res.super();
             List<AttribArray> bufs = new LinkedList<AttribArray>();
-            int fl = buf.uint8();
+            @SuppressWarnings("unused")
+			int fl = buf.uint8();
             int num = buf.uint16();
             while (!buf.eom()) {
                 String nm = buf.string();
@@ -509,7 +510,8 @@ public class VertexBuf {
     public static class Legacy implements Resource.LayerFactory<VertexRes> {
         public VertexRes cons(Resource res, Message buf) {
             ArrayList<AttribArray> bufs = new ArrayList<AttribArray>();
-            int fl = buf.uint8();
+            @SuppressWarnings("unused")
+			int fl = buf.uint8();
             int num = buf.uint16();
             while (!buf.eom()) {
                 int id = buf.uint8();

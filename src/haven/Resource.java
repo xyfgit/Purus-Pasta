@@ -195,7 +195,8 @@ public class Resource implements Serializable {
         }
     }
 
-    public static class HttpSource implements ResSource, Serializable {
+    @SuppressWarnings("static-access")
+	public static class HttpSource implements ResSource, Serializable {
         private final transient SslHelper ssl;
         public URL baseurl;
 
