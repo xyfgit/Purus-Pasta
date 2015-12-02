@@ -31,7 +31,8 @@ public class PartyMemberOutline extends Sprite {
         this.posa = new VertexBuf.VertexArray(posa);
         this.nrma = new VertexBuf.NormalArray(nrma);
         this.eidx = eidx;
-        this.mat = new States.ColState(color);
+        // Dont use kin color, might change in future ?
+        this.mat = new States.ColState(new Color(0, 255, 0, 125));
     }
 
     @Override
