@@ -95,7 +95,6 @@ public class ShadowMap extends GLState implements GLState.GlobalState, GLState.G
             if ((s.os.get(smap) != this) || (s.os.get(Light.lighting) == null))
                 continue;
             if (ll == null) {
-                PView.RenderState rs = s.os.get(PView.wnd);
                 cam = s.os.get(PView.cam);
                 ll = s.os.get(Light.lights);
             }

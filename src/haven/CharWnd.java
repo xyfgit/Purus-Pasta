@@ -67,7 +67,8 @@ public class CharWnd extends Window {
         private Tex trol;
         private long trtm = 0;
 
-        @Resource.LayerName("foodev")
+        @SuppressWarnings("serial")
+		@Resource.LayerName("foodev")
         public static class Event extends Resource.Layer {
             public final Color col;
             public final String nm;

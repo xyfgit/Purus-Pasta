@@ -65,7 +65,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private boolean showgrid;
     private TileOutline gridol;
     private Coord lasttc = Coord.z;
-    private static final Map<String, Gob.Overlay> radmap = new HashMap<String, Gob.Overlay>(7) {{
+    @SuppressWarnings("serial")
+	private static final Map<String, Gob.Overlay> radmap = new HashMap<String, Gob.Overlay>(7) {{
         put("gfx/terobjs/minesupport", new Gob.Overlay(new BPRadSprite(100.0F, 0)));
         put("gfx/terobjs/column", new Gob.Overlay(new BPRadSprite(125.0F, 0)));
         put("gfx/terobjs/trough", new Gob.Overlay(new BPRadSprite(200.0F, -10.0F)));
@@ -201,7 +202,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
             if (dist > 250) {
                 curc = cc;
             } else if (dist > fr) {
-                Coord3f oc = curc;
                 float pd = (float) Math.cos(elev) * dist(elev);
                 Coord3f cambase = new Coord3f(curc.x + ((float) Math.cos(tangl) * pd), curc.y + ((float) Math.sin(tangl) * pd), 0.0f);
                 float a = cc.xyangle(curc);
@@ -493,7 +493,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         super(sz);
         this.glob = glob;
         this.cc = cc;
-        this.plgob = plgob;
+        MapView.plgob = plgob;
         this.gridol = new TileOutline(glob.map, MCache.cutsz.mul(2 * (view + 1)));
         this.partyHighlight = new PartyHighlight(glob.party, plgob);
         setcanfocus(true);
@@ -698,9 +698,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
             if (glob.lightamb != null) {
                 Color lightamb, lightdif, lightspc;
                 if (Config.daylight) {
-                    lightamb = glob.dlightamb;
-                    lightdif = glob.dlightamb;
-                    lightspc = glob.dlightspc;
+                    lightamb = Glob.dlightamb;
+                    lightdif = Glob.dlightamb;
+                    lightspc = Glob.dlightspc;
                 } else {
                     lightamb = glob.lightamb;
                     lightdif = glob.lightdif;
@@ -1049,7 +1049,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     private void partydraw(GOut g) {
         for (Party.Member m : ui.sess.glob.party.memb.values()) {
-            if (m.gobid == this.plgob)
+            if (m.gobid == MapView.plgob)
                 continue;
             Coord mc = m.getc();
             if (mc == null)
@@ -1261,7 +1261,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
         public void run(GOut g) {
             GLState.Buffer bk = g.st.copy();
-            Coord mc;
             try {
                 BGL gl = g.gl;
                 g.st.set(clickbasic(g));

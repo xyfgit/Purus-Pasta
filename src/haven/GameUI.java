@@ -732,7 +732,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             }
         } else if (msg == "polowner") {
             String o = (String) args[0];
-            boolean n = ((Integer) args[1]) != 0;
             if (o.length() == 0)
                 o = null;
             else
@@ -1067,9 +1066,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public IMeter.Meter getmeter(String name, int midx) {
-        List<IMeter.Meter> meters = getmeters(name);
-        if (meters != null || midx < meters.size())
-            return meters.get(midx);
+        if (getmeters(name) != null || midx < getmeters(name).size())
+            return getmeters(name).get(midx);
         return null;
     }
 
@@ -1207,7 +1205,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
                 public void draw(GOut g) {
                     super.draw(g);
-                    Color urg = chat.urgcols[chat.urgency];
+                    Color urg = ChatUI.urgcols[chat.urgency];
                     if (urg != null) {
                         GOut g2 = g.reclipl(new Coord(-2, -2), g.sz.add(4, 4));
                         g2.chcolor(urg.getRed(), urg.getGreen(), urg.getBlue(), 128);

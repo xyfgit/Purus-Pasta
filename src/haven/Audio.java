@@ -371,11 +371,10 @@ public class Audio {
     public static class LDump implements CS {
         public final CS bk;
         private double val = 0.0;
-        private int n = 0, iv;
+        private int n = 0;
 
         public LDump(CS bk, int iv) {
             this.bk = bk;
-            this.iv = iv;
         }
 
         public LDump(CS bk) {

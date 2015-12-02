@@ -897,7 +897,7 @@ public class Widget {
         return (new AbstractSet<T>() {
             public int size() {
                 int i = 0;
-                for (T w : this)
+                for (@SuppressWarnings("unused") T w : this)
                     i++;
                 return (i);
             }

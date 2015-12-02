@@ -213,7 +213,8 @@ public class ClipAmbiance implements Rendered {
         return (true);
     }
 
-    @Resource.LayerName("clamb")
+    @SuppressWarnings("serial")
+	@Resource.LayerName("clamb")
     public static class Desc extends Resource.Layer {
         public final Indir<Resource> parent;
         public final int minc, maxc, maxi;

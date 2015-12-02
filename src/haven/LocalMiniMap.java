@@ -36,7 +36,6 @@ import java.util.List;
 import haven.resutil.Ridges;
 
 public class LocalMiniMap extends Widget {
-    private static final Tex gridblue = Resource.loadtex("gfx/hud/mmap/gridblue");
     private static final Tex gridred = Resource.loadtex("gfx/hud/mmap/gridred");
     public static final Coord VIEW_SZ = MCache.sgridsz.mul(9).div(tilesz);// view radius is 9x9 "server" grids
     public static final Color VIEW_BG_COLOR = new Color(255, 255, 255, 60);
@@ -54,7 +53,8 @@ public class LocalMiniMap extends Widget {
     private Coord delta = Coord.z;
 	private final HashSet<Long> sgobs = new HashSet<Long>();
     private final HashMap<Coord, BufferedImage> maptiles = new HashMap<Coord, BufferedImage>(28, 0.75f);
-    private final Map<Pair<MCache.Grid, Integer>, Defer.Future<MCache.Grid>> cache = new LinkedHashMap<Pair<MCache.Grid, Integer>, Defer.Future<MCache.Grid>>(7, 0.75f, true) {
+    @SuppressWarnings("serial")
+	private final Map<Pair<MCache.Grid, Integer>, Defer.Future<MCache.Grid>> cache = new LinkedHashMap<Pair<MCache.Grid, Integer>, Defer.Future<MCache.Grid>>(7, 0.75f, true) {
         protected boolean removeEldestEntry(Map.Entry<Pair<MCache.Grid, Integer>, Defer.Future<MCache.Grid>> eldest) {
             return size() > 7;
         }
@@ -390,7 +390,7 @@ public class LocalMiniMap extends Widget {
     }
 
     public void tick(double dt) {
-        Gob pl = ui.sess.glob.oc.getgob(mv.plgob);
+        Gob pl = ui.sess.glob.oc.getgob(MapView.plgob);
         if (pl == null) {
             this.cc = null;
             return;

@@ -1286,7 +1286,8 @@ public class Utils {
         return (null);
     }
 
-    private final static Map<Character, Character> az2qwmap = new HashMap<Character, Character>(10) {{
+    @SuppressWarnings("serial")
+	private final static Map<Character, Character> az2qwmap = new HashMap<Character, Character>(10) {{
         put('&', '1');
         put('é', '2');
         put('"', '3');

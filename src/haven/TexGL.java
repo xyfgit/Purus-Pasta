@@ -111,13 +111,11 @@ public abstract class TexGL extends Tex {
         }
 
         public void apply(GOut g) {
-            BGL gl = g.gl;
             sampler = lbind(g, tex);
             reapply(g);
         }
 
         public void unapply(GOut g) {
-            BGL gl = g.gl;
             sampler.ufree(g);
             sampler = null;
         }
@@ -188,7 +186,6 @@ public abstract class TexGL extends Tex {
         }
 
         public void unapply(GOut g) {
-            BGL gl = g.gl;
             if (g.st.old(TexDraw.slot) == null) {
                 sampler.act(g);
                 sampler.free();

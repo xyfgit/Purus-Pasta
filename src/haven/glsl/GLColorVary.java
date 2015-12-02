@@ -32,7 +32,7 @@ import static haven.glsl.Type.*;
 public class GLColorVary implements ShaderMacro {
     public static final AutoVarying color = new AutoVarying(VEC4) {
         protected Expression root(VertexContext vctx) {
-            return (vctx.gl_Color.ref());
+            return (VertexContext.gl_Color.ref());
         }
     };
 

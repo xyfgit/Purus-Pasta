@@ -476,7 +476,8 @@ public class VertexBuf {
         }
     }
 
-    @Resource.LayerName("vbuf2")
+    @SuppressWarnings("serial")
+	@Resource.LayerName("vbuf2")
     public static class VertexRes extends Resource.Layer {
         public transient final VertexBuf b;
 

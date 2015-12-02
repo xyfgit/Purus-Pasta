@@ -200,7 +200,8 @@ public class Config {
             "spindlytaproot", "stingingnettle", "dragonfly", "toad", "bram", "rowboat", "arrow", "boarspear", "frog"};
     public static String[] iconssel = Utils.getprefsa("iconssel", null);
 
-    public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(9) {{
+    @SuppressWarnings("serial")
+	public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(9) {{
         put("gfx/terobjs/vehicle/bram", Resource.loadtex("gfx/icons/bram"));
         put("gfx/kritter/toad/toad", Resource.loadtex("gfx/icons/toad"));
         put("gfx/terobjs/vehicle/rowboat", Resource.loadtex("gfx/icons/rowboat"));
@@ -229,8 +230,7 @@ public class Config {
             InputStream in = ErrorHandler.class.getResourceAsStream("/version");
             try {
                 if (in != null) {
-                    java.util.Scanner s = new java.util.Scanner(in);
-                    version = s.next();
+                    version = new java.util.Scanner(in).next();
                 }
             } finally {
                 in.close();

@@ -87,7 +87,8 @@ public abstract class Sprite implements Rendered {
         throw (new RuntimeException("Could not find any suitable constructor for dynamic sprite"));
     }
 
-    public static class ResourceException extends RuntimeException {
+    @SuppressWarnings("serial")
+	public static class ResourceException extends RuntimeException {
         public Resource res;
 
         public ResourceException(String msg, Resource res) {

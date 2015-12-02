@@ -55,9 +55,6 @@ public class Window extends Widget implements DTarget {
     public static final Coord dlmrgn = new Coord(23, 14), dsmrgn = new Coord(9, 9);
     public static final BufferedImage ctex = Resource.loadimg("gfx/hud/fonttex");
     
-    private boolean local = false; // indicates whether window is not created by the server
-    private boolean hideOnClose = false; // indicates whether windows should be destroyed or just hidden on close message
-    
     public static final Text.Furnace cf = new Text.Imager(new PUtils.TexFurn(new Text.Foundry(Text.sans, 14).aa(true), ctex)) {
         protected BufferedImage proc(Text text) {
             return (rasterimg(blurmask2(text.img.getRaster(), 1, 1, Color.BLACK)));
@@ -222,10 +219,6 @@ public class Window extends Widget implements DTarget {
         return (max);
     }
 
-    private void placecbtn() {
-        cbtn.c = xlate(new Coord(ctl.x + csz.x - cbtn.sz.x, ctl.y).add(2, -2), false);
-    }
-
     public void resize(Coord sz) {
         asz = sz;
         csz = asz.add(mrgn.mul(2));
@@ -344,10 +337,8 @@ public class Window extends Widget implements DTarget {
         return dm != null;
     }
     public void setLocal(boolean value) {
-        local = value;
     }
 
     public void setHideOnClose(boolean value) {
-        hideOnClose = value;
     }
 }

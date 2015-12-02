@@ -18,7 +18,6 @@ public class CustomHitbox extends Sprite {
 	
 	public float size;
 
-    private static States.ColState clrstate = new States.ColState(new Color(114, 159, 207, 200));
     private static int w = 12;
 
 	private static int h = 12;

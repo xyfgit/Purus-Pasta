@@ -37,7 +37,7 @@ public class Tex2D {
 
     public static final AutoVarying rtexcoord = new AutoVarying(VEC2, "s_tex2d") {
         protected Expression root(VertexContext vctx) {
-            return (pick(vctx.gl_MultiTexCoord[0].ref(), "st"));
+            return (pick(VertexContext.gl_MultiTexCoord[0].ref(), "st"));
         }
 
         protected Interpol ipol(Context ctx) {

@@ -45,7 +45,8 @@ public abstract class PView extends Widget {
     private GLState pstate;
 
     public static class RenderContext extends GLState.Abstract {
-        private Map<DataID, Object> data = new CacheMap<DataID, Object>(CacheMap.RefType.WEAK);
+        @SuppressWarnings("rawtypes")
+		private Map<DataID, Object> data = new CacheMap<DataID, Object>(CacheMap.RefType.WEAK);
 
         public interface DataID<T> {
             public T make(RenderContext c);

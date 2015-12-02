@@ -62,7 +62,6 @@ public class Glob {
     public static TimersThread timersThread;
     public GameUI gui;
     private long lasttime;
-    private static final long SEC_DAY = 60*60*24;
     private static final Color timeclr = new Color(177, 144, 173);
     public String servertime;
 
@@ -111,7 +110,8 @@ public class Glob {
         }
     }
 
-    public static class Pagina implements java.io.Serializable {
+    @SuppressWarnings("serial")
+	public static class Pagina implements java.io.Serializable {
         public final Indir<Resource> res;
         public State st;
         public int meter, dtime;
@@ -224,10 +224,6 @@ public class Glob {
         map.ctick(dt);
 
         lastctick = now;
-    }
-
-    private static double defix(int i) {
-        return (((double) i) / 1e9);
     }
 
     private long lastrep = 0;

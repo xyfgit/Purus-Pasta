@@ -104,7 +104,8 @@ public class AreaMine implements Runnable {
                 break mine;
 
             // drink
-            GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
+            @SuppressWarnings("deprecation")
+			GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
             if (gui.maininv != null) {
                 if (gui.maininv.drink(80)) {
                     try {

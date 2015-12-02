@@ -58,7 +58,8 @@ public class MenuGrid extends Widget {
         }
     }
 
-    public class PaginaException extends RuntimeException {
+    @SuppressWarnings("serial")
+	public class PaginaException extends RuntimeException {
         public Pagina pag;
 
         public PaginaException(Pagina p) {
@@ -68,7 +69,6 @@ public class MenuGrid extends Widget {
     }
 
     private boolean cons(Pagina p, Collection<Pagina> buf) {
-        Pagina[] cp = new Pagina[0];
         Collection<Pagina> open, close = new HashSet<Pagina>();
         synchronized (ui.sess.glob.paginae) {
             open = new LinkedList<Pagina>();
@@ -336,7 +336,7 @@ public class MenuGrid extends Widget {
 
     public void usecustom(String[] ad) {
         if(ad[1].equals("timer")) {
-        	gameui.AvaaTimer();
+        	GameUI.AvaaTimer();
         } else if (ad[1].equals("study")) {
     		if(ui.gui!=null){
 		    ui.gui.toggleStudy();
