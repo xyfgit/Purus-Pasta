@@ -1,5 +1,11 @@
 ## Changelog
 
+### 2.6.0
+	- Craft window shows 4 latest recipes
+	- Green highlight around party members
+	- Added odd tuber to curio.config
+	- Added total armor class to equipment windows
+	- Fixed a lot of meaningless errors, that dont affect much at all if any
 ### 2.5.0
 	- Ctrl + P shows max stage of crop
 	-  Latest Amber changes
