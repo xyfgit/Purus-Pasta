@@ -119,6 +119,8 @@ public class Config {
     public static boolean hidetrees = Utils.getprefb("hidetrees", false);
     public static boolean hidewalls = Utils.getprefb("hidewalls", false);
     public static boolean hidewagons = Utils.getprefb("hidewagons", false);
+    public static boolean hidehouses = Utils.getprefb("hidehouses", false);
+    public static boolean hideall = Utils.getprefb("hideall", false);
     public static double hidered = Utils.getprefd("hidered", 155);
     public static double hidegreen = Utils.getprefd("hidegreen", 155);
     public static double hideblue = Utils.getprefd("hideblue", 155);

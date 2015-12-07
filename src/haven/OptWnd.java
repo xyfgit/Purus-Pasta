@@ -1324,6 +1324,18 @@ public class OptWnd extends Window {
         y = 0;
         hide.add(new Label("Ctrl + h to toggle hide"), new Coord(0, y));
         y += 35;
+        hide.add(new CheckBox("Hide Everything") {
+            {
+                a = Config.hideall;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("hideall", val);
+                Config.hideall = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
         hide.add(new CheckBox("Hide Trees") {
             {
                 a = Config.hidetrees;
@@ -1367,6 +1379,18 @@ public class OptWnd extends Window {
                     public void set(boolean val) {
                         Utils.setprefb("hidewagons", val);
                         Config.hidewagons = val;
+                        a = val;
+                    }
+                }, new Coord(0, y));
+                y += 35;
+                hide.add(new CheckBox("Hide Houses (Hides also door)") {
+                    {
+                        a = Config.hidehouses;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidehouses", val);
+                        Config.hidehouses = val;
                         a = val;
                     }
                 }, new Coord(0, y));
