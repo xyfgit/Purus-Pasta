@@ -45,6 +45,7 @@ import javax.media.opengl.GL;
 import haven.GLProgram.VarID;
 import haven.resutil.BPRadSprite;
 
+
 public class MapView extends PView implements DTarget, Console.Directory {
     public static long plgob = -1;
     public Coord cc;
@@ -774,11 +775,24 @@ public class MapView extends PView implements DTarget, Console.Directory {
             return (new Coord3f(cc.x, cc.y, glob.map.getcz(cc)));
     }
 
+    private TexGL clickbuf = null;
+    private GLFrameBuffer clickfb = null;
     private final RenderContext clickctx = new RenderContext();
 
     private GLState.Buffer clickbasic(GOut g) {
         GLState.Buffer ret = basic(g);
         clickctx.prep(ret);
+        if ((clickbuf == null) || !clickbuf.sz().equals(sz)) {
+            if (clickbuf != null) {
+                clickfb.dispose();
+                clickfb = null;
+                clickbuf.dispose();
+                clickbuf = null;
+            }
+            clickbuf = new TexE(sz, GL.GL_RGB, GL.GL_RGB, GL.GL_UNSIGNED_BYTE);
+            clickfb = new GLFrameBuffer(clickbuf, null);
+        }
+        clickfb.prep(ret);
         return (ret);
     }
 
@@ -1550,8 +1564,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                         lastintergobrc = inf.gob.rc;
                         lastintermid = getid(inf.r);
                         wdgmsg("itemact", pc, mc, ui.modflags(), 0, lastintergobid, lastintergobrc, 0, lastintermid);
-                    }
-                    else {
+                    } else {
                         wdgmsg("itemact", pc, mc, ui.modflags(), 1, (int) inf.gob.id, inf.gob.rc, inf.ol.id, getid(inf.r));
                     }
                 }
