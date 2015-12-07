@@ -142,6 +142,7 @@ public class Config {
     public static boolean toggleuinot = Utils.getprefb("toggleuinot", false);
     public static boolean fepmeter = Utils.getprefb("fepmeter", false);
     public static boolean hungermeter = Utils.getprefb("hungermeter", false);
+    public static boolean autosplit = Utils.getprefb("autosplit", false);
     public static boolean autoeat = Utils.getprefb("autoeat", false);
     public static boolean runonlogin = Utils.getprefb("runonlogin", false);
     public static Coord chatsz = Utils.getprefc("chatsz", Coord.z);
@@ -169,6 +170,7 @@ public class Config {
     public static boolean enablecrime = Utils.getprefb("enablecrime", false);
     public static boolean nometallicsfx = Utils.getprefb("nometallicsfx", false);
     public static boolean highlightParty = Utils.getprefb("highlightParty", false);
+    public static boolean resinfo = Utils.getprefb("resinfo", false);
     public static boolean hwcursor = false;
     public static String playerposfile;
     public static byte[] authck = null;

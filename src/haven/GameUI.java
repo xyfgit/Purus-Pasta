@@ -74,6 +74,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private boolean updhanddestroyed = false;
     public GameUI gui = null;
     public final CraftWindow makewnd;
+    public static boolean swimon = false;
+    public static boolean crimeon = false;
+    public static boolean trackon = false;
+    private boolean crimeautotgld = false;
+    private boolean trackautotgld = false;
 
     public abstract class Belt extends Widget {
         public Belt(Coord sz) {
@@ -696,25 +701,48 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private void togglebuff(String err, String name, Resource res) {
         if (err.endsWith("on.") && buffs.gettoggle(name) == null) {
             buffs.addchild(new BuffToggle(name, res));
+            if (name.equals("swim"))
+                swimon = true;
+            else if (name.equals("crime"))
+                crimeon = true;
+            else if (name.equals("track"))
+                trackon = true;
         } else if (err.endsWith("off.")) {
             BuffToggle tgl = buffs.gettoggle(name);
             if (tgl != null)
                 tgl.reqdestroy();
+            if (name.equals("swim"))
+                swimon = true;
+            else if (name.equals("crime"))
+                crimeon = false;
+            else if (name.equals("track"))
+                trackon = false;
         }
     }
 
     public void uimsg(String msg, Object... args) {
         if (msg == "err") {
             String err = (String) args[0];
-            error(err);
             if (Config.showtoggles) {
-                if (err.startsWith("Swimming is now turned"))
+                if (err.startsWith("Swimming is now turned")) {
                     togglebuff(err, "swim", Bufflist.buffswim);
-                else if (err.startsWith("Tracking is now turned"))
+                } else if (err.startsWith("Tracking is now turned")) {
                     togglebuff(err, "track", Bufflist.bufftrack);
-                else if (err.startsWith("Criminal acts are now turned"))
+                    if (trackautotgld) {
+                        errornosfx(err);
+                        trackautotgld = false;
+                        return;
+                    }
+                } else if (err.startsWith("Criminal acts are now turned")) {
                     togglebuff(err, "crime", Bufflist.buffcrime);
+                    if (crimeautotgld) {
+                        errornosfx(err);
+                        crimeautotgld = false;
+                        return;
+                    }
+                }
             }
+            error(err);
         } else if (msg == "msg") {
             String text = (String) args[0];
             msg(text);
@@ -931,6 +959,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             if (map != null)
                 map.aggroclosest();
             return true;
+        } else if (ev.isControlDown() && ev.getKeyCode() == KeyEvent.VK_I) {
+            Config.resinfo = !Config.resinfo;
+            Utils.setprefb("resinfo", Config.resinfo);
+            info("Resource info on shift/shift+ctrl is now turned " + (Config.resinfo ? "on" : "off"), Color.WHITE);
+            return true;
         }
         return (super.globtype(key, ev));
     }
@@ -1005,6 +1038,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public void error(String msg) {
         msg(msg, new Color(192, 0, 0), new Color(255, 0, 0));
         Audio.play(errsfx);
+    }
+
+    public void errornosfx(String msg) {
+        msg(msg, new Color(192, 0, 0), new Color(255, 0, 0));
     }
 
     public void msg(String msg) {
