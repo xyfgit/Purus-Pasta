@@ -173,6 +173,7 @@ public class Config {
     public static boolean nometallicsfx = Utils.getprefb("nometallicsfx", false);
     public static boolean highlightParty = Utils.getprefb("highlightParty", false);
     public static boolean resinfo = Utils.getprefb("resinfo", false);
+    public static boolean showanimalrad = Utils.getprefb("showanimalrad", false);
     public static boolean hwcursor = false;
     public static String playerposfile;
     public static byte[] authck = null;
@@ -201,11 +202,12 @@ public class Config {
     public static String[] treessel = Utils.getprefsa("treessel", null);
 
     public final static String[] icons = new String[]{"dandelion", "chantrelle", "blueberry", "rat", "chicken", "chick",
-            "spindlytaproot", "stingingnettle", "dragonfly", "toad", "bram", "rowboat", "arrow", "boarspear", "frog"};
+            "spindlytaproot", "stingingnettle", "dragonfly", "toad", "bram", "rowboat", "arrow", "boarspear", "frog",
+            "wagon"};
     public static String[] iconssel = Utils.getprefsa("iconssel", null);
 
     @SuppressWarnings("serial")
-	public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(9) {{
+    public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(10) {{
         put("gfx/terobjs/vehicle/bram", Resource.loadtex("gfx/icons/bram"));
         put("gfx/kritter/toad/toad", Resource.loadtex("gfx/icons/toad"));
         put("gfx/terobjs/vehicle/rowboat", Resource.loadtex("gfx/icons/rowboat"));
@@ -215,10 +217,12 @@ public class Config {
         put("gfx/terobjs/items/arrow", Resource.loadtex("gfx/icons/arrow"));
         put("gfx/terobjs/items/boarspear", Resource.loadtex("gfx/icons/arrow"));
         put("gfx/kritter/frog/frog", Resource.loadtex("gfx/icons/frog"));
+        put("gfx/terobjs/vehicle/wagon", Resource.loadtex("gfx/icons/wagon"));
     }};
 
     public final static Set<String> dangerousgobres = new HashSet<String>(Arrays.asList(
-            "gfx/kritter/bat/bat", "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx"));
+            "gfx/kritter/bat/bat", "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx",
+            "gfx/kritter/badger/badger"));
     
     static {
         Arrays.sort(Config.boulders);

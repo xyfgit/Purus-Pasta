@@ -32,12 +32,15 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.media.opengl.GL;
@@ -76,10 +79,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
         put("gfx/kritter/boar/boar", new Gob.Overlay(new BPRadSprite(125.0F, -10.0F)));
         put("gfx/terobjs/vehicle/bram", new Gob.Overlay(new BPRadSprite(125.0F, -10.0F)));
     }};
+    private static final Gob.Overlay animalradius = new Gob.Overlay(new BPRadSprite(100.0F, -10.0F));
     private long lastmmhittest = System.currentTimeMillis();
     private Coord lasthittestc = Coord.z;
     private final PartyHighlight partyHighlight;
     public AreaMine areamine;
+
+    private static final  Set<String> dangerousanimalrad = new HashSet<String>(Arrays.asList(
+            "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger"));
 
     public interface Delayed {
         public void run(GOut g);
@@ -632,6 +639,15 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     gob.ols.remove(rovl);
                 }
             }
+
+            /*if (res != null && dangerousanimalrad.contains(res.name)) {
+                if (Config.showanimalrad) {
+                    if (!gob.ols.contains(animalradius))
+                        gob.ols.add(animalradius);
+                } else {
+                    gob.ols.remove(animalradius);
+                }
+            }*/
         } catch (Loading le) {
         }
     }
@@ -1722,7 +1738,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     mgrab.remove();
                     if (mv != null) {
                         areamine = new AreaMine(ol.getc1(), ol.getc2(), mv);
-                        new Thread(areamine, "areamine").start();
+                        new Thread(areamine, "Area miner").start();
                         if (selection != null) {
                             selection.destroy();
                             selection = null;

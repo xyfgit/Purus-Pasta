@@ -385,7 +385,7 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
                 public void run() {
                     StudyTimes.updatestudytimes();
                 }
-            }).start();
+            }, "Curio times fetcher").start();
 
         Config.cmdline(args);
 
