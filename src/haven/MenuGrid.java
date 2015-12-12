@@ -29,12 +29,22 @@ package haven;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.WeakHashMap;
 
+import haven.Glob.Pagina;
 import haven.Resource.AButton;
 import haven.util.ObservableCollection;
-import haven.Glob.Pagina;
-
-import java.util.*;
+import purus.MusselPicker;
 
 public class MenuGrid extends Widget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
@@ -50,6 +60,7 @@ public class MenuGrid extends Widget {
     private boolean loading = true;
     private Map<Character, Pagina> hotmap = new TreeMap<Character, Pagina>();
     public GameUI gameui;
+    private haven.Widget w;
 
     @RName("scm")
     public static class $_ implements Factory {
@@ -123,6 +134,7 @@ public class MenuGrid extends Widget {
     	ObservableCollection<Pagina> p = glob.paginae;
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/timer")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/study")));
+    	p.add(glob.paginafor(Resource.local().load("paginae/custom/mussel")));
     }
     private static Comparator<Pagina> sorter = new Comparator<Pagina>() {
         public int compare(Pagina a, Pagina b) {
@@ -341,6 +353,8 @@ public class MenuGrid extends Widget {
     		if(ui.gui!=null){
 		    ui.gui.toggleStudy();
     		}
+        } else if (ad[1].equals("mussel")) {
+        	new MusselPicker(ui, w).Run();
         }
     }
 
