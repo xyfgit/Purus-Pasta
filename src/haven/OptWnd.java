@@ -1274,7 +1274,7 @@ public class OptWnd extends Window {
                 Config.autosplit = val;
                 a = val;
             }
-        }, new Coord(0, y));
+        }, new Coord(260, y));
 
         general.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         general.pack();
