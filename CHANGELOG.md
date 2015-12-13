@@ -1,5 +1,10 @@
 ## Changelog
 
+### 2.7.0
+	- Hiding objects with ctrl+h has been improved with better hitboxes and few new things
+	- Mussel picker, picks all mussels nearby, doesnt work very well yet Xtended -> Mussel
+	- Latest Amber changes
+	- Fixes to options menu layouting
 ### 2.6.0
 	- Craft window shows 4 latest recipes
 	- Green highlight around party members
