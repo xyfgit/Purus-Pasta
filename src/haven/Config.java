@@ -174,7 +174,7 @@ public class Config {
     public static boolean highlightParty = Utils.getprefb("highlightParty", false);
     public static boolean resinfo = Utils.getprefb("resinfo", false);
     public static boolean showanimalrad = Utils.getprefb("showanimalrad", false);
-    public static boolean hwcursor = false;
+    public static boolean hwcursor = Utils.getprefb("hwcursor", false);
     public static String playerposfile;
     public static byte[] authck = null;
     public static String prefspec = "hafen";
@@ -306,7 +306,6 @@ public class Config {
         out.println("  -d                 Display debug text");
         out.println("  -P                 Enable profiling");
         out.println("  -G                 Enable GPU profiling");
-        out.println("  -c                 Force hardware cursor");
         out.println("  -p FILE            Write player position to a memory mapped file");
         out.println("  -U URL             Use specified external resource URL");
         out.println("  -r DIR             Use specified resource directory (or HAVEN_RESDIR)");
@@ -316,7 +315,7 @@ public class Config {
     }
 
     public static void cmdline(String[] args) {
-        PosixArgs opt = PosixArgs.getopt(args, "hdPGcp:U:r:A:u:C:");
+        PosixArgs opt = PosixArgs.getopt(args, "hdPGp:U:r:A:u:C:");
         if (opt == null) {
             usage(System.err);
             System.exit(1);
@@ -361,9 +360,6 @@ public class Config {
                     break;
                 case 'C':
                     authck = Utils.hex2byte(opt.arg);
-                    break;
-                case 'c':
-                    hwcursor = true;
                     break;
                 case 'p':
                     playerposfile = opt.arg;
