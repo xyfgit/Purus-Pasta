@@ -1329,4 +1329,12 @@ public class Utils {
 		long seconds = t / 1000 % 60;
 		return String.format("%02d:%02d:%02d",hours,mins,seconds);
 	}
+    public static String join(String separator, String[] array) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < array.length - 1; i++)
+            sb.append(array[i]).append(separator);
+        if (array.length > 0)
+            sb.append(array[array.length - 1]);
+        return sb.toString();
+    }
 }
