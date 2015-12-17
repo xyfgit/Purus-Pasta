@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.8.0
+	- Merged important changes from the vanilla client regarding quests
+	-> Update your client to avoid crashes on quests
 ### 2.7.0
 	- Hiding objects with ctrl+h has been improved with better hitboxes and few new things
 	- Mussel picker, picks all mussels nearby, doesnt work very well yet Xtended -> Mussel
