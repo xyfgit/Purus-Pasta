@@ -35,9 +35,9 @@ public class Curiosity extends ItemInfo.Tip {
 
     public Curiosity(Owner owner, int exp, int mw, int enc) {
         super(owner);
-        this.exp = exp;
-        this.mw = mw;
-        this.enc = enc;
+        this.exp = exp; // LP
+        this.mw = mw; // Mental Weight
+        this.enc = enc; // Experience Points
         if (owner instanceof GItem) {
         	item = (GItem)owner;
         }
@@ -61,9 +61,26 @@ public class Curiosity extends ItemInfo.Tip {
         if (customInfo != null && customInfo != CuriosityInfo.empty) {
             buf.append(String.format("Time: $col[192,192,255]{%s}\n", customInfo.getFormattedTime()));
             buf.append(String.format("LP/H/Slot: $col[255,192,255]{%.2f}\n", LPH(exp) / customInfo.slots));
-            buf.append(String.format("LP/H/MW: $col[255,255,192]{%.2f}\n", LPH(exp) / mw));
+            buf.append(String.format("LP/Exp: $col[255,255,192]{%.2f}\n", LPE(exp, enc)));
         }
         return(RichText.render(buf.toString(), 0).img);
+    }
+    
+    public float LPE(int exp, int enc) {
+    	// LP per experience point
+        if (item != null && customInfo == null) {
+            try { 
+                String resName = item.resname();
+                customInfo = CuriosityInfo.get(resName);
+                if (customInfo == null)
+                    customInfo = CuriosityInfo.empty;
+            } catch (Loading e) {
+            }
+        }
+        if (customInfo.time < 0)
+        return 0;
+        else
+    	return exp / enc;
     }
     
     public float LPH(int exp){
