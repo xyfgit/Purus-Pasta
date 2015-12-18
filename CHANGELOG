@@ -1,3 +1,13 @@
+Version 1.23.4
+    Fixed:
+        * NPE when resizing the chat.
+
+
+Version 1.23.3
+    Fixed:
+        * Quest log position.
+
+
 Version 1.23.2
     Fixed:
         * Updated builtin-res.jar
