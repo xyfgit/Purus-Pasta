@@ -69,28 +69,19 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private boolean showgrid;
     private TileOutline gridol;
     private Coord lasttc = Coord.z;
-    @SuppressWarnings("serial")
-	private static final Map<String, Gob.Overlay> radmap = new HashMap<String, Gob.Overlay>(7) {{
-        put("gfx/terobjs/minesupport", new Gob.Overlay(new BPRadSprite(100.0F, 0)));
-        put("gfx/terobjs/column", new Gob.Overlay(new BPRadSprite(125.0F, 0)));
-        put("gfx/terobjs/trough", new Gob.Overlay(new BPRadSprite(200.0F, -10.0F)));
-        put("gfx/terobjs/beehive", new Gob.Overlay(new BPRadSprite(151.0F, -10.0F)));
-        put("gfx/kritter/bear/bear", new Gob.Overlay(new BPRadSprite(125.0F, -10.0F)));
-        put("gfx/kritter/boar/boar", new Gob.Overlay(new BPRadSprite(125.0F, -10.0F)));
-        put("gfx/terobjs/vehicle/bram", new Gob.Overlay(new BPRadSprite(125.0F, -10.0F)));
-    }};
     private static final Gob.Overlay rovlsupport = new Gob.Overlay(new BPRadSprite(100.0F, 0));
     private static final Gob.Overlay rovlcolumn = new Gob.Overlay(new BPRadSprite(125.0F, 0));
     private static final Gob.Overlay rovltrough = new Gob.Overlay(new BPRadSprite(200.0F, -10.0F));
     private static final Gob.Overlay rovlbeehive = new Gob.Overlay(new BPRadSprite(151.0F, -10.0F));
     private static final Gob.Overlay animalradius = new Gob.Overlay(new BPRadSprite(100.0F, -10.0F));
+    private static final Gob.Overlay bramradius = new Gob.Overlay(new BPRadSprite(125.0F, -10.0F));
     private long lastmmhittest = System.currentTimeMillis();
     private Coord lasthittestc = Coord.z;
     private final PartyHighlight partyHighlight;
     public AreaMine areamine;
 
     private static final  Set<String> dangerousanimalrad = new HashSet<String>(Arrays.asList(
-            "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger"));
+            "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger", "gfx/kritter/moose/moose"));
 
     public interface Delayed {
         public void run(GOut g);
@@ -660,14 +651,18 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     gob.ols.remove(rovl);
             }
 
-            /*if (res != null && dangerousanimalrad.contains(res.name)) {
+            if (res != null && dangerousanimalrad.contains(res.name)) {
                 if (Config.showanimalrad) {
                     if (!gob.ols.contains(animalradius))
                         gob.ols.add(animalradius);
                 } else {
                     gob.ols.remove(animalradius);
                 }
-            }*/
+            }
+            if (res != null && res.name.equals("gfx/terobjs/bram")) {
+                if (!gob.ols.contains(bramradius))
+                    gob.ols.add(bramradius);
+            }
         } catch (Loading le) {
         }
     }
