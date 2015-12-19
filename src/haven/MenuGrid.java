@@ -44,6 +44,7 @@ import java.util.WeakHashMap;
 import haven.Glob.Pagina;
 import haven.Resource.AButton;
 import haven.util.ObservableCollection;
+import purus.CarrotFarmer;
 import purus.MusselPicker;
 
 public class MenuGrid extends Widget {
@@ -354,7 +355,8 @@ public class MenuGrid extends Widget {
 		    ui.gui.toggleStudy();
     		}
         } else if (ad[1].equals("mussel")) {
-        	new MusselPicker(ui, w).Run();
+        	new MusselPicker(ui, w).Run(); 
+        	//new CarrotFarmer(ui, w).Run();
         }
     }
 
