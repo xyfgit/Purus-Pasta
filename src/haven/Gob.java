@@ -43,7 +43,6 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public boolean virtual = false;
     int clprio = 0;
     public long id;
-    public int stage;
     public int frame;
     public final Glob glob;
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
