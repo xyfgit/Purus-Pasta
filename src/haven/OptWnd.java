@@ -905,8 +905,6 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(520, y));
-        // -------------------------------------------- display 3rd column
-        y = 0;
         y += 35;
         display.add(new CheckBox("Show troughs/beehives radius") {
             {
@@ -918,7 +916,8 @@ public class OptWnd extends Window {
                 Config.showfarmrad = val;
                 a = val;
             }
-        }, new Coord(560, y));
+        }, new Coord(520, y));
+        // -------------------------------------------- display 3rd column
         /*y += 35;
         display.add(new CheckBox("Show animal radius") {
             {
