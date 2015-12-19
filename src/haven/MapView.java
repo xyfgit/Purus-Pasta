@@ -659,7 +659,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     gob.ols.remove(animalradius);
                 }
             }
-            if (res != null && res.name.equals("gfx/terobjs/bram")) {
+            if (res != null && res.name.equals("gfx/terobjs/vehicle/bram")) {
                 if (!gob.ols.contains(bramradius))
                     gob.ols.add(bramradius);
             }
