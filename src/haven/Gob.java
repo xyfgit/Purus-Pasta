@@ -207,6 +207,18 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public Coord3f getrc() {
         return (new Coord3f(rc.x, rc.y, glob.map.getcz(rc)));
     }
+    
+    public int getStage() {
+        //
+        Resource res = getres();
+        if (res != null && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
+    	GAttrib rd = getattr(ResDrawable.class);
+    	final int stage = ((ResDrawable) rd).sdt.peekrbuf(0);
+        return stage;
+        } else
+        return 404;
+        //
+    }
 
     private Class<? extends GAttrib> attrclass(Class<? extends GAttrib> cl) {
         while (true) {
