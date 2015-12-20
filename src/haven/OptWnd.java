@@ -917,8 +917,7 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(520, y));
-        // -------------------------------------------- display 3rd column
-        /*y += 35;
+        y += 35;
         display.add(new CheckBox("Show animal radius") {
             {
                 a = Config.showanimalrad;
@@ -929,7 +928,8 @@ public class OptWnd extends Window {
                 Config.showanimalrad = val;
                 a = val;
             }
-        }, new Coord(560, y));*/
+        }, new Coord(520, y));
+        // -------------------------------------------- display 3rd column
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override
