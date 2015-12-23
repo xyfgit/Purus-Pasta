@@ -45,8 +45,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Fightview fv;
     private List<Widget> meters = new LinkedList<Widget>();
     private List<Widget> cmeters = new LinkedList<Widget>();
-    public static Text lastmsg;
-    public static long msgtime;
+    public Text lastmsg;
+    public long msgtime;
     public Window invwnd, equwnd;
     public Inventory maininv;
     public CharWnd chrwdg;
@@ -60,7 +60,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Collection<DraggedItem> handSave = new LinkedList<DraggedItem>();
     private WItem vhand;
     public ChatUI chat;
-    public static ChatUI.Channel syslog;
+    public ChatUI.Channel syslog;
     public double prog = -1;
     private boolean afk = false;
     @SuppressWarnings("unchecked")
@@ -1068,7 +1068,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         msg(msg, Color.WHITE, Color.WHITE);
     }
 
-    public static void info(String msg, Color color) {
+    public void info(String msg, Color color) {
         msgtime = System.currentTimeMillis();
         lastmsg = msgfoundry.render(msg, color);
         syslog.append(msg, color);

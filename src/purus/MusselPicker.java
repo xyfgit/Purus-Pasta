@@ -74,7 +74,7 @@ public static boolean MusselsNearby;
 			else
 				break;
 		}
-		GameUI.info("Mussel Picker Finished", Color.WHITE);
+		BotUtils.sysMsg("Mussel Picker Finished", Color.WHITE);
         window.destroy();
 				return;
 	}
@@ -89,7 +89,7 @@ public static boolean MusselsNearby;
 		                public void click() {
 		                    window.destroy();
 		                    if(t != null) {
-		            			GameUI.info("Mussel PickerCancelled", Color.WHITE);
+		                    	gameui().info("Mussel Picker Cancelled", Color.WHITE);
 		                    	t.stop();
 		                    }
 		                }
@@ -105,5 +105,4 @@ public static boolean MusselsNearby;
 		        
 			}
 			//
-
 }

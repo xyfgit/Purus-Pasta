@@ -43,7 +43,7 @@ public class CarrotFarmer {
 		}
 		Thread t = new Thread(new Runnable() {
 		public void run()  {
-			GameUI.info("Carrot Farmer Started", Color.WHITE);
+			BotUtils.sysMsg("Carrot Farmer Started", Color.WHITE);
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			Gob gob = BotUtils.findNearestStageCrop(500, 4, "gfx/terobjs/plants/carrot");
 			if(gob != null)
@@ -122,16 +122,16 @@ public class CarrotFarmer {
 	                     	}
 	                 }
 	            } else if(!isCarrot(item)) {
-	    			GameUI.info("Item in hand is not a filler", Color.WHITE);
-	    			GameUI.info("Carrot Farmer Cancelled", Color.WHITE);
+	            	BotUtils.sysMsg("Item in hand is not a filler", Color.WHITE);
+	            	BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
 	                t.stop();
 	                return;
 	            }
 	            if (item != null) {
 	                BotUtils.takeItem(item);
 	            } else {
-	    			GameUI.info("Couldnt find any filler", Color.WHITE);
-	    			GameUI.info("Carrot Farmer Cancelled", Color.WHITE);
+	            	BotUtils.sysMsg("Couldnt find any filler", Color.WHITE);
+	            	BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
 	                t.stop();
 	                return;
 	            }
@@ -143,7 +143,8 @@ public class CarrotFarmer {
 			else
 				break;
 		}
-			GameUI.info("Carrot Farmer Finished", Color.WHITE);
+			
+			BotUtils.sysMsg("Carrot Farmer Finished", Color.WHITE);
             window.destroy();
 			return;
 		}
@@ -168,7 +169,7 @@ public class CarrotFarmer {
 	                public void click() {
 	                    window.destroy();
 	                    if(t != null) {
-	            			GameUI.info("Carrot Farmer Cancelled", Color.WHITE);
+	                    	gameui().info("Carrot Farmer Cancelled", Color.WHITE);
 	                    	t.stop();
 	                    }
 	                }

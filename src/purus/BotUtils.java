@@ -40,6 +40,11 @@ public class BotUtils {
     public GameUI gui() {
     	return ui.gui;
     }
+    
+    public void sysMsg(String msg, Color color ) {
+    	ui.root.findchild(GameUI.class).info(msg,color);
+    }
+    
 	// Takes item in hand
     public void takeItem(Widget item) {
         item.wdgmsg("take", Coord.z);
