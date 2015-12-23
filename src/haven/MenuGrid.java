@@ -136,6 +136,7 @@ public class MenuGrid extends Widget {
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/timer")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/study")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/mussel")));
+    	p.add(glob.paginafor(Resource.local().load("paginae/custom/carrotfarm")));
     }
     private static Comparator<Pagina> sorter = new Comparator<Pagina>() {
         public int compare(Pagina a, Pagina b) {
@@ -356,7 +357,8 @@ public class MenuGrid extends Widget {
     		}
         } else if (ad[1].equals("mussel")) {
         	new MusselPicker(ui, w).Run(); 
-        	//new CarrotFarmer(ui, w).Run();
+        } else if (ad[1].equals("carrotfarmer")) {
+        	new CarrotFarmer(ui, w).Run();
         }
     }
 
