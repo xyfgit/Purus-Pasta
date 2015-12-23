@@ -1,10 +1,16 @@
 package purus;
 
+import java.awt.Color;
+
+import haven.Button;
+import haven.Coord;
 import haven.FlowerMenu;
 import haven.FlowerMenu.Petal;
+import haven.GameUI;
 import haven.Gob;
 import haven.UI;
 import haven.Widget;
+import haven.Window;
 
 public class MusselPicker {
 
@@ -13,6 +19,7 @@ public static boolean MusselsNearby;
 	private final UI ui;
     private haven.Widget w;
     public Petal[] opts;
+    private Widget window; 
     
 	BotUtils BotUtils;
 
@@ -21,6 +28,8 @@ public static boolean MusselsNearby;
 		this.w = w;
 		BotUtils = new BotUtils(ui, w);
 	}
+	
+	// Whole script  is example of bad coding, you cant stop it and it will probably leave thread just running in background
 	
 	public void Run () {
 	t.start();	
@@ -63,10 +72,38 @@ public static boolean MusselsNearby;
 			if(gob != null) 
 			MusselsNearby = true;
 			else
-				return;
+				break;
 		}
+		GameUI.info("Mussel Picker Finished", Color.WHITE);
+        window.destroy();
 				return;
 	}
 	});
+	
+	// This thingy makes that stupid window with cancel button, todo: make it better
+			private class StatusWindow extends Window {
+		        public StatusWindow() {
+		            super(Coord.z, "Mussel Picker");
+		            setLocal(true);
+		            add(new Button(120, "Cancel") {
+		                public void click() {
+		                    window.destroy();
+		                    if(t != null) {
+		            			GameUI.info("Mussel PickerCancelled", Color.WHITE);
+		                    	t.stop();
+		                    }
+		                }
+		            });
+		            pack();
+		        }
+		        public void wdgmsg(Widget sender, String msg, Object... args) {
+		            if (sender == this && msg.equals("close")) {
+		                t.stop();
+		            }
+		            super.wdgmsg(sender, msg, args);
+		        }
+		        
+			}
+			//
 
 }
