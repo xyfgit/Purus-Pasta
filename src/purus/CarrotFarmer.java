@@ -3,7 +3,6 @@ package purus;
 import java.awt.Color;
 
 import haven.Button;
-import haven.Config;
 import haven.Coord;
 import haven.FlowerMenu;
 import haven.GItem;
@@ -143,9 +142,11 @@ public class CarrotFarmer {
 			else
 				break;
 		}
-			
-			BotUtils.sysMsg("Carrot Farmer Finished", Color.WHITE);
             window.destroy();
+            if(t != null) {
+            	BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
+            	t.stop();
+            }
 			return;
 		}
 
