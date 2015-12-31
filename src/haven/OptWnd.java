@@ -1369,6 +1369,17 @@ public class OptWnd extends Window {
             }
         }, new Coord(0,y));
         y += 35;
+        hide.add(new CheckBox("Hide Bushes") {
+            {
+                a = Config.hidebushes;
+            }
+            public void set(boolean val) {
+                Utils.setprefb("hidebushes", val);
+                Config.hidebushes = val;
+                a = val;
+            }
+        }, new Coord(0,y));
+        y += 35;
                 hide.add(new CheckBox("Hide Crops") {
                     {
                         a = Config.hidecrops;

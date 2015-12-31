@@ -360,6 +360,14 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                                rl.add(new Overlay(new CustomHitbox(this, neg.ac, neg.bc, true)), null);
                            }
                       }
+                    if (Config.hidebushes && res != null) {
+                     	 if ((res.name.startsWith("gfx/terobjs/bushes"))) {
+                            Resource.Neg neg  = res.layer(Resource.Neg.class);  
+                     		 hide = true;
+                              if (neg != null)
+                              rl.add(new Overlay(new CustomHitbox(this, neg.ac, neg.bc, true)), null);
+                          }
+                     }
                 } catch (Loading le) {
                 }
             }
