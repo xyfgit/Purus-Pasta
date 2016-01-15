@@ -25,15 +25,17 @@ public class BotUtils {
 
 	private final UI ui;
     private haven.Widget w;
+    private haven.Inventory i;
     public Petal[] opts;
     private static Pattern liquidPattern;
     String liquids =  haven.Utils.join("|", new String[] { "Water", "Piping Hot Tea", "Tea" });
     String pattern = String.format("[0-9.]+ l of (%s)", liquids);
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
     
-	public BotUtils (UI ui, Widget w) {
+	public BotUtils (UI ui, Widget w, Inventory i) {
 		this.ui = ui;
 		this.w = w;
+		this.i = i;
 		liquidPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
 	}
 	

@@ -6,8 +6,8 @@ import haven.Button;
 import haven.Coord;
 import haven.FlowerMenu;
 import haven.FlowerMenu.Petal;
-import haven.GameUI;
 import haven.Gob;
+import haven.Inventory;
 import haven.UI;
 import haven.Widget;
 import haven.Window;
@@ -18,15 +18,17 @@ public static boolean MusselsNearby;
 
 	private final UI ui;
     private haven.Widget w;
+    private haven.Inventory i;
     public Petal[] opts;
     private Widget window; 
     
 	BotUtils BotUtils;
 
-	public MusselPicker (UI ui, Widget w) {
+	public MusselPicker (UI ui, Widget w, Inventory i) {
 		this.ui = ui;
 		this.w = w;
-		BotUtils = new BotUtils(ui, w);
+		this.i = i;
+		BotUtils = new BotUtils(ui, w, i);
 	}
 	
 	// Whole script  is example of bad coding, you cant stop it and it will probably leave thread just running in background

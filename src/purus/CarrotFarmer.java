@@ -26,15 +26,20 @@ public class CarrotFarmer {
 
 	private final UI ui;
     private haven.Widget w;
-    private Widget window; 
+    private Inventory i;
+    private Widget window;  
     
+    private String Seed = "gfx/invobjs/carrot";
+    private String Plant = "gfx/terobjs/plants/carrot";
+    private int Stage = 4;
     
 	BotUtils BotUtils;
 
-	public CarrotFarmer (UI ui, Widget w) {
+	public CarrotFarmer (UI ui, Widget w, Inventory i) {
 		this.ui = ui;
 		this.w = w;
-		BotUtils = new BotUtils(ui, w);
+		this.i = i;
+		BotUtils = new BotUtils(ui, w, i);
 	}
 	
 	public void Run () {
@@ -44,7 +49,7 @@ public class CarrotFarmer {
 		public void run()  {
 			BotUtils.sysMsg("Carrot Farmer Started", Color.WHITE);
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
-			Gob gob = BotUtils.findNearestStageCrop(500, 4, "gfx/terobjs/plants/carrot");
+			Gob gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
 			if(gob != null)
 				CarrotsNearby = true;
 			else
@@ -121,7 +126,7 @@ public class CarrotFarmer {
 	                     	}
 	                 }
 	            } else if(!isCarrot(item)) {
-	            	BotUtils.sysMsg("Item in hand is not a filler", Color.WHITE);
+	            	BotUtils.sysMsg("Item in hand is not seed", Color.WHITE);
 	            	BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
 	                t.stop();
 	                return;
@@ -129,14 +134,17 @@ public class CarrotFarmer {
 	            if (item != null) {
 	                BotUtils.takeItem(item);
 	            } else {
-	            	BotUtils.sysMsg("Couldnt find any filler", Color.WHITE);
+	            	BotUtils.sysMsg("Couldnt find any seeds", Color.WHITE);
 	            	BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
 	                t.stop();
 	                return;
 	            }
-	            // Seuraavaksi planttaa eli tähän asti vaan porkkana käteen!
-			BotUtils.mapInteractClick(1);
-			gob = BotUtils.findNearestStageCrop(500, 4, "gfx/terobjs/plants/carrot");
+	            // Planttaa, siemen käteen tähän vaiheeseen mennessä
+			BotUtils.mapInteractClick(1); 
+			//  TODO Droppaa kaikki siemenet tms. invistä + kädestä = saa toimimaan kaikkiin siemeniin
+			
+			//
+			gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
 			if(gob != null) 
 			CarrotsNearby = true;
 			else
@@ -150,7 +158,7 @@ public class CarrotFarmer {
 			return;
 		}
 
-    	final String[] carrot = {"gfx/invobjs/carrot"};
+    	final String[] carrot = {Seed};
         protected boolean isCarrot(final GItem item) {
 	        String resName = item.resname();
 	        if (resName != null && !resName.isEmpty()) {
@@ -161,7 +169,7 @@ public class CarrotFarmer {
 	        return false;
 	    }
 		});
-		// This thingy makes that stupid window with cancel button, todo: make it better
+		// This thingy makes that stupid window with cancel button, TODO: make it better
 		private class StatusWindow extends Window {
 	        public StatusWindow() {
 	            super(Coord.z, "Carrot Farmer");

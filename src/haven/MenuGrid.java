@@ -62,6 +62,7 @@ public class MenuGrid extends Widget {
     private Map<Character, Pagina> hotmap = new TreeMap<Character, Pagina>();
     public GameUI gameui;
     private haven.Widget w;
+    private haven.Inventory i;
 
     @RName("scm")
     public static class $_ implements Factory {
@@ -356,9 +357,9 @@ public class MenuGrid extends Widget {
 		    ui.gui.toggleStudy();
     		}
         } else if (ad[1].equals("mussel")) {
-        	new MusselPicker(ui, w).Run(); 
+        	new MusselPicker(ui, w, i).Run(); 
         } else if (ad[1].equals("carrotfarmer")) {
-        	new CarrotFarmer(ui, w).Run();
+        	new CarrotFarmer(ui, w, i).Run();
         }
     }
 
