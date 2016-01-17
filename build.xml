@@ -91,7 +91,6 @@
 
 	  <target name="custom-jar" depends="custom-encode">
 	    <jar basedir="build/custom-res" destfile="build/pasta-res.jar"/>
-	    <jar basedir="build/custom-res" destfile="lib/pasta-res.jar"/>
 	    <delete dir="build/custom-res" />
 	  </target>
 
