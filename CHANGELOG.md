@@ -1,5 +1,14 @@
 ## Changelog
 
+### 2.9.0
+	- Added Carrot Farmer script [WIP]
+	- Added bouquet to curio config
+	- Merged stuff from main client
+	- Option to hide bushes
+	- Updated mussel tooltip
+	- Fixed option to show animal radiuses
+	- Added Lp/exp to curio tooltips
+	- Various Bugfixes
 ### 2.8.0
 	- Merged important changes from the vanilla client regarding quests
 	-> Update your client to avoid crashes on quests
