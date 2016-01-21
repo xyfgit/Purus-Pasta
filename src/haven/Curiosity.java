@@ -102,7 +102,7 @@ public class Curiosity extends ItemInfo.Tip {
         return 0;
         else {
             // Fixed probably future bug
-            int t = (customInfo.time / 3600.0f);
+            int t = (int) (customInfo.time / 3600.0f);
             
             if (t==0)
                 return 0;
