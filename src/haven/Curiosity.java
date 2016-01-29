@@ -78,9 +78,14 @@ public class Curiosity extends ItemInfo.Tip {
             }
         }
         if (customInfo.time < 0)
-        return 0;
-        else
-    	return exp / enc;
+            return 0;
+        else {
+            // Curiosity preview fix
+            if (enc==0)
+    	        return exp / enc;
+    	    else
+    	        return 0;
+        }
     }
     
     public float LPH(int exp){
@@ -95,7 +100,14 @@ public class Curiosity extends ItemInfo.Tip {
         }
         if (customInfo.time < 0)
         return 0;
-        else
-    	return exp / (customInfo.time / 3600.0f);
+        else {
+            // Fixed probably future bug
+            int t = (int) (customInfo.time / 3600.0f);
+            
+            if (t==0)
+                return 0;
+            else
+    	        return exp / t;
+        }
         }
 }
