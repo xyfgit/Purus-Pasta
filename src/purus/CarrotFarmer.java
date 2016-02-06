@@ -47,115 +47,135 @@ public class CarrotFarmer {
 		}
 		Thread t = new Thread(new Runnable() {
 		public void run()  {
-			BotUtils.sysMsg("Carrot Farmer Started", Color.WHITE);
-			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
-			Gob gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
-			if(gob != null)
-				CarrotsNearby = true;
-			else
-				CarrotsNearby = false;
-			while(CarrotsNearby = true) {
-				// Start of drink TODO: Make separate function of this maybe yeah?
-				GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
-				 IMeter.Meter stam = gui.getmeter("stam", 0);
-				 if (stam.a <= 30) {
-				 WItem item = BotUtils.findDrink(BotUtils.playerInventory());
-				 if (item != null) {
-					 item.item.wdgmsg("iact", Coord.z, 3);
+			while (true) {
+				try {
+
+					BotUtils.sysMsg("Carrot Farmer Started", Color.WHITE);
+					window = BotUtils.gui().add(new StatusWindow(), 300, 200);
+					Gob gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
+					if (gob != null)
+						CarrotsNearby = true;
+					else
+						CarrotsNearby = false;
+					while (CarrotsNearby = true) {
+
+						// Start of drink TODO: Make separate function of this maybe yeah?
+						GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
+						IMeter.Meter stam = gui.getmeter("stam", 0);
+						if (stam.a <= 30) {
+							WItem item = BotUtils.findDrink(BotUtils.playerInventory());
+							if (item != null) {
+								item.item.wdgmsg("iact", Coord.z, 3);
+								try {
+									BotUtils.sysMsg("wait 250", Color.WHITE);
+									Thread.sleep(250);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								@SuppressWarnings("deprecation")
+								FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+								if (menu != null) {
+									for (FlowerMenu.Petal opt : menu.opts) {
+										if (opt.name.equals("Drink")) {
+											menu.choose(opt);
+											menu.destroy();
+											while (gui.getmeter("stam", 0).a <= 84) {
+												try {
+													BotUtils.sysMsg("wait 100", Color.WHITE);
+													Thread.sleep(100);
+												} catch (InterruptedException e) {
+													e.printStackTrace();
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						//end of drink
+						BotUtils.doClick(gob, 3, 0);
 						try {
+							BotUtils.sysMsg("wait 250", Color.WHITE);
 							Thread.sleep(250);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 						@SuppressWarnings("deprecation")
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-				            if (menu != null) {
-				                for (FlowerMenu.Petal opt : menu.opts) {
-				                    if (opt.name.equals("Drink")) {
-				                        menu.choose(opt);
-				                        menu.destroy();
-				                        while(gui.getmeter("stam", 0).a <= 84) {
-				                        	 try {
-												Thread.sleep(100);
-											} catch (InterruptedException e) {
-												e.printStackTrace();
-											}
-				                        }
-				                    }
-				                }
-				            }
-				 }
-				 }
-				 //end of drink
-			BotUtils.doClick(gob, 3, 0);
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+						if (menu != null) {
+							for (FlowerMenu.Petal opt : menu.opts) {
+								if (opt.name.equals("Harvest")) {
+									menu.choose(opt);
+									menu.destroy();
+								}
+							}
+						}
+						while (gui.prog >= 0) {
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+						// Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						GItem item = BotUtils.getItemAtHand();
+						if (item == null) {
+							Inventory inv = BotUtils.playerInventory();
+							for (Widget w = inv.child; w != null; w = w.next) {
+								if (w instanceof GItem && isCarrot((GItem) w)) {
+									item = (GItem) w;
+									break;
+								}
+							}
+						} else if (!isCarrot(item)) {
+							BotUtils.sysMsg("Item in hand is not seed", Color.WHITE);
+							BotUtils.sysMsg("Carrot Farmer Cancelled, not carrot", Color.WHITE);
+							t.stop();
+							return;
+						}
+						if (item != null) {
+
+							BotUtils.takeItem(item);
+
+						} else {
+							BotUtils.sysMsg("Couldnt find any seeds", Color.WHITE);
+							BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
+							t.stop();
+							return;
+						}
+						// Planttaa, siemen käteen tähän vaiheeseen mennessä
+						BotUtils.mapInteractClick(1);
+						//  TODO Droppaa kaikki siemenet tms. invistä + kädestä = saa toimimaan kaikkiin siemeniin
+
+						//
+						gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
+						if (gob != null)
+							CarrotsNearby = true;
+						else
+							break;
+					}
+					window.destroy();
+					if (t != null) {
+						BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
+						t.stop();
+					}
+					return;
+				} catch (Exception e) {
+
+					BotUtils.sysMsg(e.getMessage(), Color.RED);
+					try {
+						Thread.sleep(300);
+					} catch (InterruptedException ie) {
+						ie.printStackTrace();
+					}
+				}
 			}
-			@SuppressWarnings("deprecation")
-			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-	            if (menu != null) {
-	                for (FlowerMenu.Petal opt : menu.opts) {
-	                    if (opt.name.equals("Harvest")) {
-	                        menu.choose(opt);
-	                        menu.destroy();
-	                    }
-	                }
-	            }
-	            while(gui.prog >= 0) {
-	    			try {
-	    				Thread.sleep(100);
-	    			} catch (InterruptedException e) {
-	    				e.printStackTrace();
-	    			}
-	            }
-	            // Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
-    			try {
-    				Thread.sleep(100);
-    			} catch (InterruptedException e) {
-    				e.printStackTrace();
-    			}
-	            GItem item = BotUtils.getItemAtHand();
-	            if (item == null) {
-	            	 Inventory inv = BotUtils.playerInventory();
-	                 for (Widget w = inv.child; w != null; w = w.next) {
-	                     if (w instanceof GItem && isCarrot((GItem) w)) {
-	                         item = (GItem)w;
-	                         break;
-	                     	}
-	                 }
-	            } else if(!isCarrot(item)) {
-	            	BotUtils.sysMsg("Item in hand is not seed", Color.WHITE);
-	            	BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
-	                t.stop();
-	                return;
-	            }
-	            if (item != null) {
-	                BotUtils.takeItem(item);
-	            } else {
-	            	BotUtils.sysMsg("Couldnt find any seeds", Color.WHITE);
-	            	BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
-	                t.stop();
-	                return;
-	            }
-	            // Planttaa, siemen käteen tähän vaiheeseen mennessä
-			BotUtils.mapInteractClick(1); 
-			//  TODO Droppaa kaikki siemenet tms. invistä + kädestä = saa toimimaan kaikkiin siemeniin
-			
-			//
-			gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
-			if(gob != null) 
-			CarrotsNearby = true;
-			else
-				break;
-		}
-            window.destroy();
-            if(t != null) {
-            	BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
-            	t.stop();
-            }
-			return;
+
 		}
 
     	final String[] carrot = {Seed};
