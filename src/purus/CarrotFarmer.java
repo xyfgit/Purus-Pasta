@@ -50,7 +50,7 @@ public class CarrotFarmer {
 			while (true) {
 				try {
 
-					BotUtils.sysMsg("Carrot Farmer Started", Color.WHITE);
+					BotUtils.sysMsg("Modified Carrot Farmer Started", Color.WHITE);
 					window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 					Gob gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
 					if (gob != null)
@@ -67,7 +67,6 @@ public class CarrotFarmer {
 							if (item != null) {
 								item.item.wdgmsg("iact", Coord.z, 3);
 								try {
-									BotUtils.sysMsg("wait 250", Color.WHITE);
 									Thread.sleep(250);
 								} catch (InterruptedException e) {
 									e.printStackTrace();
@@ -81,7 +80,7 @@ public class CarrotFarmer {
 											menu.destroy();
 											while (gui.getmeter("stam", 0).a <= 84) {
 												try {
-													BotUtils.sysMsg("wait 100", Color.WHITE);
+													BotUtils.sysMsg("wait  for stam back to 84", Color.WHITE);
 													Thread.sleep(100);
 												} catch (InterruptedException e) {
 													e.printStackTrace();
@@ -91,11 +90,18 @@ public class CarrotFarmer {
 									}
 								}
 							}
+							else{
+								try {
+									BotUtils.sysMsg("slowly wait  for stam", Color.WHITE);
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
 						}
 						//end of drink
 						BotUtils.doClick(gob, 3, 0);
 						try {
-							BotUtils.sysMsg("wait 250", Color.WHITE);
 							Thread.sleep(250);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -192,7 +198,7 @@ public class CarrotFarmer {
 		// This thingy makes that stupid window with cancel button, TODO: make it better
 		private class StatusWindow extends Window {
 	        public StatusWindow() {
-	            super(Coord.z, "Carrot Farmer");
+	            super(Coord.z, "Modified Carrot Farmer");
 	            setLocal(true);
 	            add(new Button(120, "Cancel") {
 	                public void click() {
