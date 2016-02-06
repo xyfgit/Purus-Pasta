@@ -47,11 +47,11 @@ public class CarrotFarmer {
 		}
 		Thread t = new Thread(new Runnable() {
 		public void run()  {
+			BotUtils.sysMsg("Modified Carrot Farmer Started", Color.WHITE);
+			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			while (true) {
 				try {
-
-					BotUtils.sysMsg("Modified Carrot Farmer Started", Color.WHITE);
-					window = BotUtils.gui().add(new StatusWindow(), 300, 200);
+					BotUtils.drop_item(1);
 					Gob gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
 					if (gob != null)
 						CarrotsNearby = true;
@@ -78,10 +78,10 @@ public class CarrotFarmer {
 										if (opt.name.equals("Drink")) {
 											menu.choose(opt);
 											menu.destroy();
+											BotUtils.sysMsg("wait  for stam back to 84", Color.WHITE);
 											while (gui.getmeter("stam", 0).a <= 84) {
 												try {
-													BotUtils.sysMsg("wait  for stam back to 84", Color.WHITE);
-													Thread.sleep(100);
+													Thread.sleep(500);
 												} catch (InterruptedException e) {
 													e.printStackTrace();
 												}
@@ -93,7 +93,7 @@ public class CarrotFarmer {
 							else{
 								try {
 									BotUtils.sysMsg("slowly wait  for stam", Color.WHITE);
-									Thread.sleep(1000);
+									Thread.sleep(3000);
 								} catch (InterruptedException e) {
 									e.printStackTrace();
 								}
