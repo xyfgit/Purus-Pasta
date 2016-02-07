@@ -62,13 +62,14 @@ public class CarrotFarmer {
 						// Start of drink TODO: Make separate function of this maybe yeah?
 						GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 						IMeter.Meter stam = gui.getmeter("stam", 0);
+						// Check energy stop if it is lower than 1500
 						IMeter.Meter nrj = gui.getmeter("nrj", 0);
 						if (nrj.a <= 30){
 							BotUtils.sysMsg("Carrot Farmer Stop as run out of energy.", Color.WHITE);
 							t.stop();
 							return;
 						}
-						if (stam.a <= 30 && nrj.a > 30) {
+						else if (stam.a <= 30) {
 							WItem item = BotUtils.findDrink(BotUtils.playerInventory());
 							if (item != null) {
 								item.item.wdgmsg("iact", Coord.z, 3);
