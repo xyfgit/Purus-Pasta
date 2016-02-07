@@ -1215,11 +1215,11 @@ public class OptWnd extends Window {
             }
         }, new Coord(0, y));
         y += 35;
+
         general.add(new CheckBox("Toggle Tracking on logon") {
             {
                 a = Config.toggletracking;
             }
-
             public void set(boolean val) {
                 Utils.setprefb("toggletracking", val);
                 Config.toggletracking = val;
@@ -1311,6 +1311,18 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(260, y));
+        y += 35;
+        general.add(new CheckBox("Automatically 'Drink' while crafting") {
+            {
+                a = Config.autodrink;
+            }
+            public void set(boolean val) {
+                Utils.setprefb("autodrink", val);
+                Config.autodrink = val;
+                a = val;
+            }
+        }, new Coord(260, y));
+        y += 35;
 
         general.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         general.pack();
