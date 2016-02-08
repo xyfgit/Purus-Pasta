@@ -139,6 +139,7 @@ public class MenuGrid extends Widget {
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/study")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/mussel")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/carrotfarm")));
+        p.add(glob.paginafor(Resource.local().load("paginae/custom/drink")));
     	//p.add(glob.paginafor(Resource.local().load("paginae/custom/oven")));
     }
     private static Comparator<Pagina> sorter = new Comparator<Pagina>() {
@@ -199,7 +200,7 @@ public class MenuGrid extends Widget {
     private Tex glowmask(Pagina pag) {
         Tex ret = glowmasks.get(pag);
         if (ret == null) {
-            ret = new TexI(PUtils.glowmask(PUtils.glowmask(pag.res().layer(Resource.imgc).img.getRaster()), 4, new Color(32, 255, 32)));
+            ret = new TexI(PUtils.glowmask(PUtils.glowmask(pag.res().layer(Resource.imgc).img.getRaster()), 4, new Color(46, 98, 255)));
             glowmasks.put(pag, ret);
         }
         return (ret);
@@ -364,6 +365,8 @@ public class MenuGrid extends Widget {
         	new CarrotFarmer(ui, w, i).Run();
         } else if (ad[1].equals("oven-fill")) {
         	new FillOven(ui, w, i).Run();
+        }else if (ad[1].equals("drink")) {
+            new CarrotFarmer(ui, w, i).Run();
         }
     }
 

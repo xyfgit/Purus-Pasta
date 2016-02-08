@@ -10,7 +10,7 @@ public class CraftWindow extends Window {
     private final Map<Glob.Pagina, TabStrip.Button> tabs = new HashMap<Glob.Pagina, TabStrip.Button>();
     private Widget makeWidget;
     private Glob.Pagina lastAction;
-
+    private Thread drink_th = null;
 
     protected void safe_drink(){
         GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
@@ -24,12 +24,13 @@ public class CraftWindow extends Window {
                         menu.choose(opt);
                         menu.destroy();
                         ui.root.findchild(GameUI.class).info("Get some drink.", Color.WHITE);
-                        try {
-                            Thread.sleep(200);
-                        }catch (Exception e){
-
+                        while (gui.getmeter("stam", 0).a <= 84) {
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
-                        break;
                     }
                 }
             }else{
@@ -37,6 +38,37 @@ public class CraftWindow extends Window {
             }
         };
     };
+
+    protected void start_drink(){
+        ui.root.findchild(GameUI.class).info("check drink status "+Config.autodrink, Color.WHITE);
+        if (Config.autodrink == true){
+            if (drink_th == null || drink_th.isInterrupted()) {
+                drink_th = new Thread(new Runnable() {
+                    public void run() {
+                        while (true) {
+                            safe_drink();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+            if (drink_th !=null && !drink_th.isAlive() && !drink_th.isInterrupted()){
+                drink_th.start();
+            }
+        }
+    }
+
+    protected void stop_drink(){
+        if (drink_th != null && drink_th.isAlive()) {
+            ui.root.findchild(GameUI.class).info("stop check drink status "+Config.autodrink, Color.WHITE);
+            drink_th.stop();
+            drink_th = null;
+        }
+    }
     public CraftWindow() {
         super(Coord.z, "Crafting");
         tabStrip = add(new TabStrip() {
@@ -62,13 +94,11 @@ public class CraftWindow extends Window {
 
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
-        if (Config.autodrink == true){
-            ui.root.findchild(GameUI.class).info("check drink status "+Config.autodrink, Color.WHITE);
-            safe_drink();
-        }
         if (sender == cbtn) {
+            stop_drink();
             hide();
         } else {
+            start_drink();
             super.wdgmsg(sender, msg, args);
         }
     }
@@ -89,6 +119,7 @@ public class CraftWindow extends Window {
     @Override
     public void cdestroy(Widget w) {
     	if (makeWidget == w) {
+            stop_drink();
     		makeWidget = null;
     		hide();
     		}
