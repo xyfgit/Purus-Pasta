@@ -10,37 +10,34 @@ public class CraftWindow extends Window {
     private final Map<Glob.Pagina, TabStrip.Button> tabs = new HashMap<Glob.Pagina, TabStrip.Button>();
     private Widget makeWidget;
     private Glob.Pagina lastAction;
-    GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 
+
+    protected void safe_drink(){
+        GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
+        FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+        IMeter.Meter nrj = gui.getmeter("nrj", 0);
+        IMeter.Meter stam = gui.getmeter("stam", 0);
+        if (menu != null && stam.a <= 30) {
+            if (nrj.a > 30){
+                for (FlowerMenu.Petal opt : menu.opts) {
+                    if (opt.name.equals("Drink")) {
+                        menu.choose(opt);
+                        menu.destroy();
+                        ui.root.findchild(GameUI.class).info("Get some drink.", Color.WHITE);
+                        break;
+                    }
+                }
+            }else{
+                ui.root.findchild(GameUI.class).info("Energy is too low to drink.", Color.WHITE);
+            }
+        };
+    };
     public CraftWindow() {
         super(Coord.z, "Crafting");
         tabStrip = add(new TabStrip() {
-            protected void safe_drink(){
-                FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-                IMeter.Meter nrj = gui.getmeter("nrj", 0);
-                IMeter.Meter stam = gui.getmeter("stam", 0);
-                if (menu != null && stam.a <= 30) {
-                    if (nrj.a > 30){
-                        for (FlowerMenu.Petal opt : menu.opts) {
-                            if (opt.name.equals("Drink")) {
-                                menu.choose(opt);
-                                menu.destroy();
-                                ui.root.findchild(GameUI.class).info("Get some drink.", Color.WHITE);
-                                break;
-                            }
-                        }
-                    }else{
-                        ui.root.findchild(GameUI.class).info("Energy is too low to drink.", Color.WHITE);
-                    }
-                };
-            };
             protected void selected(Button button) {
                 for (Map.Entry<Glob.Pagina, Button> entry : tabs.entrySet()) {
                     Glob.Pagina pagina = entry.getKey();
-                    // Hack: hopefully to drink water automatically while crafting
-                    if (entry.getValue().equals(button) && Config.autodrink == true){
-                        safe_drink();
-                    };
                     if (entry.getValue().equals(button) && pagina != lastAction) {
                         ui.gui.wdgmsg("act", (Object[])pagina.act().ad);
                         lastAction = null;
@@ -60,6 +57,10 @@ public class CraftWindow extends Window {
 
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
+        if (Config.autodrink == true){
+            ui.root.findchild(GameUI.class).info("check drink status "+Config.autodrink, Color.WHITE);
+            safe_drink();
+        }
         if (sender == cbtn) {
             hide();
         } else {
