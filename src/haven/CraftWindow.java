@@ -24,6 +24,11 @@ public class CraftWindow extends Window {
                         menu.choose(opt);
                         menu.destroy();
                         ui.root.findchild(GameUI.class).info("Get some drink.", Color.WHITE);
+                        try {
+                            Thread.sleep(200);
+                        }catch (Exception e){
+
+                        }
                         break;
                     }
                 }
