@@ -51,7 +51,7 @@ public class CarrotFarmer {
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			while (true) {
 				try {
-					BotUtils.drop_item(1);
+//					BotUtils.drop_item(1);
 					Gob gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
 					if (gob != null)
 						CarrotsNearby = true;

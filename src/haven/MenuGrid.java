@@ -44,6 +44,7 @@ import java.util.WeakHashMap;
 import haven.Glob.Pagina;
 import haven.Resource.AButton;
 import haven.util.ObservableCollection;
+import purus.AutoDrink;
 import purus.CarrotFarmer;
 import purus.FillOven;
 import purus.MusselPicker;
@@ -366,7 +367,7 @@ public class MenuGrid extends Widget {
         } else if (ad[1].equals("oven-fill")) {
         	new FillOven(ui, w, i).Run();
         }else if (ad[1].equals("drink")) {
-            new CarrotFarmer(ui, w, i).Run();
+            new AutoDrink(ui, w, i).Run();
         }
     }
 
