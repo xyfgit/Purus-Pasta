@@ -12,7 +12,7 @@ public class CraftWindow extends Window {
     private Glob.Pagina lastAction;
     private Thread drink_th = null;
 
-    protected void safe_drink(){
+    protected void safe_drink(Widget sender, String msg, Object... args){
         GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
         FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
         IMeter.Meter nrj = gui.getmeter("nrj", 0);
@@ -31,6 +31,7 @@ public class CraftWindow extends Window {
                                 e.printStackTrace();
                             }
                         }
+                        super.wdgmsg(sender, msg, args);
                     }
                 }
             }else{
@@ -39,14 +40,14 @@ public class CraftWindow extends Window {
         };
     };
 
-    protected void start_drink(){
+    protected void start_drink(Widget sender, String msg, Object... args){
         ui.root.findchild(GameUI.class).info("check drink status "+Config.autodrink, Color.WHITE);
         if (Config.autodrink == true){
             if (drink_th == null || drink_th.isInterrupted()) {
                 drink_th = new Thread(new Runnable() {
                     public void run() {
                         while (true) {
-                            safe_drink();
+                            safe_drink(sender, msg, args);
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
@@ -98,7 +99,7 @@ public class CraftWindow extends Window {
             stop_drink();
             hide();
         } else {
-            start_drink();
+            start_drink(sender, msg, args);
             super.wdgmsg(sender, msg, args);
         }
     }
