@@ -1917,6 +1917,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         lastMC = mc;
     }
     private void drawDebugInformation(GOut g) {
+        if (!Settings.getSettings()) return;
         try {
             Gob playerGob = player();
             int x = 100, y = 100, offsetY = 15;

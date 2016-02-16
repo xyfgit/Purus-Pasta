@@ -28,6 +28,8 @@ package haven;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
+import haven.Settings;
 
 public class RootWidget extends ConsoleHost {
     public static final Resource defcurs = Resource.local().loadwait("gfx/hud/curs/arw");
@@ -43,6 +45,8 @@ public class RootWidget extends ConsoleHost {
 
     public boolean globtype(char key, KeyEvent ev) {
         if (!super.globtype(key, ev)) {
+            boolean ctrl = (((ev.getModifiers() & InputEvent.ALT_MASK) != 0));
+            int code = ev.getKeyCode();
             if (key == '`') {
                 @SuppressWarnings("deprecation")
 				GameUI gi = findchild(GameUI.class);
@@ -71,6 +75,9 @@ public class RootWidget extends ConsoleHost {
                 entercmd();
             } else if (key != 0) {
                 wdgmsg("gk", (int) key);
+            }else if((code == KeyEvent.VK_D&&ctrl)) {
+                Settings.setSettings(!Settings.getSettings());
+//                ui.root.findchild(GameUI.class).info( ""+Settings.getSettings(), Color.WHITE);
             }
         }
         return (true);
