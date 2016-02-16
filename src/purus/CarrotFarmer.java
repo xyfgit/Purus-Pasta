@@ -35,7 +35,7 @@ public class CarrotFarmer {
 		this.i = i;
 		BotUtils = new BotUtils(ui, w, i);
 	}
-	public  Gob get_plant_gob() {
+	public Gob get_plant_gob() {
 		Gob gob = null;
 		if (Plant == null) {
 			Gob gob_temp = null;
@@ -74,6 +74,13 @@ public class CarrotFarmer {
 		}
 		return gob;
 	}
+	private void sleep(int t){
+		try {
+			Thread.sleep(t);
+		} catch (InterruptedException ie) {
+			ie.printStackTrace();
+		}
+	}
 	public void Run () {
 		t.start();
 		}
@@ -105,11 +112,7 @@ public class CarrotFarmer {
 							WItem item = BotUtils.findDrink(BotUtils.playerInventory());
 							if (item != null) {
 								item.item.wdgmsg("iact", Coord.z, 3);
-								try {
-									Thread.sleep(250);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
+								sleep(250);
 								@SuppressWarnings("deprecation")
 								FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 								if (menu != null) {
@@ -119,32 +122,20 @@ public class CarrotFarmer {
 											menu.destroy();
 											BotUtils.sysMsg("wait for stam back to 84", Color.WHITE);
 											while (gui.getmeter("stam", 0).a <= 84) {
-												try {
-													Thread.sleep(500);
-												} catch (InterruptedException e) {
-													e.printStackTrace();
-												}
+												sleep(550);
 											}
 										}
 									}
 								}
 							}
 							else{
-								try {
-									BotUtils.sysMsg("slowly wait for stam", Color.WHITE);
-									Thread.sleep(3000);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
+								BotUtils.sysMsg("slowly wait for stam", Color.WHITE);
+								sleep(3000);
 							}
 						}
 						//end of drink
 						BotUtils.doClick(gob, 3, 0);
-						try {
-							Thread.sleep(250);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+						sleep(350);
 						@SuppressWarnings("deprecation")
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 						if (menu != null) {
@@ -156,18 +147,10 @@ public class CarrotFarmer {
 							}
 						}
 						while (gui.prog >= 0) {
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
+							sleep(150);
 						}
 						// Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+						sleep(150);
 						GItem item = BotUtils.getItemAtHand();
 
 						if (item == null) {
@@ -195,13 +178,13 @@ public class CarrotFarmer {
 						// Planttaa, siemen käteen tähän vaiheeseen mennessä
 						BotUtils.mapInteractClick(1);
 						//  TODO Droppaa kaikki siemenet tms. invistä + kädestä = saa toimimaan kaikkiin siemeniin
-
 						//
 						gob = get_plant_gob();
 						if (gob != null)
 							CarrotsNearby = true;
 						else
 							break;
+						sleep(100);
 					}
 					window.destroy();
 					if (t != null) {
@@ -212,12 +195,9 @@ public class CarrotFarmer {
 				} catch (Exception e) {
 
 					BotUtils.sysMsg(e.getMessage(), Color.RED);
-					try {
-						Thread.sleep(300);
-					} catch (InterruptedException ie) {
-						ie.printStackTrace();
-					}
+					sleep(350);
 				}
+				sleep(150);
 			}
 
 		}
