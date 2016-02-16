@@ -146,6 +146,7 @@ public class BotUtils {
 	                if (dist < min) {
 	                    boolean matches = false;
 	                    for (String name : names) {
+
 	                        if (isObjectName(gob, name)) {
 	                            matches = true;
 	                            break;

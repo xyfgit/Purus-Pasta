@@ -1,20 +1,10 @@
 package purus;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import haven.Button;
-import haven.Coord;
-import haven.FlowerMenu;
-import haven.GItem;
-import haven.GameUI;
-import haven.Gob;
-import haven.HavenPanel;
-import haven.IMeter;
-import haven.Inventory;
-import haven.UI;
-import haven.WItem;
-import haven.Widget;
-import haven.Window;
+import haven.*;
 
 public class CarrotFarmer {
 	/* This script harvests and replants carrots.
@@ -30,8 +20,12 @@ public class CarrotFarmer {
     private Widget window;  
     
     private String Seed = "gfx/invobjs/carrot";
-    private String Plant = "gfx/terobjs/plants/carrot";
-    private int Stage = 4;
+	// todo: use dict for this
+	private ArrayList<String> Plants =  new ArrayList<String>(Arrays.asList("gfx/terobjs/plants/pumpkin", "gfx/terobjs/plants/wine",
+			"gfx/terobjs/plants/carrot", "gfx/terobjs/plants/pepper",
+			"gfx/terobjs/plants/flax","gfx/terobjs/plants/barley"));
+	private String Plant = null;
+	private int Stage = 4;
     
 	BotUtils BotUtils;
 
@@ -41,7 +35,45 @@ public class CarrotFarmer {
 		this.i = i;
 		BotUtils = new BotUtils(ui, w, i);
 	}
-	
+	public  Gob get_plant_gob() {
+		Gob gob = null;
+		if (Plant == null) {
+			Gob gob_temp = null;
+			float distance = 99999;
+			for(String temp :Plants) {
+				if (temp.equals( "gfx/terobjs/plants/flax")){
+					Stage=3;
+				}else if (temp.equals(  "gfx/terobjs/plants/pepper")){
+					Stage=6;
+				}else if (temp.equals(  "gfx/terobjs/plants/barley")){
+					Stage=3;
+				}
+				BotUtils.sysMsg(temp, Color.WHITE);
+				gob_temp = BotUtils.findNearestStageCrop(500, Stage, temp);
+				if (gob_temp != null) {
+					Coord3f f = gob_temp.getrc();
+					Coord3f p1 = ui.sess.glob.oc.getgob(MapView.plgob).getrc();
+					if (distance > f.dist(p1)) {
+						gob = gob_temp;
+						Plant = temp;
+						distance = f.dist(p1);
+						BotUtils.sysMsg(Plant+distance, Color.WHITE);
+					}
+				}
+			}
+		}else {
+			if (Plant.equals( "gfx/terobjs/plants/flax")){
+				Stage=3;
+			}else if (Plant.equals(  "gfx/terobjs/plants/pepper")){
+				Stage=6;
+			}else if (Plant.equals(  "gfx/terobjs/plants/barley")){
+				Stage=3;
+			}
+			gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
+			Plants.add(Seed);
+		}
+		return gob;
+	}
 	public void Run () {
 		t.start();
 		}
@@ -52,7 +84,7 @@ public class CarrotFarmer {
 			while (true) {
 				try {
 //					BotUtils.drop_item(1);
-					Gob gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
+					Gob gob = get_plant_gob();
 					if (gob != null)
 						CarrotsNearby = true;
 					else
@@ -137,6 +169,7 @@ public class CarrotFarmer {
 							e.printStackTrace();
 						}
 						GItem item = BotUtils.getItemAtHand();
+
 						if (item == null) {
 							Inventory inv = BotUtils.playerInventory();
 							for (Widget w = inv.child; w != null; w = w.next) {
@@ -148,25 +181,23 @@ public class CarrotFarmer {
 						} else if (!isCarrot(item)) {
 							BotUtils.sysMsg("Item in hand is not seed", Color.WHITE);
 							BotUtils.sysMsg("Carrot Farmer Cancelled, not carrot", Color.WHITE);
-							t.stop();
-							return;
+//							t.stop();
+//							return;
 						}
 						if (item != null) {
-
 							BotUtils.takeItem(item);
-
 						} else {
-							BotUtils.sysMsg("Couldnt find any seeds", Color.WHITE);
-							BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
-							t.stop();
-							return;
+//							BotUtils.sysMsg("Couldnt find any "+Plant, Color.WHITE);
+//							BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
+//							t.stop();
+//							return;
 						}
 						// Planttaa, siemen käteen tähän vaiheeseen mennessä
 						BotUtils.mapInteractClick(1);
 						//  TODO Droppaa kaikki siemenet tms. invistä + kädestä = saa toimimaan kaikkiin siemeniin
 
 						//
-						gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
+						gob = get_plant_gob();
 						if (gob != null)
 							CarrotsNearby = true;
 						else
@@ -190,12 +221,10 @@ public class CarrotFarmer {
 			}
 
 		}
-
-    	final String[] carrot = {Seed};
         protected boolean isCarrot(final GItem item) {
 	        String resName = item.resname();
 	        if (resName != null && !resName.isEmpty()) {
-	            for (String food : carrot)
+	            for (String food : Plants)
 	                if (resName.contains(food))
 	                    return true;
 	       }
