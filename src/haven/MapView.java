@@ -1125,6 +1125,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
             undelay(delayed2, g);
             poldraw(g);
             partydraw(g);
+            drawDebugInformation(g);
             glob.map.reqarea(cc.div(tilesz).sub(MCache.cutsz.mul(view + 1)),
                     cc.div(tilesz).add(MCache.cutsz.mul(view + 1)));
             // change grid overlay position when player moves by 20 tiles
@@ -1408,6 +1409,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
 
         protected void hit(Coord pc, Coord mc, ClickInfo inf) {
+            updateDebugInformation(inf, pc, mc);
             if (inf == null) {
                 if (Config.tilecenter && clickb == 3) {
                     mc.x = mc.x / 11 * 11 + 5;
@@ -1902,6 +1904,53 @@ public class MapView extends PView implements DTarget, Console.Directory {
                 Gob pl = player();
                 wdgmsg("click", pl.sc, pl.rc, 3, 0);
             }
+        }
+    }
+
+    private ClickInfo lastInfo = null;
+    private Coord lastPC = null;
+    private Coord lastMC = null;
+
+    private void updateDebugInformation(ClickInfo clickInfo, Coord pc, Coord mc) {
+        lastInfo = clickInfo;
+        lastPC = pc;
+        lastMC = mc;
+    }
+    private void drawDebugInformation(GOut g) {
+        try {
+            Gob playerGob = player();
+            int x = 100, y = 100, offsetY = 15;
+            if (playerGob != null) {
+                g.text("Player ID: " + playerGob.id, new Coord(x, y += offsetY));
+                g.text("Player RC: " + playerGob.getrc(), new Coord(x, y += offsetY));
+            }
+            if (lastPC != null) {
+                g.text("Click PC: " + String.valueOf(lastPC), new Coord(x, y += offsetY));
+            }
+            if (lastMC != null) {
+                g.text("Click MC: " + String.valueOf(lastMC), new Coord(x, y += offsetY));
+            }
+            if (lastInfo != null) {
+                if (lastInfo.gob != null) {
+                    g.text("Gob ID: " + lastInfo.gob.id, new Coord(x, y += offsetY));
+                    g.text("Gob A: " + lastInfo.gob.a, new Coord(x, y += offsetY));
+                    g.text("Gob RD: " + lastInfo.gob.getrc(), new Coord(x, y += offsetY));
+                    if (lastInfo.gob.attr != null) {
+                        g.text("Gob Attrs: " + lastInfo.gob.attr.size(), new Coord(x, y += offsetY));
+                        for (Map.Entry<Class<? extends GAttrib>, GAttrib> entry : lastInfo.gob.attr.entrySet()) {
+                            g.text(String.valueOf(entry.getValue().getClass().toString()) + ": " + String.valueOf(entry.getValue().gob.getres().name), new Coord(x + 30, y += offsetY));
+                        }
+                    }
+                    if (lastInfo.gob.ols != null) {
+                        g.text("Gob Overlays: " + lastInfo.gob.ols.size(), new Coord(x, y += offsetY));
+                        for (Gob.Overlay overlay : lastInfo.gob.ols) {
+                            g.text(String.valueOf(overlay), new Coord(x + 30, y += offsetY));
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+
         }
     }
 }
