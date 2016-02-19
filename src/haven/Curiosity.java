@@ -80,11 +80,11 @@ public class Curiosity extends ItemInfo.Tip {
         if (customInfo.time < 0)
             return 0;
         else {
-            // Curiosity preview fix
-            if (enc==0)
+            if (enc>0)
     	        return exp / enc;
     	    else
-    	        return 0;
+    	    	// If xp cost doesnt exist, dont divide
+    	        return exp;
         }
     }
     
