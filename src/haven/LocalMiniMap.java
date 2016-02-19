@@ -535,7 +535,41 @@ public class LocalMiniMap extends Widget {
     public void center() {
         delta = Coord.z;
     }
+    Thread t = null;
+    private void keep_walk(String msg, Object... args){
 
+        if (t != null && t.isAlive()){
+            t.stop();
+        }
+        t = new Thread(new Runnable() {
+            public void run() {
+                boolean reached = false;
+                while (Settings.getKeepWalk()) {
+                    mv.wdgmsg(msg, args);
+                    Coord3f player =  mv.player().getrc();
+                    for (Object arg : args) {
+                        if (arg instanceof Coord && player.x - ((Coord)arg).x <=1 &&player.y - ((Coord)arg).y<=1){
+                            reached = true;
+                            break;
+                        };
+                    }
+                    if (reached){
+                        break;
+                    }
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ie) {
+                    }
+
+                }
+
+
+            }
+        });
+        if (Settings.getKeepWalk())
+        t.start();
+        else {mv.wdgmsg(msg, args); t=null;}
+    }
     public boolean mousedown(Coord c, int button) {
         if (Config.alternmapctrls) {
             if (button != 2) {
@@ -543,9 +577,9 @@ public class LocalMiniMap extends Widget {
                     return false;
                 Gob gob = findicongob(c.sub(delta));
                 if (gob == null)
-                    mv.wdgmsg("click", rootpos().add(c.sub(delta)), c2p(c.sub(delta)), button, ui.modflags());
+                    keep_walk("click", rootpos().add(c.sub(delta)), c2p(c.sub(delta)), button, ui.modflags());
                 else
-                    mv.wdgmsg("click", rootpos().add(c.sub(delta)), c2p(c.sub(delta)), button, ui.modflags(), 0, (int) gob.id, gob.rc, 0, -1);
+                    keep_walk("click", rootpos().add(c.sub(delta)), c2p(c.sub(delta)), button, ui.modflags(), 0, (int) gob.id, gob.rc, 0, -1);
             } else if (button == 2 && !Config.maplocked) {
                 doff = c;
                 dragging = ui.grabmouse(this);
@@ -556,9 +590,9 @@ public class LocalMiniMap extends Widget {
                     return false;
                 Gob gob = findicongob(c.sub(delta));
                 if (gob == null)
-                    mv.wdgmsg("click", rootpos().add(c.sub(delta)), c2p(c.sub(delta)), 1, ui.modflags());
+                    keep_walk("click", rootpos().add(c.sub(delta)), c2p(c.sub(delta)), 1, ui.modflags());
                 else
-                    mv.wdgmsg("click", rootpos().add(c.sub(delta)), c2p(c.sub(delta)), button, ui.modflags(), 0, (int) gob.id, gob.rc, 0, -1);
+                    keep_walk("click", rootpos().add(c.sub(delta)), c2p(c.sub(delta)), button, ui.modflags(), 0, (int) gob.id, gob.rc, 0, -1);
             } else if (button == 1 && !Config.maplocked) {
                 doff = c;
                 dragging = ui.grabmouse(this);

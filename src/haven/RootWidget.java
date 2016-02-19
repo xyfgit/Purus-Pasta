@@ -45,7 +45,7 @@ public class RootWidget extends ConsoleHost {
 
     public boolean globtype(char key, KeyEvent ev) {
         if (!super.globtype(key, ev)) {
-            boolean ctrl = (((ev.getModifiers() & InputEvent.ALT_MASK) != 0));
+            boolean alt = (((ev.getModifiers() & InputEvent.ALT_MASK) != 0));
             int code = ev.getKeyCode();
             if (key == '`') {
                 @SuppressWarnings("deprecation")
@@ -75,9 +75,12 @@ public class RootWidget extends ConsoleHost {
                 entercmd();
             } else if (key != 0) {
                 wdgmsg("gk", (int) key);
-            }else if((code == KeyEvent.VK_D&&ctrl)) {
+            }else if((code == KeyEvent.VK_D&&alt)) {
                 Settings.setSettings(!Settings.getSettings());
-//                ui.root.findchild(GameUI.class).info( ""+Settings.getSettings(), Color.WHITE);
+            }
+            else if((code == KeyEvent.VK_G&&alt)) {
+                Settings.setKeepWalk(!Settings.getKeepWalk());
+                ui.root.findchild(GameUI.class).info( "Keep walking: "+Settings.getKeepWalk(), Color.WHITE);
             }
         }
         return (true);
