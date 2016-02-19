@@ -68,25 +68,12 @@ public class Curiosity extends ItemInfo.Tip {
     
     public float LPE(int exp, int enc) {
     	// LP per experience point
-        if (item != null && customInfo == null) {
-            try { 
-                String resName = item.resname();
-                customInfo = CuriosityInfo.get(resName);
-                if (customInfo == null)
-                    customInfo = CuriosityInfo.empty;
-            } catch (Loading e) {
-            }
-        }
-        if (customInfo.time < 0)
-            return 0;
-        else {
-            if (enc>0)
-    	        return exp / enc;
-    	    else
-    	    	// If xp cost doesnt exist, dont divide
+            if (enc<=0)
+    	    	// If no xp cost, dont divide
     	        return exp;
+    	    else
+            return exp / enc;
         }
-    }
     
     public float LPH(int exp){
         if (item != null && customInfo == null) {
@@ -100,14 +87,7 @@ public class Curiosity extends ItemInfo.Tip {
         }
         if (customInfo.time < 0)
         return 0;
-        else {
-            // Fixed probably future bug
-            int t = (int) (customInfo.time / 3600.0f);
-            
-            if (t==0)
-                return 0;
-            else
-    	        return exp / t;
-        }
-        }
+        else 
+            	return exp / (customInfo.time / 3600.0f);
+         }
 }
