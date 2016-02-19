@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.9.2
+	- Latest updates from Default client
+	- Various bugfixes
 ### 2.9.1
 	- Fixed sling bug
 	- Added display for quality cap to crafting window
