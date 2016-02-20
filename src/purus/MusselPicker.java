@@ -25,8 +25,8 @@ public static boolean MusselsNearby;
 		this.i = i;
 		BotUtils = new BotUtils(ui, w, i);
 	};
-	ArrayList<String> targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs/mussels",
-			"gfx/kritter/frog/frog", "gfx/terobjs/herbs/blueberry"));
+	ArrayList<String> targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs",
+			"gfx/kritter/frog/frog"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
 	private Gob get_target_gob(){
 		Gob gob = null;
 		for (String target: targets){

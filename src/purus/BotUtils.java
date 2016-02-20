@@ -99,13 +99,13 @@ public class BotUtils {
 	public void Choose(Petal option) {
         w.wdgmsg("cl", option.num, ui.modflags());
 	}
-	public int get_o_y(int x_pc, int y_pc, int x_tar, int y_tar, int pianyi){
+	public int get_o_y(int x_pc, int y_pc, int x_tar, int y_tar, int turn_x){
 	//（x-x1)(x2-x1)+(y-y1)(y2-y1)=0
-		return (((x_pc + pianyi)-x_pc)*(x_pc-x_tar)/(y_tar-y_pc)) + y_pc;
+		return ((turn_x-x_pc)*(x_pc-x_tar)/(y_tar-y_pc)) + y_pc;
 	};
-	public int get_o_y( Coord pc, Coord tar, int pianyi){
+	public int get_o_y( Coord pc, Coord tar, int turn_x){
 		//（x-x1)(x2-x1)+(y-y1)(y2-y1)=0
-		return (((pc.x + pianyi)-pc.x)*(pc.x-tar.x)/(tar.y-pc.y)) + pc.y;
+		return ((turn_x -pc.x)*(pc.x-tar.x)/(tar.y-pc.y)) + pc.y;
 	};
 	// Click some object with specific button and modifier
 	public void doClick(Gob gob, int button, int mod) {
@@ -175,8 +175,9 @@ public class BotUtils {
 
 	public void turn_around(Coord tar_rc, int direction){
 		// direction should be 1 or -1
-		int pianyi = 20 * direction;
-		Coord target_rc = new Coord(pianyi, get_o_y(player().rc, tar_rc,pianyi));
+		Coord pc = player().rc;
+		int turn_x = pc.x+ 20 * direction;
+		Coord target_rc = new Coord(turn_x, get_o_y(pc, tar_rc,turn_x));
 		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), target_rc,1 ,0, ui.modflags());
 	}
     
@@ -204,7 +205,7 @@ public class BotUtils {
         }
         return null;
     }
-    public boolean canDrinkFrom(WItem item) {	
+    public boolean canDrinkFrom(WItem item) {
         ItemInfo.Contents contents = getContents(item);
         if (contents != null && contents.sub != null) {
             for (ItemInfo info : contents.sub) {
