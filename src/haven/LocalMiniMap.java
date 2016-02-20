@@ -535,66 +535,91 @@ public class LocalMiniMap extends Widget {
     public void center() {
         delta = Coord.z;
     }
+    private Coord last_mini_target = null;
+    private float get_y(float x1, float y1, float x2, float y2, float pianyi){
+//（x-x1)(x2-x1)+(y-y1)(y2-y1)=0 10*(x2-x1)-x1x2+x1y1 + y(y2-y1)-y1(y2-y1)=0
+    return (((x1 + pianyi)-x1)*(x1-x2)/(y2-y1)) + y1;
+    };
     Thread t = new Thread(new Runnable() {
         public void run() {
-            while (Settings.getKeepWalk()) {
+            while (true) {
                 mv.wdgmsg("click", walk_args);
-                Coord3f player =  mv.player().getrc();
-                Coord3f player_start = new Coord3f(player.x, player.y, player.z);
-                float x = player.x - ((Coord)walk_args[1]).x;
-                float y = player.y - ((Coord)walk_args[1] ).y;
-                if (walk_args[1] instanceof Coord && Math.abs(x) <=10 &&Math.abs(y)<=10){
-                    try {
-//                        ui.root.findchild(GameUI.class).info(player+" "+walk_args[1]+" x dis:"+(player.x - ((Coord)walk_args[1]).x)
-//                                +" y dis "+ (player.y - ((Coord)walk_args[1]).y) +"reached suspend" , Color.WHITE);
-                        t.suspend();
-                    }catch (Exception e){
-                    }
-                };
-
+                last_mini_target = (Coord) walk_args[1];
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(800);
                 } catch (InterruptedException ie) {
                 }
-                Coord3f player_moved =  mv.player().getrc();
-//                    ui.root.findchild(GameUI.class).info("x dis: "+ (player_start.x -player_moved.x)+" y dis: "+ (player_start.y -player_moved.y), Color.WHITE);
-                if (Math.abs(player_start.x -player_moved.x) <= 4 && Math.abs(player_start.y -player_moved.y) <=4){
-                    Object[] temp_args = walk_args.clone();
-                    temp_args[1] = new  Coord((int)(player.x - x), (int)(player.y -2*y));
-//                        ui.root.findchild(GameUI.class).info("Change direction", Color.WHITE);
-                    mv.wdgmsg("click", temp_args);
+                while (Settings.getKeepWalk()) {
+                    if (last_mini_target.dist((Coord) walk_args[1]) > 1) {
+                        mv.wdgmsg("click", walk_args);
+                    }
+                    Coord3f player = mv.player().getrc();
+                    Coord3f player_start = new Coord3f(player.x, player.y, player.z);
+                    float x = player.x - ((Coord) walk_args[1]).x;
+                    float y = player.y - ((Coord) walk_args[1]).y;
+                    if (walk_args[1] instanceof Coord && Math.abs(x) <= 10 && Math.abs(y) <= 10) {
+                        try {
+                            ui.root.findchild(GameUI.class).info(player + " " + walk_args[1] + " x dis:" + (player.x - ((Coord) walk_args[1]).x)
+                                    + " y dis " + (player.y - ((Coord) walk_args[1]).y) + "reached suspend", Color.WHITE);
+                            t.suspend();
+                        } catch (Exception e) {
+                        }
+                    };
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(1200);
                     } catch (InterruptedException ie) {
                     }
-                    if (Math.abs(player_start.x -player_moved.x) <= 4 && Math.abs(player_start.y -player_moved.y) <=4) {
-                        temp_args[1] = new Coord((int) (player.x + x), (int) (player.y - y));
+                    Coord3f player_moved = mv.player().getrc();
+//                    ui.root.findchild(GameUI.class).info("x dis: "+ (player_start.x -player_moved.x)+" y dis: "+ (player_start.y -player_moved.y), Color.WHITE);
+                    if (Math.abs(player_start.x - player_moved.x) <= 6 && Math.abs(player_start.y - player_moved.y) <= 6) {
+                        Object[] temp_args = walk_args.clone();
+                        float o_x = player.x + 20;
+                        float o_y = get_y(player.x, player.y, ((Coord) walk_args[1]).x, ((Coord) walk_args[1]).y, 20);
+                        float o_x2 = player.x - 20;
+                        float o_y2 = get_y(player.x, player.y, ((Coord) walk_args[1]).x, ((Coord) walk_args[1]).y, -20);
+
+                        temp_args[1] = new Coord((int) (o_x), (int) (o_y));
+//                        ui.root.findchild(GameUI.class).info("Change direction", Color.WHITE);
                         mv.wdgmsg("click", temp_args);
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(600);
+                        } catch (InterruptedException ie) {
+                        }
+                        player_moved = mv.player().getrc();
+                        if (Math.abs(player_start.x - player_moved.x) <= 1 && Math.abs(player_start.y - player_moved.y) <= 1) {
+                            temp_args[1] = new Coord((int) (o_x2), (int) (o_y2));
+                            mv.wdgmsg("click", temp_args);
+                            try {
+                                Thread.sleep(600);
+                            } catch (InterruptedException ie) {
+                            }
+                        }
+                        mv.wdgmsg("click", walk_args);
+                        try {
+                            Thread.sleep(600);
                         } catch (InterruptedException ie) {
                         }
                     }
                 }
-            }
-            try {
-//                ui.root.findchild(GameUI.class).info("not keep walk, so suspend", Color.WHITE);
-                t.suspend();
-            }catch (Exception e){
-                ui.root.findchild(GameUI.class).info(e.toString(), Color.RED);
+                try {
+                    ui.root.findchild(GameUI.class).info("not keep walk, so suspend", Color.WHITE);
+                    t.suspend();
+                } catch (Exception e) {
+                    ui.root.findchild(GameUI.class).info(e.toString(), Color.RED);
+                }
             }
         }
     });
-    private void keep_walk(String msg, Object... args){
+
+    public void keep_walk(String msg, Object... args){
         walk_args = args; //just to test pass Object[] as varargs
         if (Settings.getKeepWalk())
         {
-            if (t==null || !t.isAlive()){
-
-//                ui.root.findchild(GameUI.class).info("start walk", Color.WHITE);
+            if (t.getState() == Thread.State.NEW){
+                ui.root.findchild(GameUI.class).info("start walk", Color.WHITE);
                 t.start();
             }else{
-//                ui.root.findchild(GameUI.class).info("keep walk resume", Color.WHITE);
+                ui.root.findchild(GameUI.class).info("keep walk resume", Color.WHITE);
                 t.resume();
             }
         }
