@@ -535,44 +535,70 @@ public class LocalMiniMap extends Widget {
     public void center() {
         delta = Coord.z;
     }
-    Thread t = null;
+    Thread t = new Thread(new Runnable() {
+        public void run() {
+            while (Settings.getKeepWalk()) {
+                mv.wdgmsg("click", walk_args);
+                Coord3f player =  mv.player().getrc();
+                Coord3f player_start = new Coord3f(player.x, player.y, player.z);
+                float x = player.x - ((Coord)walk_args[1]).x;
+                float y = player.y - ((Coord)walk_args[1] ).y;
+                if (walk_args[1] instanceof Coord && Math.abs(x) <=10 &&Math.abs(y)<=10){
+                    try {
+//                        ui.root.findchild(GameUI.class).info(player+" "+walk_args[1]+" x dis:"+(player.x - ((Coord)walk_args[1]).x)
+//                                +" y dis "+ (player.y - ((Coord)walk_args[1]).y) +"reached suspend" , Color.WHITE);
+                        t.suspend();
+                    }catch (Exception e){
+                    }
+                };
+
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException ie) {
+                }
+                Coord3f player_moved =  mv.player().getrc();
+//                    ui.root.findchild(GameUI.class).info("x dis: "+ (player_start.x -player_moved.x)+" y dis: "+ (player_start.y -player_moved.y), Color.WHITE);
+                if (Math.abs(player_start.x -player_moved.x) <= 4 && Math.abs(player_start.y -player_moved.y) <=4){
+                    Object[] temp_args = walk_args.clone();
+                    temp_args[1] = new  Coord((int)(player.x - x), (int)(player.y -2*y));
+//                        ui.root.findchild(GameUI.class).info("Change direction", Color.WHITE);
+                    mv.wdgmsg("click", temp_args);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ie) {
+                    }
+                    if (Math.abs(player_start.x -player_moved.x) <= 4 && Math.abs(player_start.y -player_moved.y) <=4) {
+                        temp_args[1] = new Coord((int) (player.x + x), (int) (player.y - y));
+                        mv.wdgmsg("click", temp_args);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ie) {
+                        }
+                    }
+                }
+            }
+            try {
+//                ui.root.findchild(GameUI.class).info("not keep walk, so suspend", Color.WHITE);
+                t.suspend();
+            }catch (Exception e){
+                ui.root.findchild(GameUI.class).info(e.toString(), Color.RED);
+            }
+        }
+    });
     private void keep_walk(String msg, Object... args){
         walk_args = args; //just to test pass Object[] as varargs
         if (Settings.getKeepWalk())
         {
-            if (t==null){
-            t=new Thread(new Runnable() {
-            public void run() {
-                while (Settings.getKeepWalk()) {
-                    mv.wdgmsg("click", walk_args);
-                    Coord3f player =  mv.player().getrc();
-                    for (Object arg : walk_args) {
-                        if (arg instanceof Coord && Math.abs(player.x - ((Coord)arg).x) <=3 &&Math.abs(player.y - ((Coord)arg).y)<=1){
-                            try {
-//                                ui.root.findchild(GameUI.class).info(player+" "+arg+" x dis:"+(player.x - ((Coord)arg).x)
-//                                       +" y dis "+ (player.y - ((Coord)arg).y) +"reached suspend" , Color.WHITE);
-                                t.suspend();
-                            }catch (Exception e){
-                            }
-                        };
-                    }
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException ie) {
-                    }
-                }
-                try {
-                    t.suspend();
-                }catch (Exception e){
-                }
-            }
-        });
+            if (t==null || !t.isAlive()){
+
+//                ui.root.findchild(GameUI.class).info("start walk", Color.WHITE);
                 t.start();
             }else{
+//                ui.root.findchild(GameUI.class).info("keep walk resume", Color.WHITE);
                 t.resume();
             }
         }
-        else {mv.wdgmsg(msg, args); t=null;}
+        else {mv.wdgmsg(msg, args);}
     }
     public boolean mousedown(Coord c, int button) {
         if (Config.alternmapctrls) {
