@@ -531,43 +531,47 @@ public class LocalMiniMap extends Widget {
         }
         drawicons(g);
     }
-
+    Object[] walk_args = { };
     public void center() {
         delta = Coord.z;
     }
     Thread t = null;
     private void keep_walk(String msg, Object... args){
-
-        if (t != null && t.isAlive()){
-            t.stop();
-        }
-        t = new Thread(new Runnable() {
+        walk_args = args; //just to test pass Object[] as varargs
+        if (Settings.getKeepWalk())
+        {
+            if (t==null){
+            t=new Thread(new Runnable() {
             public void run() {
-                boolean reached = false;
-                while (Settings.getKeepWalk()) {
-                    mv.wdgmsg(msg, args);
+                while (true) {
+                    mv.wdgmsg("click", walk_args);
                     Coord3f player =  mv.player().getrc();
-                    for (Object arg : args) {
-                        if (arg instanceof Coord && player.x - ((Coord)arg).x <=1 &&player.y - ((Coord)arg).y<=1){
-                            reached = true;
-                            break;
+                    for (Object arg : walk_args) {
+                        if (arg instanceof Coord && player.x - ((Coord)arg).x <=3 &&player.y - ((Coord)arg).y<=3){
+                            try {
+                                t.suspend();
+                            }catch (Exception e){
+                            }
                         };
-                    }
-                    if (reached){
-                        break;
                     }
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException ie) {
                     }
-
+                    if (!Settings.getKeepWalk()){
+                        try {
+                            t.suspend();
+                        }catch (Exception e){
+                        }
+                    }
                 }
-
-
             }
         });
-        if (Settings.getKeepWalk())
-        t.start();
+                t.start();
+            }else{
+                t.resume();
+            }
+        }
         else {mv.wdgmsg(msg, args); t=null;}
     }
     public boolean mousedown(Coord c, int button) {
