@@ -557,21 +557,21 @@ public class LocalMiniMap extends Widget {
                     Coord3f player_start = new Coord3f(player.x, player.y, player.z);
                     float x = player.x - ((Coord) walk_args[1]).x;
                     float y = player.y - ((Coord) walk_args[1]).y;
-                    if (walk_args[1] instanceof Coord && Math.abs(x) <= 10 && Math.abs(y) <= 10) {
+                    if (walk_args[1] instanceof Coord && Math.abs(x) <= 20 && Math.abs(y) <= 20) {
                         try {
-                            ui.root.findchild(GameUI.class).info(player + " " + walk_args[1] + " x dis:" + (player.x - ((Coord) walk_args[1]).x)
-                                    + " y dis " + (player.y - ((Coord) walk_args[1]).y) + "reached suspend", Color.WHITE);
+//                            ui.root.findchild(GameUI.class).info(player + " " + walk_args[1] + " x dis:" + (player.x - ((Coord) walk_args[1]).x)
+//                                    + " y dis " + (player.y - ((Coord) walk_args[1]).y) + "reached suspend", Color.WHITE);
                             t.suspend();
                         } catch (Exception e) {
                         }
                     };
                     try {
-                        Thread.sleep(1200);
+                        Thread.sleep(1000);
                     } catch (InterruptedException ie) {
                     }
                     Coord3f player_moved = mv.player().getrc();
 //                    ui.root.findchild(GameUI.class).info("x dis: "+ (player_start.x -player_moved.x)+" y dis: "+ (player_start.y -player_moved.y), Color.WHITE);
-                    if (Math.abs(player_start.x - player_moved.x) <= 6 && Math.abs(player_start.y - player_moved.y) <= 6) {
+                    if (player_start.dist(player_moved) <= 3) {
                         Object[] temp_args = walk_args.clone();
                         float o_x = player.x + 20;
                         float o_y = get_y(player.x, player.y, ((Coord) walk_args[1]).x, ((Coord) walk_args[1]).y, 20);
@@ -585,13 +585,16 @@ public class LocalMiniMap extends Widget {
                             Thread.sleep(600);
                         } catch (InterruptedException ie) {
                         }
-                        player_moved = mv.player().getrc();
-                        if (Math.abs(player_start.x - player_moved.x) <= 1 && Math.abs(player_start.y - player_moved.y) <= 1) {
-                            temp_args[1] = new Coord((int) (o_x2), (int) (o_y2));
-                            mv.wdgmsg("click", temp_args);
-                            try {
-                                Thread.sleep(600);
-                            } catch (InterruptedException ie) {
+                        // not to check move after climb
+                        if (Math.abs(player_start.z - mv.player().getrc().z) <= 1){
+                            player_moved = mv.player().getrc();
+                            if (player_start.dist(player_moved) <= 3) {
+                                temp_args[1] = new Coord((int) (o_x2), (int) (o_y2));
+                                mv.wdgmsg("click", temp_args);
+                                try {
+                                    Thread.sleep(600);
+                                } catch (InterruptedException ie) {
+                                }
                             }
                         }
                         mv.wdgmsg("click", walk_args);
@@ -602,7 +605,7 @@ public class LocalMiniMap extends Widget {
                     }
                 }
                 try {
-                    ui.root.findchild(GameUI.class).info("not keep walk, so suspend", Color.WHITE);
+//                    ui.root.findchild(GameUI.class).info("not keep walk, so suspend", Color.WHITE);
                     t.suspend();
                 } catch (Exception e) {
                     ui.root.findchild(GameUI.class).info(e.toString(), Color.RED);
@@ -616,10 +619,10 @@ public class LocalMiniMap extends Widget {
         if (Settings.getKeepWalk())
         {
             if (t.getState() == Thread.State.NEW){
-                ui.root.findchild(GameUI.class).info("start walk", Color.WHITE);
+//                ui.root.findchild(GameUI.class).info("start walk", Color.WHITE);
                 t.start();
             }else{
-                ui.root.findchild(GameUI.class).info("keep walk resume", Color.WHITE);
+//                ui.root.findchild(GameUI.class).info("keep walk resume", Color.WHITE);
                 t.resume();
             }
         }
