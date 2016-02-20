@@ -51,6 +51,9 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     public long totalTime = -1;
     public int lmeter1 = -1, lmeter2 = -1, lmeter3 = -1;
     public long meterTime;
+    
+    public boolean drop = false;
+    private double dropTimer = 0;
 
     public static class Quality {
         private static final DecimalFormat shortfmt = new DecimalFormat("#.#");
@@ -223,7 +226,16 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
         return (spr);
     }
 
-    public void tick(double dt) {
+    public void tick(double dt) throws InterruptedException {
+    	super.tick(dt);
+	if(drop) {
+	    dropTimer += dt;
+	    if (dropTimer > 0.1) {
+		dropTimer = 0;
+		wdgmsg("drop", Coord.z);
+		//wdgmsg("take", Coord.z);
+	    }
+	}
         GSprite spr = spr();
         if (spr != null)
             spr.tick(dt);
