@@ -543,12 +543,14 @@ public class LocalMiniMap extends Widget {
             if (t==null){
             t=new Thread(new Runnable() {
             public void run() {
-                while (true) {
+                while (Settings.getKeepWalk()) {
                     mv.wdgmsg("click", walk_args);
                     Coord3f player =  mv.player().getrc();
                     for (Object arg : walk_args) {
-                        if (arg instanceof Coord && player.x - ((Coord)arg).x <=3 &&player.y - ((Coord)arg).y<=3){
+                        if (arg instanceof Coord && Math.abs(player.x - ((Coord)arg).x) <=3 &&Math.abs(player.y - ((Coord)arg).y)<=1){
                             try {
+//                                ui.root.findchild(GameUI.class).info(player+" "+arg+" x dis:"+(player.x - ((Coord)arg).x)
+//                                       +" y dis "+ (player.y - ((Coord)arg).y) +"reached suspend" , Color.WHITE);
                                 t.suspend();
                             }catch (Exception e){
                             }
@@ -558,12 +560,10 @@ public class LocalMiniMap extends Widget {
                         Thread.sleep(2000);
                     } catch (InterruptedException ie) {
                     }
-                    if (!Settings.getKeepWalk()){
-                        try {
-                            t.suspend();
-                        }catch (Exception e){
-                        }
-                    }
+                }
+                try {
+                    t.suspend();
+                }catch (Exception e){
                 }
             }
         });
