@@ -1314,11 +1314,11 @@ public class OptWnd extends Window {
         y += 35;
         general.add(new CheckBox("Automatically 'Drink' while crafting") {
             {
-                a = Config.autodrink;
+                a = Config.isCraftAssist;
             }
             public void set(boolean val) {
-                Utils.setprefb("autodrink", val);
-                Config.autodrink = val;
+                Utils.setprefb("isCraftAssist", val);
+                Config.isCraftAssist = val;
                 a = val;
             }
         }, new Coord(260, y));
