@@ -103,6 +103,7 @@ public class FlowerMenu extends Widget {
             Petal eat = null;
             Petal split = null;
             Petal chip = null;
+            Petal study = null;
             for (Petal p : opts) {
                 p.move(p.ta + ((1 - s) * PI), p.tr * s);
                 p.a = s;
@@ -116,12 +117,14 @@ public class FlowerMenu extends Widget {
                     split = p;
                 else if (p.name.equals("Chip stone"))
                     chip = p;
+                else if (p.name.equals("Study"))
+                    study = p;
             }
             if (Config.autopick && pick != null && s == 1.0)
                 choose(pick);
             else if (Config.autoharvest && harvest != null && s == 1.0)
                 choose(harvest);
-            else if (Config.autoeat && eat != null && s == 1.0)
+            else if (Config.autoeat && eat != null && s == 1.0 && study == null)
                 choose(eat);
             else if (Config.autosplit && split != null && s == 1.0)
                 choose(split);
