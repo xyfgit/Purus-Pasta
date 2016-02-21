@@ -48,16 +48,20 @@ public class DragonflyCollector {
 						BotUtils.doClick(gob, 3, 0); 
 						
 					}
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+						sleep(1000);
 				}
 		        window.destroy();
 		       t.stop();
 			}
 		});
+		
+	private void sleep(int t){
+		try {
+			Thread.sleep(t);
+		} catch (InterruptedException ie) {
+			ie.printStackTrace();
+		}
+	}
 
 		// This thingy makes that stupid window with cancel button, TODO: make it better
 		private class StatusWindow extends Window {

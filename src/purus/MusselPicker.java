@@ -43,12 +43,7 @@ public static boolean MusselsNearby;
 			MusselsNearby = false;
 		while(MusselsNearby = true) {
 			BotUtils.doClick(gob, 3, 0);
-			//
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			sleep(250);
 			@SuppressWarnings("deprecation")
 			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 	            if (menu != null) {
@@ -79,6 +74,14 @@ public static boolean MusselsNearby;
 				return;
 	}
 	});
+	
+	private void sleep(int t){
+		try {
+			Thread.sleep(t);
+		} catch (InterruptedException ie) {
+			ie.printStackTrace();
+		}
+	}
 	
 	// This thingy makes that stupid window with cancel button, todo: make it better
 			private class StatusWindow extends Window {

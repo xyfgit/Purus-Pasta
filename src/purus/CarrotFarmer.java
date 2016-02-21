@@ -62,11 +62,7 @@ public class CarrotFarmer {
 				 WItem item = BotUtils.findDrink(BotUtils.playerInventory());
 				 if (item != null) {
 					 item.item.wdgmsg("iact", Coord.z, 3);
-						try {
-							Thread.sleep(250);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+					 sleep(250);
 						@SuppressWarnings("deprecation")
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 				            if (menu != null) {
@@ -75,11 +71,7 @@ public class CarrotFarmer {
 				                        menu.choose(opt);
 				                        menu.destroy();
 				                        while(gui.getmeter("stam", 0).a <= 84) {
-				                        	 try {
-												Thread.sleep(100);
-											} catch (InterruptedException e) {
-												e.printStackTrace();
-											}
+				                        	sleep(100);
 				                        }
 				                    }
 				                }
@@ -88,11 +80,7 @@ public class CarrotFarmer {
 				 }
 				 //end of drink
 			BotUtils.doClick(gob, 3, 0);
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			sleep(250);
 			@SuppressWarnings("deprecation")
 			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 	            if (menu != null) {
@@ -104,18 +92,10 @@ public class CarrotFarmer {
 	                }
 	            }
 	            while(gui.prog >= 0) {
-	    			try {
-	    				Thread.sleep(100);
-	    			} catch (InterruptedException e) {
-	    				e.printStackTrace();
-	    			}
+	            	sleep(100);
 	            }
 	            // Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
-    			try {
-    				Thread.sleep(100);
-    			} catch (InterruptedException e) {
-    				e.printStackTrace();
-    			}
+	            sleep(100);
 	            GItem item = BotUtils.getItemAtHand();
 	            if (item == null) {
 	            	 Inventory inv = BotUtils.playerInventory();
@@ -169,6 +149,15 @@ public class CarrotFarmer {
 	        return false;
 	    }
 		});
+		
+		private void sleep(int t){
+			try {
+				Thread.sleep(t);
+			} catch (InterruptedException ie) {
+				ie.printStackTrace();
+			}
+		}
+		
 		// This thingy makes that stupid window with cancel button, TODO: make it better
 		private class StatusWindow extends Window {
 	        public StatusWindow() {
