@@ -32,7 +32,7 @@ public class MusselPicker {
 		double near_dis = 9999;
 		for (String target: targets){
 			Gob this_gob = BotUtils.findObjectByNames(800, target);
-			if(this_gob != null && !exclude_gobs.contains(this_gob)){
+			if(this_gob != null && !exclude_gobs.contains(this_gob.rc)){
 				double this_gob_dis = BotUtils.player().rc.dist(this_gob.rc);
 				if(this_gob_dis< near_dis ){
 				near_dis = this_gob_dis;
@@ -55,13 +55,11 @@ public class MusselPicker {
 		while(gob != null) {
 			if (init_gob_id == 0){
 				init_gob_id = gob.id;
-				exclude_gobs.add(gob.rc);
 			}
 //			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
-			if (BotUtils.player().rc.dist(gob.rc) <= 10){
+			if (BotUtils.player().rc.dist(gob.rc) <= 20){
 				// if reached the gob, pick gob, and find next gob
-				BotUtils.doClick(gob, 3, 0);
-				BotUtils.sleep(600);
+				exclude_gobs.add(gob.rc);
 				gob = null;
 				while(gob == null) {
 					if (init_gob_id != 0) {
@@ -72,8 +70,11 @@ public class MusselPicker {
 					}
 					BotUtils.sleep(500);
 				}
+				BotUtils.sysMsg("Find target:"+gob.getres().name, Color.WHITE);
+				BotUtils.doClick(gob, 3, 0);
+				BotUtils.sleep(600);
 			}
-			while (BotUtils.player().rc.dist(gob.rc) > 10){
+			while (BotUtils.player().rc.dist(gob.rc) > 20){
 				// if distance to gob is larger than 10, still need to force walk
 				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
 				// check if player moved
