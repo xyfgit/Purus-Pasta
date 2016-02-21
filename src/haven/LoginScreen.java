@@ -362,11 +362,10 @@ public class LoginScreen extends Widget {
                         ServerStatus = false;
                     else 
                     	ServerStatus = true;
-                    
                     if (ServerStatus)
-                	statusbtn.change("Server is " + String.format("up M8", Color.GREEN), Color.GREEN);
+                	statusbtn.change("Server is up M8", Color.GREEN);
                     else 
-                    statusbtn.change("Server is " + String.format("down", Color.RED), Color.RED);
+                    statusbtn.change("Server is down", Color.RED);
                     //
                     try {
                         Thread.sleep(5000);
