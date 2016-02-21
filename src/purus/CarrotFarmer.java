@@ -55,30 +55,11 @@ public class CarrotFarmer {
 			else
 				CarrotsNearby = false;
 			while(CarrotsNearby = true) {
-				// Start of drink TODO: Make separate function of this maybe yeah?
 				GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 				 IMeter.Meter stam = gui.getmeter("stam", 0);
 				 if (stam.a <= 30) {
-				 WItem item = BotUtils.findDrink(BotUtils.playerInventory());
-				 if (item != null) {
-					 item.item.wdgmsg("iact", Coord.z, 3);
-					 sleep(250);
-						@SuppressWarnings("deprecation")
-						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-				            if (menu != null) {
-				                for (FlowerMenu.Petal opt : menu.opts) {
-				                    if (opt.name.equals("Drink")) {
-				                        menu.choose(opt);
-				                        menu.destroy();
-				                        while(gui.getmeter("stam", 0).a <= 84) {
-				                        	sleep(100);
-				                        }
-				                    }
-				                }
-				            }
+					 BotUtils.drink();
 				 }
-				 }
-				 //end of drink
 			BotUtils.doClick(gob, 3, 0);
 			sleep(250);
 			@SuppressWarnings("deprecation")

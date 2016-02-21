@@ -12,6 +12,7 @@ import haven.GAttrib;
 import haven.GItem;
 import haven.GameUI;
 import haven.Gob;
+import haven.HavenPanel;
 import haven.Inventory;
 import haven.ItemInfo;
 import haven.Loading;
@@ -42,6 +43,29 @@ public class BotUtils {
 	
     public GameUI gui() {
     	return ui.gui;
+    }
+    
+    // Drinks water/tea from containers in inventory
+    public void drink() {
+		GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
+		 WItem item = findDrink(playerInventory());
+		 if (item != null) {
+			 item.item.wdgmsg("iact", Coord.z, 3);
+			 sleep(250);
+				@SuppressWarnings("deprecation")
+				FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+		            if (menu != null) {
+		                for (FlowerMenu.Petal opt : menu.opts) {
+		                    if (opt.name.equals("Drink")) {
+		                        menu.choose(opt);
+		                        menu.destroy();
+		                        while(gui.getmeter("stam", 0).a <= 90) {
+		                        	sleep(100);
+		                        }
+		                    }
+		                }
+		            }
+		 }
     }
     
     public void sysMsg(String msg, Color color ) {
@@ -219,5 +243,11 @@ public class BotUtils {
         return null;
     }
     
-    
+	private void sleep(int t){
+		try {
+			Thread.sleep(t);
+		} catch (InterruptedException ie) {
+			ie.printStackTrace();
+		}
+	}
 }
