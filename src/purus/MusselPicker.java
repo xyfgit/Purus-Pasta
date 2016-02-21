@@ -25,14 +25,14 @@ public class MusselPicker {
 	};
 	ArrayList<String> targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs",
 			"gfx/kritter/frog/frog",
-			"gfx/kritter/rat/rat",
+			"gfx/kritter/rat/rat", "gfx/terobjs/trees/appletree",
 			"no gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
-	private Gob get_target_gob(){
+	private Gob get_target_gob(ArrayList exclude_gobs){
 		Gob gob = null;
 		double near_dis = 9999;
 		for (String target: targets){
 			Gob this_gob = BotUtils.findObjectByNames(800, target);
-			if(this_gob != null){
+			if(this_gob != null && !exclude_gobs.contains(this_gob)){
 				double this_gob_dis = BotUtils.player().rc.dist(this_gob.rc);
 				if(this_gob_dis< near_dis ){
 				near_dis = this_gob_dis;
@@ -46,82 +46,71 @@ public class MusselPicker {
 	}
 	Thread t = new Thread(new Runnable() {
 	public void run()  {
+		ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
-		Gob gob = get_target_gob();
+		Gob gob = get_target_gob(exclude_gobs);
 		long init_gob_id =  0;
 		Coord p_st =  null;
+
 		while(gob != null) {
 			if (init_gob_id == 0){
 				init_gob_id = gob.id;
+				exclude_gobs.add(gob.rc);
 			}
 //			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
-			double gob_dis = BotUtils.player().rc.dist(gob.rc);
-			if (gob_dis <= 20){
+			if (BotUtils.player().rc.dist(gob.rc) <= 10){
+				// if reached the gob, pick gob, and find next gob
 				BotUtils.doClick(gob, 3, 0);
-			}
-			while (gob_dis > 20){
-				ui.root.findchild(GameUI.class).info("gob_dis:"+gob_dis, Color.WHITE);
-				p_st =  BotUtils.player().rc;
-				p_st = new Coord(p_st.x, p_st.y);
-//				BotUtils.doClick(gob, 3, 0);
-//				//
-
-				BotUtils.sleep(500);
-			if ( p_st.dist(BotUtils.player().rc) < 5){
-				p_st =  BotUtils.player().rc;
-				p_st = new Coord(p_st.x, p_st.y);
-				BotUtils.turn_around(gob.rc, 1);
-				BotUtils.sleep(500);
-				if (p_st.dist(BotUtils.player().rc) < 5){
-					BotUtils.turn_around(gob.rc, -1);
+				BotUtils.sleep(600);
+				gob = null;
+				while(gob == null) {
+					if (init_gob_id != 0) {
+						gob = BotUtils.findObjectById(init_gob_id);
+					}
+					if (gob == null){
+						gob =get_target_gob(exclude_gobs);
+					}
 					BotUtils.sleep(500);
 				}
-
-//				if (gob.getStage() == 0){
-//					break;
-//				}
-				ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1 ,0);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				BotUtils.doClick(gob, 3, 0);
-				BotUtils.sleep(500);
-
 			}
-				gob_dis = BotUtils.player().rc.dist(gob.rc);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+			while (BotUtils.player().rc.dist(gob.rc) > 10){
+				// if distance to gob is larger than 10, still need to force walk
+				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
+				// check if player moved
+				p_st =  BotUtils.player().rc;
+				p_st = new Coord(p_st.x, p_st.y);
+				BotUtils.sleep(500);
+				if ( p_st.dist(BotUtils.player().rc) < 5){
+					// if bocked try turn around
+					p_st =  BotUtils.player().rc;
+					p_st = new Coord(p_st.x, p_st.y);
+					BotUtils.turn_around(gob.rc, 1);
+					BotUtils.sleep(500);
+					if (p_st.dist(BotUtils.player().rc) < 5){
+						BotUtils.turn_around(gob.rc, -1);
+						BotUtils.sleep(500);
+					}
+					ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1 ,0);
+					BotUtils.sleep(500);
+					BotUtils.doClick(gob, 3, 0);
+					BotUtils.sleep(500);
+
 				}
+			BotUtils.sleep(500);
 			}
 			// the Pick block is nerver executed during test
 			@SuppressWarnings("deprecation")
 			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 	            if (menu != null) {
 	                for (FlowerMenu.Petal opt : menu.opts) {
-	                    if (opt.name.equals("Pick") || opt.name.equals("Chip stone") ) {
+	                    if (opt.name.contains("Pick") || opt.name.equals("Chip stone") ) {
 	                        menu.choose(opt);
 	                        menu.destroy();
 //							ui.root.findchild(GameUI.class).info("Pick", Color.WHITE);
 	                    }
 	                }
 	            }
-			gob = null;
-			while(gob == null) {
-				if (init_gob_id != 0) {
-					gob = BotUtils.findObjectById(init_gob_id);
-				}
-				if (gob == null){
-					gob =get_target_gob();
-				}
-				BotUtils.sleep(500);
-			}
-
 			BotUtils.sleep(700);
-
 //			ui.root.findchild(GameUI.class).info("Found gob", Color.WHITE);
 
          //   BotUtils.Choose(opts[1])
