@@ -19,10 +19,7 @@ public class CraftWindow extends Window {
         IMeter.Meter stam = gui.getmeter("stam", 0);
         if (menu != null && stam.a <= 30) {
             if (nrj.a > 30){
-                int slot  = 0;
-                wdgmsg("belt",  slot + (slot * 12), 1, ui.modflags());
-                ui.root.findchild(GameUI.class).info("Get some drink.", Color.WHITE);
-                while (gui.getmeter("stam", 0).a <= 84) {
+                while (gui.getmeter("stam", 0).a <= 90) {
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
@@ -32,13 +29,13 @@ public class CraftWindow extends Window {
                 super.wdgmsg(sender, msg, args);
 
             }else{
-                ui.root.findchild(GameUI.class).info("Energy is too low to drink.", Color.WHITE);
+                ui.root.findchild(GameUI.class).info("Energy and Stam is too low to craft.", Color.WHITE);
             }
         };
     };
 
     protected void startAssist(Widget sender, String msg, Object... args){
-        ui.root.findchild(GameUI.class).info("check drink status "+Config.isCraftAssist, Color.WHITE);
+        ui.root.findchild(GameUI.class).info("check craft status "+Config.isCraftAssist, Color.WHITE);
         if (Config.isCraftAssist == true){
             if (drink_th == null || drink_th.isInterrupted()) {
                 drink_th = new Thread(new Runnable() {
@@ -62,7 +59,7 @@ public class CraftWindow extends Window {
 
     protected void stopAssist(){
         if (drink_th != null && drink_th.isAlive()) {
-            ui.root.findchild(GameUI.class).info("stop check drink status "+Config.isCraftAssist, Color.WHITE);
+            ui.root.findchild(GameUI.class).info("stop check craft status "+Config.isCraftAssist, Color.WHITE);
             drink_th.stop();
             drink_th = null;
         }

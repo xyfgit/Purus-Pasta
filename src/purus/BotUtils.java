@@ -105,6 +105,9 @@ public class BotUtils {
 	};
 	public int get_o_y( Coord pc, Coord tar, int turn_x){
 		//（x-x1)(x2-x1)+(y-y1)(y2-y1)=0
+		if ((tar.y-pc.y) == 0){
+			return pc.y;
+		}
 		return ((turn_x -pc.x)*(pc.x-tar.x)/(tar.y-pc.y)) + pc.y;
 	};
 	// Click some object with specific button and modifier
@@ -178,7 +181,7 @@ public class BotUtils {
 		Coord pc = player().rc;
 		int turn_x = pc.x+ 20 * direction;
 		Coord target_rc = new Coord(turn_x, get_o_y(pc, tar_rc,turn_x));
-		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), target_rc,1 ,0, ui.modflags());
+		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), target_rc,1 ,0);
 	}
     
     public Inventory playerInventory() {
