@@ -183,7 +183,13 @@ public class BotUtils {
 		Coord target_rc = new Coord(turn_x, get_o_y(pc, tar_rc,turn_x));
 		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), target_rc,1 ,0);
 	}
-    
+	public void sleep(int t){
+		try {
+			Thread.sleep(t);
+		} catch (InterruptedException ie) {
+			ie.printStackTrace();
+		}
+	}
     public Inventory playerInventory() {
         return ui.gui.maininv;
     }

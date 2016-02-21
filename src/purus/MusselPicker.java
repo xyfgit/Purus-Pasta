@@ -9,8 +9,6 @@ import haven.FlowerMenu.Petal;
 
 public class MusselPicker {
 
-public static boolean MusselsNearby;
-
 	private final UI ui;
     private haven.Widget w;
     private haven.Inventory i;
@@ -51,14 +49,16 @@ public static boolean MusselsNearby;
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 		Gob gob = get_target_gob();
 		long init_gob_id =  0;
+		Coord p_st =  null;
 		while(gob != null) {
 			if (init_gob_id == 0){
 				init_gob_id = gob.id;
 			}
 //			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
-			Coord p_st =  BotUtils.player().rc;
-
 			double gob_dis = BotUtils.player().rc.dist(gob.rc);
+			if (gob_dis <= 20){
+				BotUtils.doClick(gob, 3, 0);
+			}
 			while (gob_dis > 20){
 				ui.root.findchild(GameUI.class).info("gob_dis:"+gob_dis, Color.WHITE);
 				p_st =  BotUtils.player().rc;
@@ -66,27 +66,15 @@ public static boolean MusselsNearby;
 //				BotUtils.doClick(gob, 3, 0);
 //				//
 
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				BotUtils.sleep(500);
 			if ( p_st.dist(BotUtils.player().rc) < 5){
 				p_st =  BotUtils.player().rc;
 				p_st = new Coord(p_st.x, p_st.y);
 				BotUtils.turn_around(gob.rc, 1);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				BotUtils.sleep(500);
 				if (p_st.dist(BotUtils.player().rc) < 5){
 					BotUtils.turn_around(gob.rc, -1);
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					BotUtils.sleep(500);
 				}
 
 //				if (gob.getStage() == 0){
@@ -99,11 +87,7 @@ public static boolean MusselsNearby;
 					e.printStackTrace();
 				}
 				BotUtils.doClick(gob, 3, 0);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				BotUtils.sleep(500);
 
 			}
 				gob_dis = BotUtils.player().rc.dist(gob.rc);
@@ -133,12 +117,10 @@ public static boolean MusselsNearby;
 				if (gob == null){
 					gob =get_target_gob();
 				}
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				BotUtils.sleep(500);
 			}
+
+			BotUtils.sleep(700);
 
 //			ui.root.findchild(GameUI.class).info("Found gob", Color.WHITE);
 

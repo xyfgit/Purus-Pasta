@@ -74,13 +74,6 @@ public class CarrotFarmer {
 		}
 		return gob;
 	}
-	private void sleep(int t){
-		try {
-			Thread.sleep(t);
-		} catch (InterruptedException ie) {
-			ie.printStackTrace();
-		}
-	}
 	public void Run () {
 		t.start();
 		}
@@ -112,7 +105,7 @@ public class CarrotFarmer {
 							WItem item = BotUtils.findDrink(BotUtils.playerInventory());
 							if (item != null) {
 								item.item.wdgmsg("iact", Coord.z, 3);
-								sleep(250);
+								BotUtils.sleep(250);
 								@SuppressWarnings("deprecation")
 								FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 								if (menu != null) {
@@ -122,7 +115,7 @@ public class CarrotFarmer {
 											menu.destroy();
 											BotUtils.sysMsg("wait for stam back to 84", Color.WHITE);
 											while (gui.getmeter("stam", 0).a <= 84) {
-												sleep(550);
+												BotUtils.sleep(550);
 											}
 										}
 									}
@@ -130,12 +123,12 @@ public class CarrotFarmer {
 							}
 							else{
 								BotUtils.sysMsg("slowly wait for stam", Color.WHITE);
-								sleep(3000);
+								BotUtils.sleep(3000);
 							}
 						}
 						//end of drink
 						BotUtils.doClick(gob, 3, 0);
-						sleep(350);
+						BotUtils.sleep(350);
 						@SuppressWarnings("deprecation")
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 						if (menu != null) {
@@ -147,10 +140,10 @@ public class CarrotFarmer {
 							}
 						}
 						while (gui.prog >= 0) {
-							sleep(150);
+							BotUtils.sleep(150);
 						}
 						// Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
-						sleep(150);
+						BotUtils.sleep(150);
 						GItem item = BotUtils.getItemAtHand();
 
 						if (item == null) {
@@ -184,7 +177,7 @@ public class CarrotFarmer {
 							CarrotsNearby = true;
 						else
 							break;
-						sleep(100);
+						BotUtils.sleep(100);
 					}
 					window.destroy();
 					if (t != null) {
@@ -195,9 +188,9 @@ public class CarrotFarmer {
 				} catch (Exception e) {
 
 					BotUtils.sysMsg(e.getMessage(), Color.RED);
-					sleep(350);
+					BotUtils.sleep(350);
 				}
-				sleep(150);
+				BotUtils.sleep(150);
 			}
 
 		}
