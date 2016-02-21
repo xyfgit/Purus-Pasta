@@ -92,11 +92,15 @@ public class MusselPicker {
 						BotUtils.turn_around(gob.rc, -1);
 						BotUtils.sleep(500);
 					}
+					if (p_st.dist(BotUtils.player().rc) < 5){
+						// check ui.modflags(), 2 means press control
+						ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1, 2);
+						BotUtils.sleep(100);
+					}
 					ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1 ,0);
 					BotUtils.sleep(500);
 					BotUtils.doClick(gob, 3, 0);
 					BotUtils.sleep(500);
-
 				}
 			BotUtils.sleep(500);
 			}
