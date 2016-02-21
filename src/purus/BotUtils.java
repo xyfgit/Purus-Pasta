@@ -17,6 +17,7 @@ import haven.ItemInfo;
 import haven.Loading;
 import haven.Moving;
 import haven.Resource;
+import haven.Speedget;
 import haven.UI;
 import haven.WItem;
 import haven.Widget;
@@ -45,6 +46,13 @@ public class BotUtils {
     
     public void sysMsg(String msg, Color color ) {
     	ui.root.findchild(GameUI.class).info(msg,color);
+    }
+    
+    // Sets speed for player
+    // 0 = Crawl 1 = Walk  2 = Run 3 = Sprint
+    public void setSpeed(int speed) {
+    	haven.Speedget.setSpeed = true;
+    	haven.Speedget.SpeedToSet = speed;
     }
     
 	// Takes item in hand
@@ -97,7 +105,7 @@ public class BotUtils {
 	
 	// Chooses option from flower menu
 	public void Choose(Petal option) {
-        w.wdgmsg("cl", option.num, ui.modflags());
+       w.wdgmsg("cl", option.num, ui.modflags());
 	}
 	
 	// Click some object with specific button and modifier
