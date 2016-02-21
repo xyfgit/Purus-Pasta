@@ -26,13 +26,20 @@ public static boolean MusselsNearby;
 		BotUtils = new BotUtils(ui, w, i);
 	};
 	ArrayList<String> targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs",
-			"gfx/kritter/frog/frog"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
+			"gfx/kritter/frog/frog",
+			"gfx/kritter/rat/rat",
+			"gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
 	private Gob get_target_gob(){
 		Gob gob = null;
+		double near_dis = 9999;
 		for (String target: targets){
-			gob = BotUtils.findObjectByNames(500, target);
-			if(gob != null){
-				break;}
+			Gob this_gob = BotUtils.findObjectByNames(500, target);
+			if(this_gob != null){
+				double this_gob_dis = BotUtils.player().rc.dist(this_gob.rc);
+				if(this_gob_dis< near_dis ){
+				near_dis = this_gob_dis;
+				gob = this_gob;
+			}}
 		}
 		return gob;
 	};
@@ -43,7 +50,6 @@ public static boolean MusselsNearby;
 	public void run()  {
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 		Gob gob = get_target_gob();
-
 		long init_gob_id =  0;
 		while(gob != null) {
 			if (init_gob_id == 0){
@@ -53,7 +59,8 @@ public static boolean MusselsNearby;
 			Coord p_st =  BotUtils.player().rc;
 
 			double gob_dis = BotUtils.player().rc.dist(gob.rc);
-			while (gob_dis> 10){
+			while (gob_dis > 20){
+				ui.root.findchild(GameUI.class).info("gob_dis:"+gob_dis, Color.WHITE);
 				p_st =  BotUtils.player().rc;
 				p_st = new Coord(p_st.x, p_st.y);
 				BotUtils.doClick(gob, 3, 0);
@@ -81,6 +88,10 @@ public static boolean MusselsNearby;
 						e.printStackTrace();
 					}
 				}
+
+//				if (gob.getStage() == 0){
+//					break;
+//				}
 				BotUtils.doClick(gob, 3, 0);
 
 			}
@@ -96,7 +107,7 @@ public static boolean MusselsNearby;
 			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 	            if (menu != null) {
 	                for (FlowerMenu.Petal opt : menu.opts) {
-	                    if (opt.name.equals("Pick")) {
+	                    if (opt.name.equals("Pick") || opt.name.equals("Chip stone") ) {
 	                        menu.choose(opt);
 	                        menu.destroy();
 //							ui.root.findchild(GameUI.class).info("Pick", Color.WHITE);
@@ -124,6 +135,7 @@ public static boolean MusselsNearby;
 		}
 		BotUtils.sysMsg("Mussel Picker Finished", Color.WHITE);
         window.destroy();
+		t.stop();
 		return;
 	}
 	});
