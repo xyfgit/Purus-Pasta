@@ -74,10 +74,11 @@ public class MusselPicker {
 					BotUtils.sleep(500);
 				}
 				BotUtils.sysMsg("Find target:"+gob.getres().name, Color.WHITE);
+				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
 			}
 			while (BotUtils.player().rc.dist(gob.rc) > 20){
 				// if distance to gob is larger than 10, still need to force walk
-				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
+//				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
 				// check if player moved
 				p_st =  BotUtils.player().rc;
 				p_st = new Coord(p_st.x, p_st.y);
@@ -89,13 +90,13 @@ public class MusselPicker {
 					BotUtils.turn_around(gob.rc, 1);
 					BotUtils.sleep(500);
 					if (p_st.dist(BotUtils.player().rc) < 5){
-						BotUtils.turn_around(gob.rc, -1);
-						BotUtils.sleep(500);
-					}
-					if (p_st.dist(BotUtils.player().rc) < 5){
 						// check ui.modflags(), 2 means press control
 						ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1, 2);
 						BotUtils.sleep(100);
+					}
+					if (p_st.dist(BotUtils.player().rc) < 5){
+						BotUtils.turn_around(gob.rc, -1);
+						BotUtils.sleep(500);
 					}
 					ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1 ,0);
 					BotUtils.sleep(500);
