@@ -28,12 +28,12 @@ public static boolean MusselsNearby;
 	ArrayList<String> targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs",
 			"gfx/kritter/frog/frog",
 			"gfx/kritter/rat/rat",
-			"gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
+			"no gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
 	private Gob get_target_gob(){
 		Gob gob = null;
 		double near_dis = 9999;
 		for (String target: targets){
-			Gob this_gob = BotUtils.findObjectByNames(500, target);
+			Gob this_gob = BotUtils.findObjectByNames(800, target);
 			if(this_gob != null){
 				double this_gob_dis = BotUtils.player().rc.dist(this_gob.rc);
 				if(this_gob_dis< near_dis ){
@@ -63,8 +63,8 @@ public static boolean MusselsNearby;
 				ui.root.findchild(GameUI.class).info("gob_dis:"+gob_dis, Color.WHITE);
 				p_st =  BotUtils.player().rc;
 				p_st = new Coord(p_st.x, p_st.y);
-				BotUtils.doClick(gob, 3, 0);
-				//
+//				BotUtils.doClick(gob, 3, 0);
+//				//
 
 				try {
 					Thread.sleep(500);
@@ -92,7 +92,18 @@ public static boolean MusselsNearby;
 //				if (gob.getStage() == 0){
 //					break;
 //				}
+				ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1 ,0);
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				BotUtils.doClick(gob, 3, 0);
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 
 			}
 				gob_dis = BotUtils.player().rc.dist(gob.rc);
