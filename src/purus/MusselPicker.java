@@ -27,7 +27,12 @@ public class MusselPicker {
 			"gfx/kritter/frog/frog",
 			"gfx/kritter/rat/rat", "gfx/terobjs/trees/appletree",
 			"no gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
+
+	ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
 	private Gob get_target_gob(ArrayList exclude_gobs){
+		if (exclude_gobs.size() > 100) {
+			exclude_gobs=  new ArrayList<Coord>();
+		}
 		Gob gob = null;
 		double near_dis = 9999;
 		for (String target: targets){
@@ -46,7 +51,6 @@ public class MusselPicker {
 	}
 	Thread t = new Thread(new Runnable() {
 	public void run()  {
-		ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 		Gob gob = get_target_gob(exclude_gobs);
 		long init_gob_id =  0;
@@ -58,21 +62,18 @@ public class MusselPicker {
 			}
 //			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
 			if (BotUtils.player().rc.dist(gob.rc) <= 20){
+				BotUtils.doClick(gob, 3, 0);
+				BotUtils.sleep(600);
 				// if reached the gob, pick gob, and find next gob
 				exclude_gobs.add(gob.rc);
 				gob = null;
 				while(gob == null) {
-					if (init_gob_id != 0) {
-						gob = BotUtils.findObjectById(init_gob_id);
-					}
 					if (gob == null){
 						gob =get_target_gob(exclude_gobs);
 					}
 					BotUtils.sleep(500);
 				}
 				BotUtils.sysMsg("Find target:"+gob.getres().name, Color.WHITE);
-				BotUtils.doClick(gob, 3, 0);
-				BotUtils.sleep(600);
 			}
 			while (BotUtils.player().rc.dist(gob.rc) > 20){
 				// if distance to gob is larger than 10, still need to force walk
