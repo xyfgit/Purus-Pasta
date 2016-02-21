@@ -29,20 +29,73 @@ package haven;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.MalformedURLException;
+import java.net.SocketException;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 public class LoginScreen extends Widget {
     Login cur;
     Text error;
     IButton btn;
     Button optbtn;
+    Button statusbtn;
     OptWnd opts;
     static Text.Foundry textf, textfs;
     static Tex bg = Resource.loadtex("gfx/loginscr");
     Text progress = null;
 
+    private static SSLSocketFactory sslfactory;
+
     static {
         textf = new Text.Foundry(Text.sans, 16).aa(true);
         textfs = new Text.Foundry(Text.sans, 14).aa(true);
+        
+        InputStream crt = null;
+        try {
+            KeyStore keystore  = KeyStore.getInstance(KeyStore.getDefaultType());
+            keystore.load(null);
+            crt = Resource.class.getResourceAsStream("websrv.crt");
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            keystore.setCertificateEntry("havenandhearth", cf.generateCertificate(crt));
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(keystore);
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, tmf.getTrustManagers(), null);
+            sslfactory = ctx.getSocketFactory();
+        } catch (CertificateException ce) {
+            ce.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } catch (NoSuchAlgorithmException nsae) {
+            nsae.printStackTrace();
+        } catch (KeyStoreException kse) {
+            kse.printStackTrace();
+        } catch (KeyManagementException kme) {
+            kme.printStackTrace();
+        } finally {
+            try {
+                if (crt != null)
+                    crt.close();
+            } catch (IOException ioe) {
+            }
+        }
     }
     
     public LoginScreen() {
@@ -50,6 +103,8 @@ public class LoginScreen extends Widget {
         setfocustab(true);
         add(new Img(bg), Coord.z);
         optbtn = adda(new Button(100, "Options"), sz.x-110, 40, 0, 1);
+        statusbtn = adda(new Button(100, "Initializing..."), sz.x-110, 80, 0, 1);
+        StartUpdaterThread();
         new UpdateChecker().start();
         LoginList ll = new LoginList(new Coord(10, 10), new Coord(200, this.sz.y-20), this);
         this.add(ll);
@@ -276,6 +331,9 @@ public class LoginScreen extends Widget {
         } else if (sender == opts) {
             opts.reqdestroy();
             opts = null;
+        } else if (sender == statusbtn) {
+        	// Do nothing maybe
+        	return;
         }
         super.wdgmsg(sender, msg, args);
     }
@@ -285,7 +343,97 @@ public class LoginScreen extends Widget {
             opts = null;
         }
     }
+    //
+    private void StartUpdaterThread() {
+        Thread statusupdaterthread = new Thread(new Runnable() {
+            public void run() {
+                CookieHandler.setDefault(new CookieManager());
 
+                while (true) {
+                	//
+                	// True = up and false = down
+                    boolean ServerStatus;
+                    String PlayerCount = "";
+
+                    String mainpagecontent = geturlcontent("https://www.havenandhearth.com/portal/");
+                    if (!mainpagecontent.isEmpty())
+                        PlayerCount = getstringbetween(mainpagecontent, "There are", "hearthlings playing").trim();
+                    if (PlayerCount.isEmpty())
+                        ServerStatus = false;
+                    else 
+                    	ServerStatus = true;
+                    
+                    if (ServerStatus)
+                	statusbtn.change("Server is " + String.format("up M8", Color.GREEN), Color.GREEN);
+                    else 
+                    statusbtn.change("Server is " + String.format("down", Color.RED), Color.RED);
+                    //
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        return;
+                    }
+                }
+            }
+        });
+        statusupdaterthread.start();
+    }
+    
+    private static String getstringbetween(String input, String leftdelimiter, String rightdelimiter) {
+        int leftdelimiterposition = input.indexOf(leftdelimiter);
+        if (leftdelimiterposition == -1)
+            return "";
+
+        int rightdelimiterposition = input.indexOf(rightdelimiter);
+        if (rightdelimiterposition == -1)
+            return "";
+
+        return input.substring(leftdelimiterposition + leftdelimiter.length(), rightdelimiterposition);
+    }
+
+    private String geturlcontent(String url) {
+        if (sslfactory == null)
+            return "";
+        URL url_;
+        InputStream is = null;
+        BufferedReader br;
+        String urlcontent = "";
+
+        try {
+            url_ = new URL(url);
+            HttpsURLConnection conn = (HttpsURLConnection)url_.openConnection();
+            conn.setSSLSocketFactory(sslfactory);
+            is = conn.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is));
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                urlcontent += line;
+            }
+        } catch (SocketException se) {
+            // don't print socket exceptions when network is unreachable to prevent console spamming on bad connections
+            if (!se.getMessage().equals("Network is unreachable"))
+                se.printStackTrace();
+            return "";
+        } catch (MalformedURLException mue) {
+            mue.printStackTrace();
+            return "";
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return "";
+        } finally {
+            try {
+                if (is != null)
+                    is.close();
+            } catch (IOException ioe) {
+                // NOP
+            }
+        }
+
+        return urlcontent;
+    }
+    //
+    
     public void uimsg(String msg, Object... args) {
         synchronized (ui) {
             if (msg == "passwd") {
