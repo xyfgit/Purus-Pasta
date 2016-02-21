@@ -45,6 +45,7 @@ import haven.Glob.Pagina;
 import haven.Resource.AButton;
 import haven.util.ObservableCollection;
 import purus.CarrotFarmer;
+import purus.DragonflyCollector;
 import purus.FillOven;
 import purus.MusselPicker;
 
@@ -139,6 +140,7 @@ public class MenuGrid extends Widget {
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/study")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/mussel")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/carrotfarm")));
+    	p.add(glob.paginafor(Resource.local().load("paginae/custom/flycollect")));
     	//p.add(glob.paginafor(Resource.local().load("paginae/custom/oven")));
     }
     private static Comparator<Pagina> sorter = new Comparator<Pagina>() {
@@ -364,6 +366,8 @@ public class MenuGrid extends Widget {
         	new CarrotFarmer(ui, w, i).Run();
         } else if (ad[1].equals("oven-fill")) {
         	new FillOven(ui, w, i).Run();
+        } else if (ad[1].equals("flycollect")) {
+        	new DragonflyCollector(ui, w, i).Run();
         }
     }
 

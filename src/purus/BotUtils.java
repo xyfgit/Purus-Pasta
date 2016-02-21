@@ -109,9 +109,9 @@ public class BotUtils {
 	}
 	
 	// Click some object with specific button and modifier
-	public void doClick(Gob gob, int button, int mod) {
-		 ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
-		}
+    public void doClick(Gob gob, int button, int mod) {
+        ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
+    }
 
 	// Finds nearest crop with x stage
 		 public Gob findNearestStageCrop(int radius, int stage, String... names) {
