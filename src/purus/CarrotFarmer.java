@@ -102,9 +102,8 @@ public class CarrotFarmer {
 	            }
 	            // Planttaa, siemen käteen tähän vaiheeseen mennessä
 			BotUtils.mapInteractClick(1); 
-			//  TODO Droppaa kaikki siemenet tms. invistä + kädestä = saa toimimaan kaikkiin siemeniin
-			
-			//
+			//  TODO Droppaa kaikki siemenet tms. invistä + kädestä = saa toimimaan kaikkiin siemeniin joku hieno
+			//	juttu jolla saa valittua mitä kasvia farmaa jne. 
 			gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
 			if(gob != null) 
 			CarrotsNearby = true;
