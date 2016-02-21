@@ -43,24 +43,37 @@ public static boolean MusselsNearby;
 	public void run()  {
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 		Gob gob = get_target_gob();
+
+		long init_gob_id =  0;
 		while(gob != null) {
-			double start_dis = BotUtils.player().rc.dist(gob.rc);
-			BotUtils.doClick(gob, 3, 0);
-			//
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if (init_gob_id == 0){
+				init_gob_id = gob.id;
 			}
-			double moved_dis = BotUtils.player().rc.dist(gob.rc);
-			if (moved_dis > 50 && Math.abs(start_dis-moved_dis)<5){
+//			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
+			Coord p_st =  BotUtils.player().rc;
+
+			double gob_dis = BotUtils.player().rc.dist(gob.rc);
+			while (gob_dis> 10){
+				p_st =  BotUtils.player().rc;
+				p_st = new Coord(p_st.x, p_st.y);
+				BotUtils.doClick(gob, 3, 0);
+				//
+
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			if ( p_st.dist(BotUtils.player().rc) < 5){
+				p_st =  BotUtils.player().rc;
+				p_st = new Coord(p_st.x, p_st.y);
 				BotUtils.turn_around(gob.rc, 1);
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				if (moved_dis > 50 && Math.abs(start_dis-moved_dis)<5){
+				if (p_st.dist(BotUtils.player().rc) < 5){
 					BotUtils.turn_around(gob.rc, -1);
 					try {
 						Thread.sleep(500);
@@ -69,12 +82,16 @@ public static boolean MusselsNearby;
 					}
 				}
 				BotUtils.doClick(gob, 3, 0);
+
+			}
+				gob_dis = BotUtils.player().rc.dist(gob.rc);
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
+			// the Pick block is nerver executed during test
 			@SuppressWarnings("deprecation")
 			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 	            if (menu != null) {
@@ -82,26 +99,35 @@ public static boolean MusselsNearby;
 	                    if (opt.name.equals("Pick")) {
 	                        menu.choose(opt);
 	                        menu.destroy();
-	            			boolean onolemassa = true;
-	            			while(onolemassa) {
-		            			Gob onko = BotUtils.findObjectById(gob.id);
-		            			if (onko != null) 
-		            			onolemassa = true;
-		            			else
-		            			onolemassa = false;
-	            			}
+//							ui.root.findchild(GameUI.class).info("Pick", Color.WHITE);
 	                    }
 	                }
 	            }
+			gob = null;
+			while(gob == null) {
+				if (init_gob_id != 0) {
+					gob = BotUtils.findObjectById(init_gob_id);
+				}
+				if (gob == null){
+					gob =get_target_gob();
+				}
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+//			ui.root.findchild(GameUI.class).info("Found gob", Color.WHITE);
+
          //   BotUtils.Choose(opts[1])
-			gob = get_target_gob();
 		}
 		BotUtils.sysMsg("Mussel Picker Finished", Color.WHITE);
         window.destroy();
 		return;
 	}
 	});
-	
+
 	// This thingy makes that stupid window with cancel button, todo: make it better
 			private class StatusWindow extends Window {
 		        public StatusWindow() {
