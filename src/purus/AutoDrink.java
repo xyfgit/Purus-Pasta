@@ -38,57 +38,48 @@ public class AutoDrink {
 			BotUtils.sysMsg("Auto Drink Started", Color.WHITE);
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			while (true) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				};
-						// Start of drink TODO: Make separate function of this maybe yeah?
-						GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
-						IMeter.Meter stam = gui.getmeter("stam", 0);
-						// Check energy stop if it is lower than 1500
-						IMeter.Meter nrj = gui.getmeter("nrj", 0);
-						if (nrj.a <= 30){
-							BotUtils.sysMsg("Auto Drink Stop as run out of energy.", Color.WHITE);
-							t.stop();
-							return;
-						}
-						else if (stam.a <= 30) {
-							WItem item = BotUtils.findDrink(BotUtils.playerInventory());
-							if (item != null) {
-								item.item.wdgmsg("iact", Coord.z, 3);
-								try {
-									Thread.sleep(250);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-								@SuppressWarnings("deprecation")
-								FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-								if (menu != null) {
-									for (FlowerMenu.Petal opt : menu.opts) {
-										if (opt.name.equals("Drink")) {
-											menu.choose(opt);
-											menu.destroy();
-											BotUtils.sysMsg("wait for stam back to 84", Color.WHITE);
-											while (gui.getmeter("stam", 0).a <= 84) {
-												try {
-													Thread.sleep(500);
-												} catch (InterruptedException e) {
-													e.printStackTrace();
-												}
-											}
-										}
+				BotUtils.sleep(1000);
+				GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
+				IMeter.Meter stam = gui.getmeter("stam", 0);
+				// Check energy stop if it is lower than 1500
+				IMeter.Meter nrj = gui.getmeter("nrj", 0);
+				if (nrj.a <= 30){
+					BotUtils.sysMsg("Auto Drink Stop as run out of energy.", Color.WHITE);
+					t.stop();
+					return;
+				}
+				else if (stam.a <= 30) {
+					WItem item = BotUtils.findDrink(BotUtils.playerInventory());
+					if (item != null) {
+						item.item.wdgmsg("iact", Coord.z, 3);
+						BotUtils.sleep(500);
+						@SuppressWarnings("deprecation")
+						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+						if (menu != null) {
+							for (FlowerMenu.Petal opt : menu.opts) {
+								if (opt.name.equals("Drink")) {
+									menu.choose(opt);
+									menu.destroy();
+									BotUtils.sysMsg("wait for stam back to 84", Color.WHITE);
+									while (gui.getmeter("stam", 0).a <= 84) {
+										BotUtils.sleep(500);
+									}
+									//
+									CraftWindow makewnd = BotUtils.gui().gameui().makewnd;
+									if (makewnd != null && makewnd.activeWdgmsgArgs!=null){
+										Widget sender = (Widget) makewnd.activeWdgmsgArgs.get(0);
+										String msg = (String) makewnd.activeWdgmsgArgs.get(1);
+										Object[] args = (Object[]) makewnd.activeWdgmsgArgs.get(2);
+										makewnd.wdgmsg(sender, msg, args);
 									}
 								}
 							}
-							else{
-								try {
-									BotUtils.sysMsg("slowly wait for stam", Color.WHITE);
-									Thread.sleep(3000);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-							}
+						}
+					}
+					else{
+						// no drink available
+						BotUtils.sleep(3000);
+					}
 
 			}
 

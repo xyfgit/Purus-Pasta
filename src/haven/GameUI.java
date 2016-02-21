@@ -71,6 +71,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MinimapWnd minimapWnd;
     public static TimersWnd timerswnd;
     public StudyWnd studywnd;
+    public Widget miscwnd;
     public QuickSlotsWdg quickslots;
     public StatusWdg statuswindow;
     public AlignPanel questpanel;
@@ -622,7 +623,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         };
 	    add(questpanel);
         } else if (place == "misc") {
-            add(child, (Coord) args[1]);
+            miscwnd =  add(child, (Coord) args[1]);
         } else {
             throw (new UI.UIException("Illegal gameui child", place, args));
         }

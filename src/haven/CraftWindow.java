@@ -1,72 +1,22 @@
 package haven;
 
-import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import haven.util.ActionRecord;
 
 public class CraftWindow extends Window {
     private static final IBox frame = new IBox("hud/tab", "tl", "tr", "bl", "br", "extvl", "extvr", "extht", "exthb");
     private final TabStrip tabStrip;
     private final Map<Glob.Pagina, TabStrip.Button> tabs = new HashMap<Glob.Pagina, TabStrip.Button>();
     private Widget makeWidget;
+    public ArrayList<Object>  activeWdgmsgArgs= null;
     private Glob.Pagina lastAction;
-    private Thread drink_th = null;
 
-    protected void craftAssist(Widget sender, String msg, Object... args){
-        GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
-        FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-        IMeter.Meter nrj = gui.getmeter("nrj", 0);
-        IMeter.Meter stam = gui.getmeter("stam", 0);
-        if (menu != null && stam.a <= 30) {
-            if (nrj.a > 30){
-                while (gui.getmeter("stam", 0).a <= 90) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                super.wdgmsg(sender, msg, args);
-
-            }else{
-                ui.root.findchild(GameUI.class).info("Energy and Stam is too low to craft.", Color.WHITE);
-            }
-        };
-    };
-
-    protected void startAssist(Widget sender, String msg, Object... args){
-        ui.root.findchild(GameUI.class).info("check craft status "+Config.isCraftAssist, Color.WHITE);
-        if (Config.isCraftAssist == true){
-            if (drink_th == null || drink_th.isInterrupted()) {
-                drink_th = new Thread(new Runnable() {
-                    public void run() {
-                        while (true) {
-                            craftAssist(sender, msg, args);
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                });
-            }
-            if (drink_th !=null && !drink_th.isAlive() && !drink_th.isInterrupted()){
-                drink_th.start();
-            }
-        }
-    }
-
-    protected void stopAssist(){
-        if (drink_th != null && drink_th.isAlive()) {
-            ui.root.findchild(GameUI.class).info("stop check craft status "+Config.isCraftAssist, Color.WHITE);
-            drink_th.stop();
-            drink_th = null;
-        }
-    }
     public CraftWindow() {
         super(Coord.z, "Crafting");
         tabStrip = add(new TabStrip() {
+            // open crafting window
             protected void selected(Button button) {
                 for (Map.Entry<Glob.Pagina, Button> entry : tabs.entrySet()) {
                     Glob.Pagina pagina = entry.getKey();
@@ -89,12 +39,16 @@ public class CraftWindow extends Window {
 
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
+        //click crafting button
         if (sender == cbtn) {
-            stopAssist();
+            activeWdgmsgArgs = null;
             hide();
         } else {
-            startAssist(sender, msg, args);
+            activeWdgmsgArgs = new ArrayList<>();
             super.wdgmsg(sender, msg, args);
+            activeWdgmsgArgs.add(sender);
+            activeWdgmsgArgs.add(msg);
+            activeWdgmsgArgs.add(args);
         }
     }
 
@@ -114,10 +68,10 @@ public class CraftWindow extends Window {
     @Override
     public void cdestroy(Widget w) {
     	if (makeWidget == w) {
-            stopAssist();
-    		makeWidget = null;
-    		hide();
-    		}
+            activeWdgmsgArgs = null;
+            makeWidget = null;
+            hide();
+        }
     	}
 
     @Override
