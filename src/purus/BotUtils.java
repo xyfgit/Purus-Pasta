@@ -1,6 +1,7 @@
 package purus;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -144,7 +145,63 @@ public class BotUtils {
 		        return nearest;
 		    }
 	//
-		 
+	public Gob get_target_gob(ArrayList<String> targets, ArrayList<Coord>  exclude_gobs){
+		if (exclude_gobs.size() > 100) {
+			exclude_gobs=  new ArrayList<Coord>();
+		}
+		Gob gob = null;
+		double near_dis = 9999;
+		for (String target: targets){
+			Gob this_gob = findObjectByNames(800, target);
+			if(this_gob != null && !exclude_gobs.contains(this_gob.rc)){
+				double this_gob_dis = player().rc.dist(this_gob.rc);
+				if(this_gob_dis< near_dis ){
+					near_dis = this_gob_dis;
+					gob = this_gob;
+				}}
+		}
+		return gob;
+	};
+	public void goToGob(Gob gob){
+
+		Coord p_st = null;
+		if (gob==null){
+			sysMsg("Get null gob in goToGob function.", Color.RED);
+			return;
+		}
+		sysMsg("gob_dis:"+player().rc.dist(gob.rc), Color.WHITE);
+		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
+//			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
+		while (player().rc.dist(gob.rc) > 20){
+			// if distance to gob is larger than 10, still need to force walk
+//				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
+			// check if player moved
+			p_st =  player().rc;
+			p_st = new Coord(p_st.x, p_st.y);
+			sleep(500);
+			if ( p_st.dist(player().rc) < 5){
+				// if bocked try turn around
+				p_st =  player().rc;
+				p_st = new Coord(p_st.x, p_st.y);
+				turn_around(gob.rc, 1);
+				sleep(500);
+				if (p_st.dist(player().rc) < 5){
+					turn_around(gob.rc, -1);
+					sleep(500);
+				}
+				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
+				sleep(500);
+			}
+			sleep(500);
+		}
+		if (player().rc.dist(gob.rc) <= 20){
+			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
+			sleep(600);
+			// if reached the gob, pick gob, and find next gob
+			sysMsg("Reached target:"+gob.getres().name, Color.WHITE);
+		}
+
+	}
 	// Finds nearest objects
 	 public Gob findObjectByNames(int radius, String... names) {
 	        Coord plc = player().rc;

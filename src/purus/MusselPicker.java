@@ -29,23 +29,7 @@ public class MusselPicker {
 			"no gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
 	String boat_gob_name = "gfx/terobjs/vehicle/rowboat";
 	ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
-	private Gob get_target_gob(ArrayList exclude_gobs){
-		if (exclude_gobs.size() > 100) {
-			exclude_gobs=  new ArrayList<Coord>();
-		}
-		Gob gob = null;
-		double near_dis = 9999;
-		for (String target: targets){
-			Gob this_gob = BotUtils.findObjectByNames(800, target);
-			if(this_gob != null && !exclude_gobs.contains(this_gob.rc)){
-				double this_gob_dis = BotUtils.player().rc.dist(this_gob.rc);
-				if(this_gob_dis< near_dis ){
-				near_dis = this_gob_dis;
-				gob = this_gob;
-			}}
-		}
-		return gob;
-	};
+
 	Gob boat_gob = null;
 	public void Run () {
 	t.start();	
@@ -53,77 +37,46 @@ public class MusselPicker {
 	Thread t = new Thread(new Runnable() {
 	public void run()  {
 		boat_gob = BotUtils.findObjectByNames(100, boat_gob_name);
+		boolean on_boat = false;
 		if (boat_gob != null){
-			// check ui.modflags(), 2 means press control
-			ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), boat_gob.rc,1, 2);
-			BotUtils.sleep(100);
+			on_boat = true;
 		}
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
-		Gob gob = get_target_gob(exclude_gobs);
-		Coord p_st =  null;
-
-		while(gob != null) {
-//			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
-			if (BotUtils.player().rc.dist(gob.rc) <= 20){
-				BotUtils.doClick(gob, 3, 0);
-				BotUtils.sleep(600);
-				// if reached the gob, pick gob, and find next gob
-				exclude_gobs.add(gob.rc);
-				gob = null;
-				while(gob == null) {
-					if (gob == null){
-						gob =get_target_gob(exclude_gobs);
-					}
-					BotUtils.sleep(500);
-				}
-				BotUtils.sysMsg("Find target:"+gob.getres().name, Color.WHITE);
-				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
-			}
-			while (BotUtils.player().rc.dist(gob.rc) > 20){
-				// if distance to gob is larger than 10, still need to force walk
-//				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
-				// check if player moved
-				p_st =  BotUtils.player().rc;
-				p_st = new Coord(p_st.x, p_st.y);
+		Gob gob = null;
+		while (true){
+			while(gob == null) {
+				gob =BotUtils.get_target_gob(targets, exclude_gobs);
 				BotUtils.sleep(500);
-				if ( p_st.dist(BotUtils.player().rc) < 5){
-					// if bocked try turn around
-					p_st =  BotUtils.player().rc;
-					p_st = new Coord(p_st.x, p_st.y);
-					BotUtils.turn_around(gob.rc, 1);
-					BotUtils.sleep(500);
-					if (p_st.dist(BotUtils.player().rc) < 5){
-						BotUtils.turn_around(gob.rc, -1);
-						BotUtils.sleep(500);
-					}
-					ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1 ,0);
-					BotUtils.sleep(500);
-					BotUtils.doClick(gob, 3, 0);
-					BotUtils.sleep(500);
-				}
-			BotUtils.sleep(500);
 			}
-			// the Pick block is nerver executed during test
-			@SuppressWarnings("deprecation")
+			if (boat_gob != null && on_boat ){
+				// check ui.modflags(), 2 means press control
+				ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1, 2);
+				BotUtils.sleep(500);
+			}
+			BotUtils.doClick(gob, 3, 0);
+			BotUtils.sleep(500);
+			BotUtils.goToGob(gob);
+			BotUtils.doClick(gob, 3, 0);
+			BotUtils.sleep(500);
 			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-	            if (menu != null) {
-	                for (FlowerMenu.Petal opt : menu.opts) {
-	                    if (opt.name.contains("Pick") || opt.name.equals("Chip stone") ) {
-	                        menu.choose(opt);
-//							ui.root.findchild(GameUI.class).info("Pick", Color.WHITE);
-	                    }
-	                }
-					menu.destroy();
-	            }
-			BotUtils.sleep(700);
-//			ui.root.findchild(GameUI.class).info("Found gob", Color.WHITE);
-
-         //   BotUtils.Choose(opts[1])
+			boolean nex_pick = true;
+			while (nex_pick && menu != null) {
+				nex_pick = false;
+				for (FlowerMenu.Petal opt : menu.opts) {
+					if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
+						menu.choose(opt);
+						menu.destroy();
+						nex_pick = true;
+						BotUtils.doClick(gob, 3, 0);
+						BotUtils.sleep(500);
+						menu = ui.root.findchild(FlowerMenu.class);
+						break;
+					}
+				}
+			}
+			exclude_gobs.add(gob.rc);
+			gob = null;
 		}
-		BotUtils.sysMsg("Mussel Picker Finished", Color.WHITE);
-        window.destroy();
-		t.stop();
-		return;
 	}
 	});
 
@@ -137,7 +90,10 @@ public class MusselPicker {
 		                    if(t != null) {
 		                    	gameui().info("Mussel Picker Cancelled", Color.WHITE);
 		                    	t.stop();
-								BotUtils.doClick(boat_gob, 3, 0);
+								if (boat_gob !=null) {
+//									BotUtils.goToGob(boat_gob);
+									BotUtils.doClick(boat_gob, 3, 0);
+								}
 		                    }
 							window.destroy();
 		                }
