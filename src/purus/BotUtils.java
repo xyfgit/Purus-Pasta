@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import haven.Coord;
 import haven.FlowerMenu;
 import haven.FlowerMenu.Petal;
@@ -162,18 +163,34 @@ public class BotUtils {
 		}
 		return gob;
 	};
-	public void goToGob(Gob gob, int radiation, boolean cancelable){
+	public Coord getReachRC(Coord rc_st, Coord rc_end){
+//		if ((rc_end.y - rc_st.y)==0 ||((rc_end.x-rc_st.x)/(rc_end.y-rc_st.y))==0) return rc_end;
+//		float y = (x-rc_st.x)/((rc_end.x-rc_st.x)/(rc_end.y-rc_st.y))+rc_st.y ;
+//		Coord reach_rc = new Coord(x, (int)(y));
+		int x_direction = (player().rc.x >  rc_end.x)?-1:1;
+		int y_direction = (player().rc.y >  rc_end.y)?-1:1;
+		Coord middle_rc = rc_end;
+		while (middle_rc.dist(rc_st)> 400) {
+			middle_rc = new Coord(rc_st.x + Math.abs(middle_rc.x - rc_st.x) / 2 * x_direction, rc_st.y + Math.abs(middle_rc.y - rc_st.y) / 2 * y_direction);
+			if (middle_rc.dist(rc_st) > 3000){
+				sysMsg("getReachRC get a middle rc > 3000!", Color.RED);
+			}
+		}
+		return middle_rc;
+	}
+	public void goToCoord(Coord gob_rc, int radiation, boolean cancelable){
 
 		Coord p_st = null;
-		if (gob==null){
+		if (gob_rc==null){
 			sysMsg("Get null gob in goToGob function.", Color.RED);
 			return;
 		}
-		sysMsg("gob_dis:"+player().rc.dist(gob.rc), Color.WHITE);
-		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
+		sysMsg("gob_dis:"+player().rc.dist(gob_rc), Color.WHITE);
+		Coord reach_rc = getReachRC(player().rc, gob_rc);
+		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
 //			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
 		sleep(200);
-		while (player().rc.dist(gob.rc) > radiation){
+		while (player().rc.dist(gob_rc) > radiation){
 			if (haven.Settings.getCancelAuto() && cancelable){
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(),  player().rc,1 ,0);
 				return;
@@ -188,25 +205,25 @@ public class BotUtils {
 				// if bocked try turn around
 				p_st =  player().rc;
 				p_st = new Coord(p_st.x, p_st.y);
-				turn_around(gob.rc, 1);
+				turn_around(gob_rc, 1);
 				sleep(500);
 				if (p_st.dist(player().rc) < 5){
-					turn_around(gob.rc, -1);
+					turn_around(gob_rc, -1);
 					sleep(500);
 				}
 				//climb the hill need 2 click.
-				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
+				reach_rc = getReachRC(player().rc, gob_rc);
+				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
 				sleep(300);
-				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
+				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
 				sleep(500);
 			}
 			sleep(500);
 		}
-		if (player().rc.dist(gob.rc) <= radiation){
+		if (player().rc.dist(gob_rc) <= radiation){
 			// if reached the gob, pick gob, and find next gob
-			sysMsg("Reached target:"+gob.getres().name, Color.WHITE);
+//			sysMsg("Reached target:"+gob.getres().name, Color.WHITE);
 		}
-
 	}
 	// Finds nearest objects
 	 public Gob findObjectByNames(int radius, String... names) {

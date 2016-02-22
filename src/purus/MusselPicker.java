@@ -45,7 +45,7 @@ public class MusselPicker {
 		Gob gob = null;
 		while (true){
 			if (Settings.getCancelAuto() && boat_gob!=null){
-				BotUtils.goToGob(boat_gob,30, false);
+				BotUtils.goToCoord(boat_gob.rc,30, false);
 				BotUtils.doClick(boat_gob, 3, 0);
 				BotUtils.sleep(200);
 				t.stop();
@@ -62,7 +62,7 @@ public class MusselPicker {
 				BotUtils.sleep(300);
 				on_boat=false;
 			}
-			BotUtils.goToGob(gob,15, true);
+			BotUtils.goToCoord(gob.rc,15, true);
 			BotUtils.sleep(500);
 			BotUtils.doClick(gob, 3, 0);
 			BotUtils.sleep(500);
