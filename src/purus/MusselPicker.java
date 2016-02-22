@@ -27,7 +27,7 @@ public class MusselPicker {
 			"gfx/kritter/frog/frog",
 			"gfx/kritter/rat/rat", "gfx/terobjs/trees/appletree",
 			"no gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
-
+	String boat_gob_name = "gfx/terobjs/vehicle/rowboat";
 	ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
 	private Gob get_target_gob(ArrayList exclude_gobs){
 		if (exclude_gobs.size() > 100) {
@@ -46,20 +46,23 @@ public class MusselPicker {
 		}
 		return gob;
 	};
+	Gob boat_gob = null;
 	public void Run () {
 	t.start();	
 	}
 	Thread t = new Thread(new Runnable() {
 	public void run()  {
+		boat_gob = BotUtils.findObjectByNames(100, boat_gob_name);
+		if (boat_gob != null){
+			// check ui.modflags(), 2 means press control
+			ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), boat_gob.rc,1, 2);
+			BotUtils.sleep(100);
+		}
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 		Gob gob = get_target_gob(exclude_gobs);
-		long init_gob_id =  0;
 		Coord p_st =  null;
 
 		while(gob != null) {
-			if (init_gob_id == 0){
-				init_gob_id = gob.id;
-			}
 //			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
 			if (BotUtils.player().rc.dist(gob.rc) <= 20){
 				BotUtils.doClick(gob, 3, 0);
@@ -90,11 +93,6 @@ public class MusselPicker {
 					BotUtils.turn_around(gob.rc, 1);
 					BotUtils.sleep(500);
 					if (p_st.dist(BotUtils.player().rc) < 5){
-						// check ui.modflags(), 2 means press control
-						ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1, 2);
-						BotUtils.sleep(100);
-					}
-					if (p_st.dist(BotUtils.player().rc) < 5){
 						BotUtils.turn_around(gob.rc, -1);
 						BotUtils.sleep(500);
 					}
@@ -112,10 +110,10 @@ public class MusselPicker {
 	                for (FlowerMenu.Petal opt : menu.opts) {
 	                    if (opt.name.contains("Pick") || opt.name.equals("Chip stone") ) {
 	                        menu.choose(opt);
-	                        menu.destroy();
 //							ui.root.findchild(GameUI.class).info("Pick", Color.WHITE);
 	                    }
 	                }
+					menu.destroy();
 	            }
 			BotUtils.sleep(700);
 //			ui.root.findchild(GameUI.class).info("Found gob", Color.WHITE);
@@ -136,11 +134,12 @@ public class MusselPicker {
 		            setLocal(true);
 		            add(new Button(120, "Cancel") {
 		                public void click() {
-		                    window.destroy();
 		                    if(t != null) {
 		                    	gameui().info("Mussel Picker Cancelled", Color.WHITE);
 		                    	t.stop();
+								BotUtils.doClick(boat_gob, 3, 0);
 		                    }
+							window.destroy();
 		                }
 		            });
 		            pack();
