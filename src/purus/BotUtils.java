@@ -152,7 +152,7 @@ public class BotUtils {
 		Gob gob = null;
 		double near_dis = 9999;
 		for (String target: targets){
-			Gob this_gob = findObjectByNames(800, target);
+			Gob this_gob = findObjectByNames(600, target);
 			if(this_gob != null && !exclude_gobs.contains(this_gob.rc)){
 				double this_gob_dis = player().rc.dist(this_gob.rc);
 				if(this_gob_dis< near_dis ){
@@ -162,7 +162,7 @@ public class BotUtils {
 		}
 		return gob;
 	};
-	public void goToGob(Gob gob){
+	public void goToGob(Gob gob, int radiation, boolean cancelable){
 
 		Coord p_st = null;
 		if (gob==null){
@@ -172,13 +172,18 @@ public class BotUtils {
 		sysMsg("gob_dis:"+player().rc.dist(gob.rc), Color.WHITE);
 		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
 //			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
-		while (player().rc.dist(gob.rc) > 20){
+		sleep(200);
+		while (player().rc.dist(gob.rc) > radiation){
+			if (haven.Settings.getCancelAuto() && cancelable){
+				ui.gui.map.wdgmsg("click", getCenterScreenCoord(),  player().rc,1 ,0);
+				return;
+			}
 			// if distance to gob is larger than 10, still need to force walk
 //				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
 			// check if player moved
 			p_st =  player().rc;
 			p_st = new Coord(p_st.x, p_st.y);
-			sleep(500);
+			sleep(300);
 			if ( p_st.dist(player().rc) < 5){
 				// if bocked try turn around
 				p_st =  player().rc;
@@ -189,14 +194,15 @@ public class BotUtils {
 					turn_around(gob.rc, -1);
 					sleep(500);
 				}
+				//climb the hill need 2 click.
+				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
+				sleep(300);
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
 				sleep(500);
 			}
 			sleep(500);
 		}
-		if (player().rc.dist(gob.rc) <= 20){
-			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
-			sleep(600);
+		if (player().rc.dist(gob.rc) <= radiation){
 			// if reached the gob, pick gob, and find next gob
 			sysMsg("Reached target:"+gob.getres().name, Color.WHITE);
 		}
