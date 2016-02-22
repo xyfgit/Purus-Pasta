@@ -9,7 +9,7 @@ import haven.UI;
 import haven.Widget;
 import haven.FlowerMenu.Petal;
 
-public class FillOven {
+public class FillSmelter {
 
 	private final UI ui;
     private haven.Widget w;
@@ -19,7 +19,7 @@ public class FillOven {
     private Widget window; 
 	BotUtils BotUtils;
 
-	public FillOven (UI ui, Widget w, Inventory i) {
+	public FillSmelter (UI ui, Widget w, Inventory i) {
 		this.ui = ui;
 		this.w = w;
 		this.i = i;
@@ -29,17 +29,18 @@ public class FillOven {
 	public void Run () {
 	t.start();	
 	}
+	
 	Thread t = new Thread(new Runnable() {
 	public void run()  {
-		Gob gob = BotUtils.findObjectByNames(100, "gfx/terobjs/oven");
+		Gob gob = BotUtils.findObjectByNames(100, "gfx/terobjs/smelter");
 			int AmountFilled = 0;
-			while (AmountFilled != 4) {
+			while (AmountFilled != 12) {
 		
            	 Inventory inv = BotUtils.playerInventory();
            	 GItem item = null;;
            	 
              for (Widget w = inv.child; w != null; w = w.next) {
-                 if (w instanceof GItem && isBranch((GItem) w)) {
+                 if (w instanceof GItem && isCoal((GItem) w)) {
                     item = (GItem)w;
                      break;
                  	}
@@ -48,8 +49,8 @@ public class FillOven {
 	                BotUtils.takeItem(item);
 	    			sleep(250);
 	            } else {
-	            	BotUtils.sysMsg("Couldnt find branch", Color.WHITE);
-	            	BotUtils.sysMsg("Oven Filler Cancelled", Color.WHITE);
+	            	BotUtils.sysMsg("Couldnt find coal", Color.WHITE);
+	            	BotUtils.sysMsg("Smelter Filler Cancelled", Color.WHITE);
 	                t.stop();
 	                return;
 	            }
@@ -70,8 +71,8 @@ public class FillOven {
     public String itemName(GItem item) {
     return item.resname();
     }
-	final String[] coal = {"gfx/invobjs/branch"};
-    protected boolean isBranch(final GItem item) {
+	final String[] coal = {"gfx/invobjs/coal", "gfx/invobjs/blackcoal"};
+    protected boolean isCoal(final GItem item) {
         String resName = item.resname();
         if (resName != null && !resName.isEmpty()) {
             for (String food : coal)

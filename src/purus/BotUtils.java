@@ -22,6 +22,7 @@ import haven.Speedget;
 import haven.UI;
 import haven.WItem;
 import haven.Widget;
+import haven.Window;
 
 public class BotUtils {
 
@@ -132,7 +133,15 @@ public class BotUtils {
        w.wdgmsg("cl", option.num, ui.modflags());
 	}
 	
+	// Click some object with item on hand
+	// Modifier 1 - shift; 2 - ctrl; 4 alt;
+    public void itemClick(Gob gob, int mod) {
+        ui.gui.map.wdgmsg("itemact", Coord.z, gob.rc, mod, 0, (int)gob.id, gob.rc, 0, -1);
+    }
+	
 	// Click some object with specific button and modifier
+	// Button 1 = Left click and 3 = right click
+	// Modifier 1 - shift; 2 - ctrl; 4 - alt;
     public void doClick(Gob gob, int button, int mod) {
         ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
     }
