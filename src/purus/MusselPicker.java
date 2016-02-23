@@ -72,9 +72,13 @@ public class MusselPicker {
 			}
 			BotUtils.goToCoord(gob.rc,15, true);
 			BotUtils.doClick(gob, 3, 0);
-			BotUtils.sleep(500);
+			BotUtils.sleep(400);
 			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 			boolean nex_pick = true;
+			if (menu==null){
+				BotUtils.doClick(gob, 3, 0);
+				BotUtils.sleep(300);
+			}
 			while (nex_pick && menu != null&&!Settings.getCancelAuto()) {
 				nex_pick = false;
 				for (FlowerMenu.Petal opt : menu.opts) {

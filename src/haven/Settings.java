@@ -22,4 +22,5 @@ public class Settings {
     public static void setCancelAuto(boolean val) {
         CancelAuto=val;
     }
+    public static Thread MusselPicker = null;
 }
