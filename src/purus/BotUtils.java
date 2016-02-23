@@ -6,24 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
-import haven.Coord;
-import haven.FlowerMenu;
+import haven.*;
 import haven.FlowerMenu.Petal;
-import haven.GAttrib;
-import haven.GItem;
-import haven.GameUI;
-import haven.Gob;
-import haven.Inventory;
-import haven.ItemInfo;
-import haven.Loading;
-import haven.Moving;
-import haven.Resource;
-import haven.UI;
-import haven.WItem;
-import haven.Widget;
 
-public class BotUtils {
+public class  BotUtils {
 
 	private final UI ui;
     private haven.Widget w;
@@ -33,8 +19,8 @@ public class BotUtils {
     String liquids =  haven.Utils.join("|", new String[] { "Water", "Piping Hot Tea", "Tea" });
     String pattern = String.format("[0-9.]+ l of (%s)", liquids);
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
-    
-	public BotUtils (UI ui, Widget w, Inventory i) {
+	public static Thread MusselPicker = null;
+	public  BotUtils (UI ui, Widget w, Inventory i) {
 		this.ui = ui;
 		this.w = w;
 		this.i = i;
@@ -178,12 +164,12 @@ public class BotUtils {
 		}
 		return middle_rc;
 	}
-	public void goToCoord(Coord gob_rc, int radiation, boolean cancelable){
+	public boolean goToCoord(Coord gob_rc, int radiation, boolean cancelable){
 
 		Coord p_st = null;
 		if (gob_rc==null){
 			sysMsg("Get null gob in goToGob function.", Color.RED);
-			return;
+			return false;
 		}
 		sysMsg("gob_dis:"+player().rc.dist(gob_rc), Color.WHITE);
 		Coord reach_rc = getReachRC(player().rc, gob_rc);
@@ -193,7 +179,7 @@ public class BotUtils {
 		while (player().rc.dist(gob_rc) > radiation){
 			if (haven.Settings.getCancelAuto() && cancelable){
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(),  player().rc,1 ,0);
-				return;
+				return false;
 			}
 			// if distance to gob is larger than 10, still need to force walk
 //				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
@@ -222,8 +208,10 @@ public class BotUtils {
 		}
 		if (player().rc.dist(gob_rc) <= radiation){
 			// if reached the gob, pick gob, and find next gob
-//			sysMsg("Reached target:"+gob.getres().name, Color.WHITE);
+//			sysMsg("Reached target:"+gob.getres().name, Color.WHITE)
+			return true;
 		}
+		return false;
 	}
 	// Finds nearest objects
 	 public Gob findObjectByNames(int radius, String... names) {

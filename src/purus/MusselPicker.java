@@ -1,11 +1,13 @@
 package purus;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import haven.*;
+import haven.Button;
 import haven.FlowerMenu.Petal;
+import haven.Window;
 
 public class MusselPicker {
 
@@ -13,7 +15,7 @@ public class MusselPicker {
     private haven.Widget w;
     private haven.Inventory i;
     public Petal[] opts;
-    private Widget window; 
+    private static Widget window;
     
 	BotUtils BotUtils;
 
@@ -27,95 +29,101 @@ public class MusselPicker {
 
 	String boat_gob_name = "gfx/terobjs/vehicle/rowboat";
 	ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
-	Gob boat_gob = null;
-	public void Run () {
-	t.start();	
-	}
-	Thread t = new Thread(new Runnable() {
-	public void run()  {
+	static Gob  boat_gob = null;
+	boolean on_boat = false;
+	public Gob gob = null;
+	public synchronized void Run () {
+//		gob = null;
+		Settings.setCancelAuto(false);
+		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
+		boat_gob = BotUtils.findObjectByNames(100, boat_gob_name);
 		if (Config.autoPickAnimal){
 			targets.add("gfx/kritter");
 		}
-		Settings.setCancelAuto(false);
-		boat_gob = BotUtils.findObjectByNames(100, boat_gob_name);
-		boolean on_boat = false;
-		if (boat_gob != null){
-			on_boat = true;
+		if (boat_gob != null  ){
+			// check ui.modflags(), 2 means press control
+			ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), boat_gob.rc,1, 2);
+			BotUtils.sleep(300);
+			on_boat=false;
 		}
-		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
-		Gob gob = null;
-		Gob start_gob = BotUtils.get_target_gob(targets, exclude_gobs);
-		while (start_gob != null){
-			if (Settings.getCancelAuto() && boat_gob!=null){
-				BotUtils.goToCoord(boat_gob.rc,30, false);
-				BotUtils.doClick(boat_gob, 3, 0);
-				BotUtils.sleep(200);
-				window.destroy();
-				t.stop();
-				return;
-			}
-			while(gob == null) {
-				gob =BotUtils.get_target_gob(targets, exclude_gobs);
-				if (Settings.getCancelAuto() && boat_gob != null){
-					gob = boat_gob;
-					break;
-				}
-				BotUtils.sleep(200);
-			}
-			BotUtils.doClick(gob, 3, 0);
-			BotUtils.sleep(500);
-			if (boat_gob != null && on_boat ){
-				// check ui.modflags(), 2 means press control
-				ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1, 2);
-				BotUtils.sleep(300);
-				on_boat=false;
-			}
-			BotUtils.goToCoord(gob.rc,15, true);
-			BotUtils.doClick(gob, 3, 0);
-			BotUtils.sleep(400);
-			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-			boolean nex_pick = true;
-			if (menu==null){
-				BotUtils.doClick(gob, 3, 0);
-				BotUtils.sleep(300);
-			}
-			while (nex_pick && menu != null&&!Settings.getCancelAuto()) {
-				nex_pick = false;
-				for (FlowerMenu.Petal opt : menu.opts) {
-					if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
-						menu.choose(opt);
-						menu.destroy();
-						nex_pick = true;
+		gob = null;
+		if (BotUtils.MusselPicker == null) {
+			BotUtils.MusselPicker = new Thread(new Runnable() {
+				public synchronized void run()  {
+					while (true){
+						while(gob == null) {
+							BotUtils.sleep(400);
+							gob =BotUtils.get_target_gob(targets, exclude_gobs);
+//							BotUtils.sysMsg("cancel?" +Settings.getCancelAuto(), Color.WHITE);
+							if (Settings.getCancelAuto() && boat_gob != null){
+								gob = boat_gob;
+								break;
+							}
+						}
+						// gob cannot be null
+						if (gob==boat_gob){
+							BotUtils.sysMsg("Go back to boat!", Color.WHITE);
+							BotUtils.goToCoord(gob.rc,30, false);
+							BotUtils.sleep(200);
+							BotUtils.doClick(gob, 3, 0);
+							BotUtils.sleep(300);
+							window.destroy();
+							BotUtils.MusselPicker.suspend();
+							// important to trigger find gob
+							gob = null;
+							continue;
+						}else{
+							if (BotUtils.goToCoord(gob.rc,15, true)){
+								if (!exclude_gobs.contains(gob.rc)){ exclude_gobs.add(gob.rc);}
+							}
+						}
 						BotUtils.doClick(gob, 3, 0);
-						BotUtils.sleep(1000);
-						menu = ui.root.findchild(FlowerMenu.class);
-						break;
+						BotUtils.sleep(400);
+						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+						boolean nex_pick = true;
+						if (menu==null){
+							BotUtils.doClick(gob, 3, 0);
+							BotUtils.sleep(300);
+						}
+						while (nex_pick && menu != null&&!Settings.getCancelAuto()) {
+							nex_pick = false;
+							for (FlowerMenu.Petal opt : menu.opts) {
+								if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
+									menu.choose(opt);
+									menu.destroy();
+									nex_pick = true;
+									BotUtils.doClick(gob, 3, 0);
+									BotUtils.sleep(1000);
+									menu = ui.root.findchild(FlowerMenu.class);
+									break;
+								}
+							}
+							if (!nex_pick){
+								menu.destroy();
+							}
+						}
+						gob = null;
 					}
 				}
-				if (!nex_pick){
-					menu.destroy();
-				}
-			}
-			exclude_gobs.add(gob.rc);
-			gob = null;
+			});;
+			BotUtils.MusselPicker.start();
+		}else{
+			BotUtils.MusselPicker.resume();
 		}
-		BotUtils.sysMsg("Nothing found, Mussel Picker finish", Color.WHITE);
 	}
-	});
 
 	// This thingy makes that stupid window with cancel button, todo: make it better
 			private class StatusWindow extends Window {
 				Button cancel_btn =new Button(120, "Cancel") {
 					public void click() {
-						if(t != null) {
+						if(BotUtils.MusselPicker != null) {
 							if (Settings.getCancelAuto()||boat_gob==null) {
-								t.stop();
+								BotUtils.MusselPicker.suspend();
 								window.destroy();
 							}
 							if (boat_gob !=null) {
 								Settings.setCancelAuto(true);
 							}
-
 						}
 						gameui().info("Mussel Picker Cancelled, handle cancel: " + haven.Settings.getCancelAuto() , Color.WHITE);
 
@@ -129,17 +137,16 @@ public class MusselPicker {
 		            pack();
 		        }
 		        public void wdgmsg(Widget sender, String msg, Object... args) {
+					// comment out as this code can cause bug
 //		            if (sender == this && msg.equals("close")) {
-					if (t.isAlive()){
-					t.stop();}
+					if (BotUtils.MusselPicker.isAlive()){
+					BotUtils.MusselPicker.suspend();}
 					window.destroy();
 //		            }
 					if (boat_gob !=null) {
 						BotUtils.doClick(boat_gob, 3, 0);
-						BotUtils.sleep(500);
 					}
 		        }
-
 			}
 			//
 }
