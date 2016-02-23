@@ -44,16 +44,23 @@ public class MusselPicker {
 		}
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 		Gob gob = null;
-		while (true){
+		Gob start_gob = BotUtils.get_target_gob(targets, exclude_gobs);
+		while (start_gob != null){
 			if (Settings.getCancelAuto() && boat_gob!=null){
 				BotUtils.goToCoord(boat_gob.rc,30, false);
 				BotUtils.doClick(boat_gob, 3, 0);
 				BotUtils.sleep(200);
+				window.destroy();
 				t.stop();
 				return;
 			}
 			while(gob == null) {
 				gob =BotUtils.get_target_gob(targets, exclude_gobs);
+				if (Settings.getCancelAuto() && boat_gob != null){
+					gob = boat_gob;
+					break;
+				}
+				BotUtils.sleep(200);
 			}
 			BotUtils.doClick(gob, 3, 0);
 			BotUtils.sleep(500);
@@ -88,6 +95,7 @@ public class MusselPicker {
 			exclude_gobs.add(gob.rc);
 			gob = null;
 		}
+		BotUtils.sysMsg("Nothing found, Mussel Picker finish", Color.WHITE);
 	}
 	});
 
@@ -105,7 +113,7 @@ public class MusselPicker {
 							}
 
 						}
-						gameui().info("Mussel Picker Cancelled" + haven.Settings.getCancelAuto() , Color.WHITE);
+						gameui().info("Mussel Picker Cancelled, handle cancel: " + haven.Settings.getCancelAuto() , Color.WHITE);
 
 					}
 				};
