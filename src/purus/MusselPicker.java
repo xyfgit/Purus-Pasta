@@ -23,10 +23,8 @@ public class MusselPicker {
 		this.i = i;
 		BotUtils = new BotUtils(ui, w, i);
 	};
-	ArrayList<String> targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs",
-			"gfx/kritter/frog/frog",
-			"gfx/kritter/rat/rat", "gfx/terobjs/trees/appletree",
-			"no gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
+	ArrayList<String> targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs", "gfx/terobjs/trees/appletree"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
+
 	String boat_gob_name = "gfx/terobjs/vehicle/rowboat";
 	ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
 	Gob boat_gob = null;
@@ -35,6 +33,9 @@ public class MusselPicker {
 	}
 	Thread t = new Thread(new Runnable() {
 	public void run()  {
+		if (Config.autoPickAnimal){
+			targets.add("gfx/kritter");
+		}
 		Settings.setCancelAuto(false);
 		boat_gob = BotUtils.findObjectByNames(100, boat_gob_name);
 		boolean on_boat = false;
@@ -63,7 +64,6 @@ public class MusselPicker {
 				on_boat=false;
 			}
 			BotUtils.goToCoord(gob.rc,15, true);
-			BotUtils.sleep(500);
 			BotUtils.doClick(gob, 3, 0);
 			BotUtils.sleep(500);
 			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);

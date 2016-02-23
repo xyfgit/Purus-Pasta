@@ -277,7 +277,7 @@ public class BotUtils {
     public static boolean isObjectName(Gob gob, String name) {
         try {
             Resource res = gob.getres();
-            return (res != null) && res.name.contains(name);
+            return (res != null) && res.name.startsWith(name);
         } catch (Loading e) {
             return false;
         }   

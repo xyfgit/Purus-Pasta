@@ -1312,13 +1312,24 @@ public class OptWnd extends Window {
             }
         }, new Coord(260, y));
         y += 35;
-        general.add(new CheckBox("Use CraftAssist with help of auto drink window") {
+//        general.add(new CheckBox("Use CraftAssist with help of auto drink window") {
+//            {
+//                a = Config.isCraftAssist;
+//            }
+//            public void set(boolean val) {
+//                Utils.setprefb("isCraftAssist", val);
+//                Config.isCraftAssist = val;
+//                a = val;
+//            }
+//        }, new Coord(260, y));
+//        y += 35;
+        general.add(new CheckBox("Auto pick animal") {
             {
-                a = Config.isCraftAssist;
+                a = Config.autoPickAnimal;
             }
             public void set(boolean val) {
-                Utils.setprefb("isCraftAssist", val);
-                Config.isCraftAssist = val;
+                Utils.setprefb("autoPickAnimal", val);
+                Config.autoPickAnimal = val;
                 a = val;
             }
         }, new Coord(260, y));

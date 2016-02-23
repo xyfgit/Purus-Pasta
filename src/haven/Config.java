@@ -180,6 +180,7 @@ public class Config {
     public static boolean showanimalrad = Utils.getprefb("showanimalrad", false);
     public static boolean hwcursor = Utils.getprefb("hwcursor", false);
     public static boolean isCraftAssist = Utils.getprefb("isCraftAssist", false);
+    public static boolean autoPickAnimal = Utils.getprefb("autoPickAnimal", false);
     public static boolean showboundingboxes = Utils.getprefb("showboundingboxes", false);
     public static String playerposfile;
     public static byte[] authck = null;
