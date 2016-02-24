@@ -19,7 +19,7 @@ public class  BotUtils {
     String liquids =  haven.Utils.join("|", new String[] { "Water", "Piping Hot Tea", "Tea" });
     String pattern = String.format("[0-9.]+ l of (%s)", liquids);
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
-	public static Thread MusselPicker = null;
+	public static Thread MusselPicker;
 	public  BotUtils (UI ui, Widget w, Inventory i) {
 		this.ui = ui;
 		this.w = w;
@@ -100,6 +100,9 @@ public class  BotUtils {
 	};
 	// Click some object with specific button and modifier
 	public void doClick(Gob gob, int button, int mod) {
+		if (gob == null){
+			return;
+		}
 		 ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
 		}
 
@@ -132,14 +135,12 @@ public class  BotUtils {
 		        return nearest;
 		    }
 	//
-	public Gob get_target_gob(ArrayList<String> targets, ArrayList<Coord>  exclude_gobs){
-		if (exclude_gobs.size() > 100) {
-			exclude_gobs=  new ArrayList<Coord>();
-		}
+	public Gob get_target_gob(Coord center_rc, int radius, ArrayList<String> targets, ArrayList<Coord>  exclude_gobs){
+
 		Gob gob = null;
 		double near_dis = 9999;
 		for (String target: targets){
-			Gob this_gob = findObjectByNames(600, target);
+			Gob this_gob = findObjectByNames(center_rc,radius, target);
 			if(this_gob != null && !exclude_gobs.contains(this_gob.rc)){
 				double this_gob_dis = player().rc.dist(this_gob.rc);
 				if(this_gob_dis< near_dis ){
@@ -156,7 +157,7 @@ public class  BotUtils {
 		int x_direction = (player().rc.x >  rc_end.x)?-1:1;
 		int y_direction = (player().rc.y >  rc_end.y)?-1:1;
 		Coord middle_rc = rc_end;
-		while (middle_rc.dist(rc_st)> 400) {
+		while (middle_rc.dist(rc_st)> 600) {
 			middle_rc = new Coord(rc_st.x + Math.abs(middle_rc.x - rc_st.x) / 2 * x_direction, rc_st.y + Math.abs(middle_rc.y - rc_st.y) / 2 * y_direction);
 			if (middle_rc.dist(rc_st) > 3000){
 				sysMsg("getReachRC get a middle rc > 3000!", Color.RED);
@@ -200,7 +201,7 @@ public class  BotUtils {
 				//climb the hill need 2 click.
 				reach_rc = getReachRC(player().rc, gob_rc);
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
-				sleep(300);
+				sleep(100);
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
 				sleep(500);
 			}
@@ -214,13 +215,12 @@ public class  BotUtils {
 		return false;
 	}
 	// Finds nearest objects
-	 public Gob findObjectByNames(int radius, String... names) {
-	        Coord plc = player().rc;
+	 public Gob findObjectByNames(Coord center_rc,int radius, String... names) {
 	        double min = radius;
 	        Gob nearest = null;
 	        synchronized (ui.sess.glob.oc) {
 	            for (Gob gob : ui.sess.glob.oc) {
-	                double dist = gob.rc.dist(plc);
+	                double dist = gob.rc.dist(center_rc);
 	                if (dist < min) {
 	                    boolean matches = false;
 	                    for (String name : names) {

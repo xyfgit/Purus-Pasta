@@ -38,7 +38,7 @@ public class FillOven {
 		 * 4. Toista oksan otto ja uunin klikkaus niin etta 4 oksaa sisalla
 		 * 5. Valmis!!
 		 */
-		Gob gob = BotUtils.findObjectByNames(50, "gfx/terobjs/oven");
+		Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 50, "gfx/terobjs/oven");
 		
 		branchesfed = 0;
 		while(branchesfed != 4) {

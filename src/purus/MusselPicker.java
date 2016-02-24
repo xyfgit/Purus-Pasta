@@ -26,7 +26,9 @@ public class MusselPicker {
 		BotUtils = new BotUtils(ui, w, i);
 	};
 	static ArrayList<String>  targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs", "gfx/terobjs/trees/appletree"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
-	static String animal = "gfx/kritter";
+	static ArrayList<String>  animal_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/frog", "gfx/kritter/rat", "gfx/kritter/chicken"));
+	static ArrayList<String>  avoid_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/badger", "gfx/kritter/boar", "gfx/kritter/borka/body"));
+
 	String boat_gob_name = "gfx/terobjs/vehicle/rowboat";
 	ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
 	static Gob boat_gob = null;
@@ -44,12 +46,17 @@ public class MusselPicker {
 		}
 		Settings.setCancelAuto(false);
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
-		boat_gob = BotUtils.findObjectByNames(50, boat_gob_name);
+		boat_gob = BotUtils.findObjectByNames(BotUtils.player().rc, 50, boat_gob_name);
 
 		if (Config.autoPickAnimal){
-			targets.add(animal);
-		}else if(targets.contains(animal)){
-			targets.remove(animal);
+			for (String animal: animal_targets){
+			targets.add(animal);}
+		}else{
+			for (String animal: animal_targets){
+				if(targets.contains(animal)){
+				targets.remove(animal);
+				}
+			}
 		}
 		if (boat_gob != null){
 			// check ui.modflags(), 2 means press control
@@ -64,8 +71,11 @@ public class MusselPicker {
 					while (true) {
 						BotUtils.sleep(200);
 						while (gob == null) {
-							gob = BotUtils.get_target_gob(targets, exclude_gobs);
-//							BotUtils.sysMsg("cancel?" +Settings.getCancelAuto(), Color.WHITE);
+							if (exclude_gobs.size() > 100) {
+								exclude_gobs=  new ArrayList<Coord>();
+							}
+							gob = BotUtils.get_target_gob(BotUtils.player().rc, 600, targets, exclude_gobs);
+// BotUtils.sysMsg("cancel?" +Settings.getCancelAuto(), Color.WHITE);
 							if (Settings.getCancelAuto() && boat_gob != null) {
 								BotUtils.sysMsg("Go back to boat!", Color.WHITE);
 								Settings.setCancelAuto(false);
@@ -77,11 +87,15 @@ public class MusselPicker {
 								BotUtils.MusselPicker.suspend();
 								continue;
 							}
+							if (gob!=null &&BotUtils.get_target_gob(gob.rc, 300, avoid_targets, exclude_gobs)!=null){
+								continue;
+							}
 							BotUtils.sleep(200);
 						}
-						if (BotUtils.goToCoord(gob.rc, 15, true)) {
-							if (!exclude_gobs.contains(gob.rc)) {
-								exclude_gobs.add(gob.rc);
+						Coord gob_rc = gob.rc;
+						if (BotUtils.goToCoord(gob_rc, 15, true)) {
+							if (!exclude_gobs.contains(gob_rc)) {
+								exclude_gobs.add(gob_rc);
 							}
 
 						BotUtils.doClick(gob, 3, 0);
@@ -98,6 +112,7 @@ public class MusselPicker {
 								if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
 									menu.choose(opt);
 									menu.destroy();
+									menu = null;
 									nex_pick = true;
 									BotUtils.doClick(gob, 3, 0);
 									BotUtils.sleep(1000);
@@ -105,7 +120,7 @@ public class MusselPicker {
 									break;
 								}
 							}
-							if (!nex_pick) {
+							if (!nex_pick && menu!=null) {
 								menu.destroy();
 							}
 						}
@@ -152,7 +167,7 @@ public class MusselPicker {
 					// comment out as this code can cause bug
 //		            if (sender == this && msg.equals("close")) {
 					if (BotUtils.MusselPicker.isAlive()){
-					BotUtils.MusselPicker.stop();;
+					BotUtils.MusselPicker.suspend();;
 					}
 					window.destroy();
 //		            }
