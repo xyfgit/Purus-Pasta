@@ -954,6 +954,18 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(520, y));
+        y += 35;
+        display.add(new CheckBox("Hide Horizon Meter  (Req. Restart)") {
+            {
+                a = Config.hideum;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("hideum", val);
+                Config.hideum = val;
+                a = val;
+            }
+        }, new Coord(520, y));
         // -------------------------------------------- display 3rd column
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
@@ -1005,93 +1017,9 @@ public class OptWnd extends Window {
         }, new Coord(0, y));
 
         map.add(new Label("Show boulders:"), new Coord(180, 0));
-        CheckListbox boulderlist = new CheckListbox(130, 18) {
-            protected void itemclick(CheckListboxItem itm, int button) {
-                super.itemclick(itm, button);
-                Config.boulderssel = getselected();
-                Utils.setprefsa("boulderssel", Config.boulderssel);
-            }
-        };
-        for (String boulder : Config.boulders) {
-            boolean selected = false;
-            if (Config.boulderssel != null) {
-                for (String sboulder : Config.boulderssel) {
-                    if (sboulder.equals(boulder)) {
-                        selected = true;
-                        break;
-                    }
-                }
-            }
-            boulderlist.items.add(new CheckListboxItem(boulder, selected));
-        }
-        map.add(boulderlist, new Coord(180, 15));
-
         map.add(new Label("Show bushes:"), new Coord(325, 0));
-        CheckListbox bushlist = new CheckListbox(130, 18) {
-            protected void itemclick(CheckListboxItem itm, int button) {
-                super.itemclick(itm, button);
-                Config.bushessel = getselected();
-                Utils.setprefsa("bushessel", Config.bushessel);
-            }
-        };
-        for (String bush : Config.bushes) {
-            boolean selected = false;
-            if (Config.bushessel != null) {
-                for (String sbush : Config.bushessel) {
-                    if (sbush.equals(bush)) {
-                        selected = true;
-                        break;
-                    }
-                }
-            }
-            bushlist.items.add(new CheckListboxItem(bush, selected));
-        }
-        map.add(bushlist, new Coord(325, 15));
-
         map.add(new Label("Show trees:"), new Coord(470, 0));
-        CheckListbox treelist = new CheckListbox(130, 18) {
-            protected void itemclick(CheckListboxItem itm, int button) {
-                super.itemclick(itm, button);
-                Config.treessel = getselected();
-                Utils.setprefsa("treessel", Config.treessel);
-            }
-        };
-        for (String tree : Config.trees) {
-            boolean selected = false;
-            if (Config.treessel != null) {
-                for (String stree : Config.treessel) {
-                    if (stree.equals(tree)) {
-                        selected = true;
-                        break;
-                    }
-                }
-            }
-            treelist.items.add(new CheckListboxItem(tree, selected));
-        }
-        map.add(treelist, new Coord(470, 15));
-
         map.add(new Label("Hide icons:"), new Coord(615, 0));
-        CheckListbox iconslist = new CheckListbox(130, 18) {
-            protected void itemclick(CheckListboxItem itm, int button) {
-                super.itemclick(itm, button);
-                Config.iconssel = getselected();
-                Utils.setprefsa("iconssel", Config.iconssel);
-            }
-        };
-        for (String icon : Config.icons) {
-            boolean selected = false;
-            if (Config.iconssel != null) {
-                for (String sicon : Config.iconssel) {
-                    if (sicon.equals(icon)) {
-                        selected = true;
-                        break;
-                    }
-                }
-            }
-            iconslist.items.add(new CheckListboxItem(icon, selected));
-        }
-        map.add(iconslist, new Coord(615, 15));
-
 
         map.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         map.pack();
@@ -1334,6 +1262,17 @@ public class OptWnd extends Window {
             }
         }, new Coord(260, y));
         y += 35;
+        general.add(new CheckBox("Drop Leeches Automatically") {
+            {
+                a = Config.dropleeches;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("dropleeches", val);
+                Config.dropleeches = val;
+                a = val;
+            }
+        }, new Coord(260, y));
 
         general.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         general.pack();
@@ -1384,6 +1323,18 @@ public class OptWnd extends Window {
             public void set(boolean val) {
                 Utils.setprefb("agroclosest", val);
                 Config.agroclosest = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        combat.add(new CheckBox("Smaller Combat Move Icons") {
+            {
+                a = Config.smallicon;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("smallicon", val);
+                Config.smallicon = val;
                 a = val;
             }
         }, new Coord(0, y));
@@ -1609,7 +1560,6 @@ public class OptWnd extends Window {
             }
         }, new Coord(0, y));
 
-
         control.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         control.pack();
 
@@ -1618,6 +1568,96 @@ public class OptWnd extends Window {
 
     public OptWnd() {
         this(true);
+    }
+
+    public void setMapSettings() {
+        final String charname = gameui().chrid;
+
+         CheckListbox boulderlist = new CheckListbox(130, 18) {
+            protected void itemclick(CheckListboxItem itm, int button) {
+                super.itemclick(itm, button);
+                Config.boulderssel = getselected();
+                Utils.setprefsa("boulderssel_" + charname, Config.boulderssel);
+            }
+        };
+        for (String boulder : Config.boulders) {
+            boolean selected = false;
+            if (Config.boulderssel != null) {
+                for (String sboulder : Config.boulderssel) {
+                    if (sboulder.equals(boulder)) {
+                        selected = true;
+                        break;
+                    }
+                }
+            }
+            boulderlist.items.add(new CheckListboxItem(boulder, selected));
+        }
+        map.add(boulderlist, new Coord(180, 15));
+
+
+        CheckListbox bushlist = new CheckListbox(130, 18) {
+            protected void itemclick(CheckListboxItem itm, int button) {
+                super.itemclick(itm, button);
+                Config.bushessel = getselected();
+                Utils.setprefsa("bushessel_" + charname, Config.bushessel);
+            }
+        };
+        for (String bush : Config.bushes) {
+            boolean selected = false;
+            if (Config.bushessel != null) {
+                for (String sbush : Config.bushessel) {
+                    if (sbush.equals(bush)) {
+                        selected = true;
+                        break;
+                    }
+                }
+            }
+            bushlist.items.add(new CheckListboxItem(bush, selected));
+        }
+        map.add(bushlist, new Coord(325, 15));
+
+        CheckListbox treelist = new CheckListbox(130, 18) {
+            protected void itemclick(CheckListboxItem itm, int button) {
+                super.itemclick(itm, button);
+                Config.treessel = getselected();
+                Utils.setprefsa("treessel_" + charname, Config.treessel);
+            }
+        };
+        for (String tree : Config.trees) {
+            boolean selected = false;
+            if (Config.treessel != null) {
+                for (String stree : Config.treessel) {
+                    if (stree.equals(tree)) {
+                        selected = true;
+                        break;
+                    }
+                }
+            }
+            treelist.items.add(new CheckListboxItem(tree, selected));
+        }
+        map.add(treelist, new Coord(470, 15));
+
+        CheckListbox iconslist = new CheckListbox(130, 18) {
+            protected void itemclick(CheckListboxItem itm, int button) {
+                super.itemclick(itm, button);
+                Config.iconssel = getselected();
+                Utils.setprefsa("iconssel_" + charname, Config.iconssel);
+            }
+        };
+        for (String icon : Config.icons) {
+            boolean selected = false;
+            if (Config.iconssel != null) {
+                for (String sicon : Config.iconssel) {
+                    if (sicon.equals(icon)) {
+                        selected = true;
+                        break;
+                    }
+                }
+            }
+            iconslist.items.add(new CheckListboxItem(icon, selected));
+        }
+        map.add(iconslist, new Coord(615, 15));
+        map.pack();
     }
 
     public void wdgmsg(Widget sender, String msg, Object... args) {

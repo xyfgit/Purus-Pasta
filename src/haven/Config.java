@@ -84,6 +84,7 @@ public class Config {
     public static int showqualitymode = Utils.getprefi("showqualitymode", 0);
     public static boolean arithavg = Utils.getprefb("arithavg", false);
     public static boolean qualitywhole = Utils.getprefb("qualitywhole", true);
+    public static boolean hideum = Utils.getprefb("hideum", false);
     public static boolean showlpgainmult = Utils.getprefb("showlpgainmult", false);
     public static int badcamsensitivity = Utils.getprefi("badcamsensitivity", 5);
     public static List<LoginData> logins = new ArrayList<LoginData>();
@@ -100,6 +101,7 @@ public class Config {
     public static int chatfontsize = Utils.getprefi("chatfontsize", 0);
     public static boolean quickslots = Utils.getprefb("quickslots", false);
     public static boolean statuswdgvisible = Utils.getprefb("statuswdgvisible", false);
+    public static boolean smallicon = Utils.getprefb("smallicon", false);
     public static boolean chatalarm = Utils.getprefb("chatalarm", false);
     public static boolean partychatalarm = Utils.getprefb("partychatalarm", false);
     public static double chatalarmvol = Utils.getprefd("chatalarmvol", 0.8);
@@ -176,6 +178,7 @@ public class Config {
     public static boolean enablecrime = Utils.getprefb("enablecrime", false);
     public static boolean nometallicsfx = Utils.getprefb("nometallicsfx", false);
     public static boolean highlightParty = Utils.getprefb("highlightParty", false);
+    public static boolean dropleeches = Utils.getprefb("dropleeches", false);
     public static boolean resinfo = Utils.getprefb("resinfo", false);
     public static boolean showanimalrad = Utils.getprefb("showanimalrad", false);
     public static boolean hwcursor = Utils.getprefb("hwcursor", false);
@@ -193,25 +196,25 @@ public class Config {
     public final static String[] boulders = new String[]{"basalt", "limonite", "schist", "dolomite", "magnetite", "gneiss",
             "granite", "malachite", "hematite", "porphyry", "ilmenite", "quartz", "cassiterite", "limestone", "sandstone",
             "chalcopyrite", "cinnabar", "feldspar", "marble", "ras", "flint", "hornsilver", "blackcoal", "stalagmite"};
-    public static String[] boulderssel = Utils.getprefsa("boulderssel", null);
+    public static String[] boulderssel = null;
 
     public final static String[] bushes = new String[]{"arrowwood", "crampbark", "sandthorn", "blackberrybush", "dogrose",
             "spindlebush", "blackcurrant", "elderberrybush", "teabush", "blackthorn", "gooseberrybush", "tibast",
             "bogmyrtle", "hawthorn", "tundrarose", "boxwood", "holly", "woodbine", "bsnightshade", "raspberrybush",
             "caprifole", "redcurrant"};
-    public static String[] bushessel = Utils.getprefsa("bushessel", null);
+    public static String[] bushessel = null;
 
     public final static String[] trees = new String[]{"alder", "corkoak", "plumtree", "juniper", "crabappletree", "kingsoak",
             "oak", "walnuttree", "birdcherrytree", "larch", "poplar", "whitebeam", "appletree", "cypress", "buckthorn",
             "laurel", "ash", "elm", "rowan", "willow", "cedar", "linden", "olivetree", "aspen",  "fir", "baywillow",
             "goldenchain", "peartree", "sallow", "yew", "cherry", "maple", "beech", "chestnuttree", "hazel", "spruce",
             "hornbeam", "oldtrunk", "conkertree", "mulberry", "sweetgum", "pine", "birch", "planetree"};
-    public static String[] treessel = Utils.getprefsa("treessel", null);
+    public static String[] treessel = null;
 
     public final static String[] icons = new String[]{"dandelion", "chantrelle", "blueberry", "rat", "chicken", "chick",
             "spindlytaproot", "stingingnettle", "dragonfly", "toad", "bram", "rowboat", "arrow", "boarspear", "frog",
             "wagon"};
-    public static String[] iconssel = Utils.getprefsa("iconssel", null);
+    public static String[] iconssel = null;
 
     @SuppressWarnings("serial")
     public final static Map<String, Tex> additonalicons = new HashMap<String, Tex>(10) {{

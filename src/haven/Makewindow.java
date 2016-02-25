@@ -130,8 +130,10 @@ public class Makewindow extends Widget {
             this.outputs = outputs;
         } else if (msg == "qmod") {
             List<Indir<Resource>> qmod = new ArrayList<Indir<Resource>>();
-            for (Object arg : args)
-                qmod.add(ui.sess.getres((Integer) arg));
+            for (Object arg : args) {
+            	qmod.add(ui.sess.getres((Integer) arg));
+
+            }
             this.qmod = qmod;
         } else {
             super.uimsg(msg, args);
@@ -159,6 +161,8 @@ public class Makewindow extends Widget {
             } catch (Exception e) { // fail silently
             }
 
+            List<Integer> qmodValues = new ArrayList<Integer>(3);
+
             for (Indir<Resource> qm : qmod) {
                 try {
                     Tex t = qm.get().layer(Resource.imgc).tex();
@@ -177,6 +181,7 @@ public class Makewindow extends Widget {
                                 Coord sz = attr.attr.comptex.sz();
                                 g.image(attr.attr.comptex, c.add(3, t.sz().y / 2 - sz.y / 2));
                                 c = c.add(sz.x + 8, 0);
+                                qmodValues.add(attr.attr.comp);
                                 break;
                             }
                         }
@@ -187,6 +192,7 @@ public class Makewindow extends Widget {
                                 Coord sz = attr.attr.comptex.sz();
                                 g.image(attr.attr.comptex, c.add(3, t.sz().y / 2 - sz.y / 2));
                                 c = c.add(sz.x + 8, 0);
+                                qmodValues.add(attr.attr.comp);
                                 break;
                             }
                         }

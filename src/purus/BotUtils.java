@@ -8,6 +8,21 @@ import java.util.regex.Pattern;
 
 import haven.*;
 import haven.FlowerMenu.Petal;
+import haven.GAttrib;
+import haven.GItem;
+import haven.GameUI;
+import haven.Gob;
+import haven.HavenPanel;
+import haven.Inventory;
+import haven.ItemInfo;
+import haven.Loading;
+import haven.Moving;
+import haven.Resource;
+import haven.Speedget;
+import haven.UI;
+import haven.WItem;
+import haven.Widget;
+import haven.Window;
 
 public class  BotUtils {
 
@@ -31,8 +46,38 @@ public class  BotUtils {
     	return ui.gui;
     }
     
+    // Drinks water/tea from containers in inventory
+    public void drink() {
+		GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
+		 WItem item = findDrink(playerInventory());
+		 if (item != null) {
+			 item.item.wdgmsg("iact", Coord.z, 3);
+			 sleep(250);
+				@SuppressWarnings("deprecation")
+				FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+		            if (menu != null) {
+		                for (FlowerMenu.Petal opt : menu.opts) {
+		                    if (opt.name.equals("Drink")) {
+		                        menu.choose(opt);
+		                        menu.destroy();
+		                        while(gui.getmeter("stam", 0).a <= 90) {
+		                        	sleep(100);
+		                        }
+		                    }
+		                }
+		            }
+		 }
+    }
+    
     public void sysMsg(String msg, Color color ) {
     	ui.root.findchild(GameUI.class).info(msg,color);
+    }
+    
+    // Sets speed for player
+    // 0 = Crawl 1 = Walk  2 = Run 3 = Sprint
+    public void setSpeed(int speed) {
+    	haven.Speedget.setSpeed = true;
+    	haven.Speedget.SpeedToSet = speed;
     }
     
 	// Takes item in hand
@@ -85,7 +130,7 @@ public class  BotUtils {
 	
 	// Chooses option from flower menu
 	public void Choose(Petal option) {
-        w.wdgmsg("cl", option.num, ui.modflags());
+       w.wdgmsg("cl", option.num, ui.modflags());
 	}
 	public int get_o_y(int x_pc, int y_pc, int x_tar, int y_tar, int turn_x){
 	//（x-x1)(x2-x1)+(y-y1)(y2-y1)=0
@@ -98,13 +143,19 @@ public class  BotUtils {
 		}
 		return ((turn_x -pc.x)*(pc.x-tar.x)/(tar.y-pc.y)) + pc.y;
 	};
+	
+	// Click some object with item on hand
+	// Modifier 1 - shift; 2 - ctrl; 4 alt;
+    public void itemClick(Gob gob, int mod) {
+        ui.gui.map.wdgmsg("itemact", Coord.z, gob.rc, mod, 0, (int)gob.id, gob.rc, 0, -1);
+    }
+	
 	// Click some object with specific button and modifier
-	public void doClick(Gob gob, int button, int mod) {
-		if (gob == null){
-			return;
-		}
-		 ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
-		}
+	// Button 1 = Left click and 3 = right click
+	// Modifier 1 - shift; 2 - ctrl; 4 - alt;
+    public void doClick(Gob gob, int button, int mod) {
+        ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
+    }
 
 	// Finds nearest crop with x stage
 		 public Gob findNearestStageCrop(int radius, int stage, String... names) {
@@ -303,6 +354,5 @@ public class  BotUtils {
         } catch (Loading ignored) {}
         return null;
     }
-    
-    
+
 }
