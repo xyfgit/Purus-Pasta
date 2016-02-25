@@ -955,7 +955,7 @@ public class OptWnd extends Window {
             }
         }, new Coord(520, y));
         y += 35;
-        display.add(new CheckBox("Hide Horizon Meter") {
+        display.add(new CheckBox("Hide Horizon Meter  (Req. Restart)") {
             {
                 a = Config.hideum;
             }
