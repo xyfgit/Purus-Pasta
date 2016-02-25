@@ -159,11 +159,19 @@ public class Fightsess extends Widget {
             try {
                 if (act != null) {
                     Tex img = act.get().layer(Resource.imgc).tex();
-                    g.image(img, ca);
-                    g.image(dyn[i] ? lframe : Buff.frame, ca.sub(Buff.imgoff));
+                    if (Config.smallicon) { 
+                    g.image(img, ca, new Coord((img.sz().x/2), img.sz().y/2));
+                    g.image(dyn[i] ? lframe : Buff.frame, ca.sub(Buff.imgoff), new Coord(lframe.sz().x/2, lframe.sz().y/2));
                     String hotkeyText;
                     hotkeyText = ""+(i+1);
-                    g.astext(hotkeyText, ca.add( img.sz().x/2 + 5, img.sz().y + 1), 1, 1, Color.WHITE, Color.BLACK);
+                    g.astext(hotkeyText, ca.add( img.sz().x/4 + 5, img.sz().y/2 + 10), 1, 1, Color.WHITE, Color.BLACK);
+                    } else {
+                        g.image(img, ca);
+                        g.image(dyn[i] ? lframe : Buff.frame, ca.sub(Buff.imgoff));
+                         String hotkeyText;
+                         hotkeyText = ""+(i+1);
+                         g.astext(hotkeyText, ca.add( img.sz().x/2 + 5, img.sz().y + 1), 1, 1, Color.WHITE, Color.BLACK);
+                    }
                     if (i == use) {
                         g.chcolor(255, 0, 128, 255);
                         Coord cc = ca.add(img.sz().x / 2, img.sz().y + 5);

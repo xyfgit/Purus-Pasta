@@ -101,6 +101,7 @@ public class Config {
     public static int chatfontsize = Utils.getprefi("chatfontsize", 0);
     public static boolean quickslots = Utils.getprefb("quickslots", false);
     public static boolean statuswdgvisible = Utils.getprefb("statuswdgvisible", false);
+    public static boolean smallicon = Utils.getprefb("smallicon", false);
     public static boolean chatalarm = Utils.getprefb("chatalarm", false);
     public static boolean partychatalarm = Utils.getprefb("partychatalarm", false);
     public static double chatalarmvol = Utils.getprefd("chatalarmvol", 0.8);

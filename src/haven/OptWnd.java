@@ -1304,6 +1304,18 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(0, y));
+        y += 35;
+        combat.add(new CheckBox("Smaller Combat Move Icons") {
+            {
+                a = Config.smallicon;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("smallicon", val);
+                Config.smallicon = val;
+                a = val;
+            }
+        }, new Coord(0, y));
 
         combat.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         combat.pack();
