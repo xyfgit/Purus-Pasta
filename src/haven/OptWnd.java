@@ -1623,6 +1623,7 @@ public class OptWnd extends Window {
             iconslist.items.add(new CheckListboxItem(icon, selected));
         }
         map.add(iconslist, new Coord(615, 15));
+        map.pack();
     }
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
