@@ -71,20 +71,24 @@ public class MusselPicker {
 					while (true) {
 						BotUtils.sleep(200);
 						while (gob == null) {
+							BotUtils.sysMsg("Find target!", Color.WHITE);
 							if (exclude_gobs.size() > 100) {
 								exclude_gobs=  new ArrayList<Coord>();
 							}
 							gob = BotUtils.get_target_gob(BotUtils.player().rc, 600, targets, exclude_gobs);
 // BotUtils.sysMsg("cancel?" +Settings.getCancelAuto(), Color.WHITE);
-							if (Settings.getCancelAuto() && boat_gob != null) {
+							if (Settings.getCancelAuto() ) {
+								if (boat_gob != null){
 								BotUtils.sysMsg("Go back to boat!", Color.WHITE);
 								Settings.setCancelAuto(false);
 								BotUtils.goToCoord(boat_gob.rc, 30, true);
 								BotUtils.sleep(200);
 								BotUtils.doClick(boat_gob, 3, 0);
 								BotUtils.sleep(300);
+								}
 								window.destroy();
 								BotUtils.MusselPicker.suspend();
+								gob = null;
 								continue;
 							}
 							if (gob!=null &&BotUtils.get_target_gob(gob.rc, 300, avoid_targets, exclude_gobs)!=null){
@@ -141,7 +145,8 @@ public class MusselPicker {
 				Button cancel_btn =new Button(120, "Cancel") {
 					public void click() {
 						if(BotUtils.MusselPicker != null) {
-							if (curStatus != STATUS.RUNNING ||boat_gob==null) {
+							//gob = null; will not work as gob is not static
+							if (curStatus != STATUS.RUNNING) {
 								BotUtils.MusselPicker.suspend();
 								window.destroy();
 								curStatus = STATUS.RESTING;
@@ -151,7 +156,8 @@ public class MusselPicker {
 							gameui().info("Mussel Picker Status: " + curStatus , Color.WHITE);
 							if(boat_gob != null&&curStatus != STATUS.BACK_TO_BOAT){
 							curStatus = STATUS.BACK_TO_BOAT;
-							Settings.setCancelAuto(true);}
+							}
+							Settings.setCancelAuto(true);
 						}
 						gameui().info("Mussel Picker Cancelled, handle cancel: " + haven.Settings.getCancelAuto() , Color.WHITE);
 					}
