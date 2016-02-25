@@ -931,7 +931,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         if (key == ':') {
             entercmd();
             return (true);
-        } else if (key == ' ' && !Config.disablespacebar) {
+        } else if (key == ' ') {
             toggleui();
             return (true);
         } else if (key == 3) {
