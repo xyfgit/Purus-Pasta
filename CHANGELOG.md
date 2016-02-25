@@ -3,7 +3,7 @@
 ### 2.10.0
 	- Option to hide horizontal meter
 	- Added some curios to curio.config
-	- Disacle auto-eat option for studyable items
+	- Disable auto-eat option for studyable items
 	- Added oven and smelter filler
 	- Server status on login screen
 	- Fixes and improvements on bots
