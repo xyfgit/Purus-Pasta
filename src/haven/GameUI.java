@@ -1059,7 +1059,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         if (map != null)
             map.resize(sz);
         beltwdg.c = new Coord(blpw + 10, sz.y - beltwdg.sz.y - 5);
-        statuswindow.c = new Coord(HavenPanel.w / 2, 10);
+        statuswindow.c = new Coord(HavenPanel.w / 2, 15);
         super.resize(sz);
     }
 
