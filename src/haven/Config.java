@@ -84,6 +84,7 @@ public class Config {
     public static int showqualitymode = Utils.getprefi("showqualitymode", 0);
     public static boolean arithavg = Utils.getprefb("arithavg", false);
     public static boolean qualitywhole = Utils.getprefb("qualitywhole", true);
+    public static boolean hideum = Utils.getprefb("hideum", true);
     public static boolean showlpgainmult = Utils.getprefb("showlpgainmult", false);
     public static int badcamsensitivity = Utils.getprefi("badcamsensitivity", 5);
     public static List<LoginData> logins = new ArrayList<LoginData>();
