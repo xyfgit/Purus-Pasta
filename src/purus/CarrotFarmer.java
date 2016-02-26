@@ -92,44 +92,14 @@ public class CarrotFarmer {
 					while (CarrotsNearby = true) {
 
 						// Start of drink TODO: Make separate function of this maybe yeah?
-						GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
-						IMeter.Meter stam = gui.getmeter("stam", 0);
-						// Check energy stop if it is lower than 1500
-						IMeter.Meter nrj = gui.getmeter("nrj", 0);
-						if (nrj.a <= 30){
-							BotUtils.sysMsg("Carrot Farmer Stop as run out of energy.", Color.WHITE);
-							t.stop();
-							return;
-						}
-						else if (stam.a <= 30) {
-							WItem item = BotUtils.findDrink(BotUtils.playerInventory());
-							if (item != null) {
-								item.item.wdgmsg("iact", Coord.z, 3);
-								BotUtils.sleep(250);
-								@SuppressWarnings("deprecation")
-								FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-								if (menu != null) {
-									for (FlowerMenu.Petal opt : menu.opts) {
-										if (opt.name.equals("Drink")) {
-											menu.choose(opt);
-											menu.destroy();
-											BotUtils.sysMsg("wait for stam back to 84", Color.WHITE);
-											while (gui.getmeter("stam", 0).a <= 84) {
-												BotUtils.sleep(550);
-											}
-										}
-									}
-								}
-							}
-							else{
-								BotUtils.sysMsg("slowly wait for stam", Color.WHITE);
-								BotUtils.sleep(3000);
-							}
-						}
+						 BotUtils.drink();
 						//end of drink
+						BotUtils.goToCoord(gob.rc, 10, false);
+						BotUtils.sleep(100);
 						BotUtils.doClick(gob, 3, 0);
 						BotUtils.sleep(350);
 						@SuppressWarnings("deprecation")
+						GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 						if (menu != null) {
 							for (FlowerMenu.Petal opt : menu.opts) {
