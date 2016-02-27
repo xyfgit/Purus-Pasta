@@ -7,7 +7,8 @@ public class QuickSlotsWdg extends Widget implements DTarget {
     private static final Coord ssz = new Coord(44, 44);
     private UI.Grab dragging;
     private Coord dc;
-
+    public WItem left = null;
+    public WItem right = null;
     public QuickSlotsWdg() {
         super(new Coord(44 + 44 + 6, 44));
     }
@@ -17,13 +18,13 @@ public class QuickSlotsWdg extends Widget implements DTarget {
         Equipory e = gameui().getequipory();
         if (e != null) {
             g.image(sbg, Coord.z);
-            WItem left = e.quickslots[6];
+            left = e.quickslots[6];
             if (left != null) {
                 drawitem(g.reclipl(lc, g.sz), left);
                 if (Config.showcontentsbars)
                     drawamountbar(g, left.item, 44 + 6);
             }
-            WItem right = e.quickslots[7];
+            right = e.quickslots[7];
             if (right != null) {
                 drawitem(g.reclipl(rc, g.sz), right);
                 if (Config.showcontentsbars)

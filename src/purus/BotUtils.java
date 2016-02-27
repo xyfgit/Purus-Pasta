@@ -49,7 +49,10 @@ public class  BotUtils {
     // Drinks water/tea from containers in inventory
     public void drink() {
 		GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
-		 WItem item = findDrink(playerInventory());
+		WItem item = findDrinkOnHand();
+		if (item==null) {
+			item = findDrink(playerInventory());
+		}
 		 if (item != null) {
 			 item.item.wdgmsg("iact", Coord.z, 3);
 			 sleep(250);
@@ -193,7 +196,7 @@ public class  BotUtils {
 		for (String target: targets){
 			Gob this_gob = findObjectByNames(center_rc,radius, target);
 			if(this_gob != null && !exclude_gobs.contains(this_gob.rc)){
-				double this_gob_dis = player().rc.dist(this_gob.rc);
+				double this_gob_dis = center_rc.dist(this_gob.rc);
 				if(this_gob_dis< near_dis ){
 					near_dis = this_gob_dis;
 					gob = this_gob;
@@ -333,6 +336,13 @@ public class  BotUtils {
         }
         return null;
     }
+	public WItem findDrinkOnHand() {
+		if (ui.gui.quickslots.left!=null && canDrinkFrom(ui.gui.quickslots.left))
+				return ui.gui.quickslots.left;
+		if (ui.gui.quickslots.right!=null && canDrinkFrom(ui.gui.quickslots.right))
+			return ui.gui.quickslots.right;
+		return null;
+	}
     public boolean canDrinkFrom(WItem item) {
         ItemInfo.Contents contents = getContents(item);
         if (contents != null && contents.sub != null) {

@@ -71,7 +71,7 @@ public class MusselPicker {
 					while (true) {
 						BotUtils.sleep(200);
 						while (gob == null) {
-							BotUtils.sysMsg("Find target!", Color.WHITE);
+//							BotUtils.sysMsg("Find target!", Color.WHITE);
 							if (exclude_gobs.size() > 100) {
 								exclude_gobs=  new ArrayList<Coord>();
 							}
@@ -116,7 +116,7 @@ public class MusselPicker {
 								if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
 									menu.choose(opt);
 									menu.destroy();
-									menu = null;
+//									menu = null;
 									nex_pick = true;
 									BotUtils.doClick(gob, 3, 0);
 									BotUtils.sleep(1000);
@@ -124,9 +124,9 @@ public class MusselPicker {
 									break;
 								}
 							}
-							if (!nex_pick && menu!=null) {
-								menu.destroy();
-							}
+//							if (!nex_pick && menu!=null) {
+//								menu.destroy();
+//							}
 						}
 						}
 						gob = null;

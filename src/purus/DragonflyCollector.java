@@ -40,13 +40,15 @@ public class DragonflyCollector {
 		public void run()  {
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			ui.root.findchild(FlowerMenu.class);
-				BotUtils.setSpeed(0);
+				BotUtils.setSpeed(2);
 				while(BotUtils.getItemAtHand() == null) {
+					BotUtils.drink();
 					if (!BotUtils.isMoving()) {
 						Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, "gfx/kritter/dragonfly/dragonfly");
-						if (gob != null)
-						BotUtils.doClick(gob, 3, 0); 
-						
+						if (gob != null) {
+							BotUtils.goToCoord(gob.rc, 15, false);
+							BotUtils.doClick(gob, 3, 0);
+						}
 					}
 						sleep(1000);
 				}

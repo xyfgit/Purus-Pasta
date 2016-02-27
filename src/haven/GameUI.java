@@ -192,7 +192,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         if (!Config.statuswdgvisible)
             statuswindow.hide();
         add(statuswindow, new Coord(HavenPanel.w / 2, 20));
-        
+
         makewnd = add(new CraftWindow(), new Coord(400, 200));
         makewnd.hide();
 
@@ -210,7 +210,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     	super.attach(ui);
     	ui.gui = this;
     }
-    
+
     /* Ice cream */
     private final IButton[] fold_br = new IButton[4];
 
@@ -549,7 +549,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		ulpanel.add(m, getMeterPos(x, y));
 		ulpanel.pack();
 	}
-	
+
 	public void toggleStudy() {
 		studywnd.show(!studywnd.visible);
 	}
@@ -931,7 +931,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         }
     }
     public static void AvaaTimer () {
-    	
+
     	timerswnd.show(!timerswnd.visible);
         timerswnd.raise();
     }
