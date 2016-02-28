@@ -66,6 +66,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     @SuppressWarnings("unchecked")
     public Indir<Resource>[] belt = new Indir[300];
     public Belt beltwdg;
+    public Belt beltwdg_f;
     public String polowner;
     public Bufflist buffs;
     public MinimapWnd minimapWnd;
@@ -130,6 +131,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             chat.show();
         }
         beltwdg.raise();
+        beltwdg_f.raise();
         ulpanel = add(new Hidepanel("gui-ul", null, new Coord(-1, -1)));
         umpanel = add(new Hidepanel("gui-um", null, new Coord(0, -1)) {
             @Override
@@ -701,6 +703,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public void draw(GOut g) {
         beltwdg.c = new Coord(chat.c.x, Math.min(chat.c.y - beltwdg.sz.y + 4, sz.y - beltwdg.sz.y));
+        beltwdg_f.c = new Coord(chat.c.x+430, Math.min(chat.c.y - beltwdg_f.sz.y + 4, sz.y - beltwdg_f.sz.y));
         super.draw(g);
         if (prog >= 0)
             drawprog(g, prog);
@@ -1060,6 +1063,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         if (map != null)
             map.resize(sz);
         beltwdg.c = new Coord(blpw + 10, sz.y - beltwdg.sz.y - 5);
+        beltwdg_f.c = new Coord(blpw + 10, sz.y - beltwdg_f.sz.y - 5);
         statuswindow.c = new Coord(HavenPanel.w / 2, 15);
         super.resize(sz);
     }
@@ -1387,7 +1391,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     {
         String val = Utils.getpref("belttype", "n");
-        beltwdg = add(new FKeyBelt(), new Coord(430, HavenPanel.h -50));
+        beltwdg_f = add(new FKeyBelt(), new Coord(430, HavenPanel.h -50));
 //        if (val.equals("n")) {
 //            beltwdg = add(new NKeyBelt());
 //        }
@@ -1425,17 +1429,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         });
         cmdmap.put("belt", new Console.Command() {
             public void run(Console cons, String[] args) {
-                if (args[1].equals("f")) {
-                    beltwdg.destroy();
-                    beltwdg = add(new FKeyBelt(), new Coord(250, HavenPanel.h -60));
-                    Utils.setpref("belttype", "f");
-                    resize(sz);
-                } else if (args[1].equals("n")) {
-                    beltwdg.destroy();
-                    beltwdg = add(new NKeyBelt());
-                    Utils.setpref("belttype", "n");
-                    resize(sz);
-                }
+                beltwdg_f.destroy();
+                beltwdg_f = add(new FKeyBelt(), new Coord(430, HavenPanel.h -60));
+//                Utils.setpref("belttype", "f");
+//                resize(sz);
+                beltwdg.destroy();
+                beltwdg = add(new NKeyBelt());
+//                Utils.setpref("belttype", "n");
+                resize(sz);
+
             }
         });
         cmdmap.put("tool", new Console.Command() {
