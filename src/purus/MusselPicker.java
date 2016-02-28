@@ -92,6 +92,7 @@ public class MusselPicker {
 								continue;
 							}
 							if (gob!=null &&BotUtils.get_target_gob(gob.rc, 300, avoid_targets, exclude_gobs)!=null){
+								gob =null;
 								continue;
 							}
 							BotUtils.sleep(200);

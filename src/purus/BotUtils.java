@@ -31,7 +31,7 @@ public class  BotUtils {
     private haven.Inventory i;
     public Petal[] opts;
     private static Pattern liquidPattern;
-    String liquids =  haven.Utils.join("|", new String[] { "Water", "Piping Hot Tea", "Tea" });
+    String liquids =  haven.Utils.join("|", new String[] { "Bucket", "Water", "Piping Hot Tea", "Tea" });
     String pattern = String.format("[0-9.]+ l of (%s)", liquids);
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
 	public static Thread MusselPicker;
@@ -337,10 +337,12 @@ public class  BotUtils {
         return null;
     }
 	public WItem findDrinkOnHand() {
-		if (ui.gui.quickslots.left!=null && canDrinkFrom(ui.gui.quickslots.left))
-				return ui.gui.quickslots.left;
-		if (ui.gui.quickslots.right!=null && canDrinkFrom(ui.gui.quickslots.right))
-			return ui.gui.quickslots.right;
+		WItem left = ui.gui.getequipory().quickslots[6];
+		if (left!=null && canDrinkFrom(left))
+				return left;
+		WItem right = ui.gui.getequipory().quickslots[7];
+		if (right!=null && canDrinkFrom(right))
+			return right;
 		return null;
 	}
     public boolean canDrinkFrom(WItem item) {

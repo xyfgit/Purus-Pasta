@@ -2,14 +2,7 @@ package purus;
 
 import java.awt.Color;
 
-import haven.Button;
-import haven.Coord;
-import haven.FlowerMenu;
-import haven.Gob;
-import haven.Inventory;
-import haven.UI;
-import haven.Widget;
-import haven.Window;
+import haven.*;
 
 public class DragonflyCollector {
 	/* This script collects dragonfly with crawlin speed around swamp
@@ -42,11 +35,21 @@ public class DragonflyCollector {
 			ui.root.findchild(FlowerMenu.class);
 				BotUtils.setSpeed(2);
 				while(BotUtils.getItemAtHand() == null) {
-					BotUtils.drink();
+					GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
+					IMeter.Meter stam = gui.getmeter("stam", 0);
+					// Check energy stop if it is lower than 1500
+					IMeter.Meter nrj = gui.getmeter("nrj", 0);
+					if (nrj.a <= 30){
+						t.stop();
+						return;
+					}
+					else if (stam.a <= 30) {
+						BotUtils.drink();
+					}
 					if (!BotUtils.isMoving()) {
 						Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, "gfx/kritter/dragonfly/dragonfly");
 						if (gob != null) {
-							BotUtils.goToCoord(gob.rc, 15, false);
+							BotUtils.goToCoord(gob.rc, 50, false);
 							BotUtils.doClick(gob, 3, 0);
 						}
 					}
