@@ -64,7 +64,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public double prog = -1;
     private boolean afk = false;
     @SuppressWarnings("unchecked")
-    public Indir<Resource>[] belt = new Indir[144];
+    public Indir<Resource>[] belt = new Indir[300];
     public Belt beltwdg;
     public String polowner;
     public Bufflist buffs;
@@ -1167,8 +1167,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         public final int beltkeys[] = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4,
                 KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8,
                 KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12};
-        public int curbelt = 0;
-
+        int start = 10;
+        public int curbelt = start;
         public FKeyBelt() {
             super(new Coord(450, 34));
         }
@@ -1220,7 +1220,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             for (int i = 0; i < beltkeys.length; i++) {
                 if (ev.getKeyCode() == beltkeys[i]) {
                     if (M) {
-                        curbelt = i;
+                        curbelt = i + start;
                         return (true);
                     } else {
                         keyact(i + (curbelt * 12));
@@ -1387,13 +1387,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     {
         String val = Utils.getpref("belttype", "n");
-        if (val.equals("n")) {
+        beltwdg = add(new FKeyBelt(), new Coord(430, HavenPanel.h -50));
+//        if (val.equals("n")) {
+//            beltwdg = add(new NKeyBelt());
+//        }
+//        else if (val.equals("f")) {
+//        }
+//        else {
             beltwdg = add(new NKeyBelt());
-        } else if (val.equals("f")) {
-            beltwdg = add(new FKeyBelt());
-        } else {
-            beltwdg = add(new NKeyBelt());
-        }
+//        }
     }
     
     @Override
@@ -1425,7 +1427,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             public void run(Console cons, String[] args) {
                 if (args[1].equals("f")) {
                     beltwdg.destroy();
-                    beltwdg = add(new FKeyBelt());
+                    beltwdg = add(new FKeyBelt(), new Coord(250, HavenPanel.h -60));
                     Utils.setpref("belttype", "f");
                     resize(sz);
                 } else if (args[1].equals("n")) {
