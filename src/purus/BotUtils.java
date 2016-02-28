@@ -220,8 +220,8 @@ public class  BotUtils {
 		return middle_rc;
 	}
 	public boolean goToCoord(Coord gob_rc, int radiation, boolean cancelable){
-
-		Coord p_st = null;
+		int walk_sleep = Math.max(500, 500 * (2-haven.Speedget.SpeedToSet));
+		Coord3f p_st = null;
 		if (gob_rc==null){
 			sysMsg("Get null gob in goToGob function.", Color.RED);
 			return false;
@@ -239,27 +239,26 @@ public class  BotUtils {
 			// if distance to gob is larger than 10, still need to force walk
 //				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
 			// check if player moved
-			p_st =  player().rc;
-			p_st = new Coord(p_st.x, p_st.y);
-			sleep(300);
-			if ( p_st.dist(player().rc) < 5){
+			p_st =  player().getrc();
+			p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
+			sleep(walk_sleep);
+			if ( p_st.dist(player().getrc()) < 5){
 				// if bocked try turn around
-				p_st =  player().rc;
-				p_st = new Coord(p_st.x, p_st.y);
+				p_st =  player().getrc();
+				p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
 				turn_around(gob_rc, 1);
-				sleep(500);
-				if (p_st.dist(player().rc) < 5){
+				sleep(walk_sleep);
+				if (p_st.dist(player().getrc()) < 5){
 					turn_around(gob_rc, -1);
-					sleep(500);
+					sleep(walk_sleep);
 				}
 				//climb the hill need 2 click.
 				reach_rc = getReachRC(player().rc, gob_rc);
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
 				sleep(100);
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
-				sleep(500);
+				sleep(walk_sleep);
 			}
-			sleep(500);
 		}
 		if (player().rc.dist(gob_rc) <= radiation){
 			// if reached the gob, pick gob, and find next gob

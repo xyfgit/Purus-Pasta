@@ -33,7 +33,7 @@ public class DragonflyCollector {
 		public void run()  {
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			ui.root.findchild(FlowerMenu.class);
-				BotUtils.setSpeed(2);
+				BotUtils.setSpeed(1);
 				while(BotUtils.getItemAtHand() == null) {
 					GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 					IMeter.Meter stam = gui.getmeter("stam", 0);
@@ -43,13 +43,13 @@ public class DragonflyCollector {
 						t.stop();
 						return;
 					}
-					else if (stam.a <= 30) {
+					else if (stam.a <= 30 && nrj.a >= 80) {
 						BotUtils.drink();
 					}
 					if (!BotUtils.isMoving()) {
 						Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, "gfx/kritter/dragonfly/dragonfly");
 						if (gob != null) {
-							BotUtils.goToCoord(gob.rc, 50, false);
+							BotUtils.goToCoord(gob.rc, 100, false);
 							BotUtils.doClick(gob, 3, 0);
 						}
 					}
