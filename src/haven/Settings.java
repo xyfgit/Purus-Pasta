@@ -22,4 +22,11 @@ public class Settings {
     public static void setCancelAuto(boolean val) {
         CancelAuto=val;
     }
+    private static String FindTargetName = null;
+    public static String getFindTargetName() {
+        return FindTargetName;
+    }
+    public static void setFindTargetName(String val) {
+        FindTargetName=val;
+    }
 }

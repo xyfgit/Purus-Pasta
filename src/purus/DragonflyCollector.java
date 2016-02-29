@@ -16,7 +16,7 @@ public class DragonflyCollector {
     private haven.Widget w;
     private Inventory i;
     private Widget window;  
-    
+    static String targetName = null;
 	BotUtils BotUtils;
 
 	public DragonflyCollector (UI ui, Widget w, Inventory i) {
@@ -31,6 +31,8 @@ public class DragonflyCollector {
 		}
 		Thread t = new Thread(new Runnable() {
 		public void run()  {
+			targetName = (Settings.getFindTargetName()==null)? "gfx/kritter/dragonfly/dragonfly": Settings.getFindTargetName();
+			BotUtils.sysMsg("Target "+ targetName, Color.WHITE);
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			ui.root.findchild(FlowerMenu.class);
 				BotUtils.setSpeed(1);
@@ -43,16 +45,16 @@ public class DragonflyCollector {
 						t.stop();
 						return;
 					}
-					else if (stam.a <= 30 && nrj.a >= 80) {
+					else if (stam.a <= 30 && nrj.a >= 85) {
 						BotUtils.drink();
 					}
-					if (!BotUtils.isMoving()) {
-						Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, "gfx/kritter/dragonfly/dragonfly");
+//					if (!BotUtils.isMoving()) {
+						Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, targetName);
 						if (gob != null) {
 							BotUtils.goToCoord(gob.rc, 100, false);
 							BotUtils.doClick(gob, 3, 0);
 						}
-					}
+//					}
 						sleep(1000);
 				}
 		        window.destroy();
@@ -75,6 +77,7 @@ public class DragonflyCollector {
 	            setLocal(true);
 	            add(new Button(120, "Cancel") {
 	                public void click() {
+						Settings.setFindTargetName(null);
 	                    window.destroy();
 	                    if(t != null) {
 	                    	gameui().info("Dragonfly Collector Cancelled", Color.WHITE);
@@ -86,6 +89,7 @@ public class DragonflyCollector {
 	        }
 	        public void wdgmsg(Widget sender, String msg, Object... args) {
 	            if (sender == this && msg.equals("close")) {
+					Settings.setFindTargetName(null);
 	                t.stop();
 	            }
 	            super.wdgmsg(sender, msg, args);
