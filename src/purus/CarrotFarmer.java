@@ -1,7 +1,8 @@
 package purus;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import haven.*;
 
@@ -16,25 +17,16 @@ public class CarrotFarmer {
 	private final UI ui;
     private haven.Widget w;
     private Inventory i;
-    private Widget window;  
-    
+    private Widget window;
+
     private String Seed = "gfx/invobjs/carrot";
 	// todo: use dict for this
-
-//	private ArrayList<String> targetPlants =  new ArrayList<String>(Arrays.asList("gfx/terobjs/plants/pumpkin", "gfx/terobjs/plants/wine",
-//			"gfx/terobjs/plants/carrot", "gfx/terobjs/plants/pepper",
-//			"gfx/terobjs/plants/flax","gfx/terobjs/plants/barley"));
-	HashMap<String, Integer> PlantsSet = new HashMap<String, Integer>(){{
-		put("gfx/terobjs/plants/pumpkin", 3);
-		put("gfx/terobjs/plants/carrot", 4);
-		put("gfx/terobjs/plants/pepper", 6);
-		put("gfx/terobjs/plants/flax", 3);
-		put("gfx/terobjs/plants/barley",3);
-	}};
-	private String targetPlant = null;
-	private ArrayList<String> targetPlants = null;
+	private ArrayList<String> Plants =  new ArrayList<String>(Arrays.asList("gfx/terobjs/plants/pumpkin", "gfx/terobjs/plants/wine",
+			"gfx/terobjs/plants/carrot", "gfx/terobjs/plants/pepper",
+			"gfx/terobjs/plants/flax","gfx/terobjs/plants/barley"));
+	private String Plant = null;
 	private int Stage = 4;
-    
+
 	BotUtils BotUtils;
 
 	public CarrotFarmer (UI ui, Widget w, Inventory i) {
@@ -45,31 +37,24 @@ public class CarrotFarmer {
 	}
 	public Gob get_plant_gob() {
 		Gob gob = null;
-		if (targetPlant == null) {
+		if (Plant == null) {
 			Gob gob_temp = null;
 			float distance = 99999;
-			Iterator iter = PlantsSet.entrySet().iterator();
-			String temp;
-			while(iter.hasNext()) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				temp = (String)entry.getKey();
-				Stage = (int)entry.getValue();
-				BotUtils.sysMsg(temp, Color.WHITE);
-				gob_temp = BotUtils.findNearestStageCrop(500, Stage, temp);
+				gob_temp = BotUtils.findNearestHarvestCrop(500, "gfx/terobjs/plants");
 				if (gob_temp != null) {
 					Coord3f f = gob_temp.getrc();
 					Coord3f p1 = ui.sess.glob.oc.getgob(MapView.plgob).getrc();
 					if (distance > f.dist(p1)) {
 						gob = gob_temp;
-						targetPlant = temp;
+						Plant = gob_temp.getres().name;
 						distance = f.dist(p1);
-						BotUtils.sysMsg(targetPlant +distance, Color.WHITE);
+						BotUtils.sysMsg(Plant+distance, Color.WHITE);
 					}
-				}
+
 			}
 		}else {
-			gob = BotUtils.findNearestStageCrop(500, PlantsSet.get(targetPlant), targetPlant);
-			targetPlants = new ArrayList<String>(Arrays.asList(targetPlant, targetPlant.replace("terobjs/plants", "invobjs")));
+			gob = BotUtils.findNearestHarvestCrop(500, Plant);
+			Plants.add(Plant.replace("terobjs/plants", "invobjs"));
 		}
 		return gob;
 	}
@@ -82,7 +67,7 @@ public class CarrotFarmer {
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			while (true) {
 				try {
-//					BotUtils.drop_item(1);
+					BotUtils.drop_item(1);
 					Gob gob = get_plant_gob();
 					if (gob != null)
 						CarrotsNearby = true;
@@ -107,7 +92,7 @@ public class CarrotFarmer {
 						BotUtils.goToCoord(gob.rc, 10, false);
 						BotUtils.sleep(100);
 						BotUtils.doClick(gob, 3, 0);
-						BotUtils.sleep(350);
+						BotUtils.sleep(1200);
 //						@SuppressWarnings("deprecation")
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 						if (menu != null) {
@@ -142,7 +127,7 @@ public class CarrotFarmer {
 						if (item != null) {
 							BotUtils.takeItem(item);
 						} else {
-//							BotUtils.sysMsg("Couldnt find any "+targetPlant, Color.WHITE);
+//							BotUtils.sysMsg("Couldnt find any "+Plant, Color.WHITE);
 //							BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
 //							t.stop();
 //							return;
@@ -165,7 +150,8 @@ public class CarrotFarmer {
 					}
 					return;
 				} catch (Exception e) {
-//					BotUtils.sysMsg(e.getMessage(), Color.RED);
+
+					BotUtils.sysMsg(e.getMessage(), Color.RED);
 					BotUtils.sleep(350);
 				}
 				BotUtils.sleep(150);
@@ -175,7 +161,7 @@ public class CarrotFarmer {
         protected boolean isCarrot(final GItem item) {
 	        String resName = item.resname();
 	        if (resName != null && !resName.isEmpty()) {
-	            for (String food : targetPlants)
+	            for (String food : Plants)
 	                if (resName.contains(food))
 	                    return true;
 	       }

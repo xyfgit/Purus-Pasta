@@ -207,11 +207,12 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public Coord3f getrc() {
         return (new Coord3f(rc.x, rc.y, glob.map.getcz(rc)));
     }
-    
+
     public int getStage() {
         //
         Resource res = getres();
-        if (res != null && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
+//        if (res != null && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
+        if (res != null && res.name.startsWith("gfx/terobjs/plants")) {
     	GAttrib rd = getattr(ResDrawable.class);
     	final int stage = ((ResDrawable) rd).sdt.peekrbuf(0);
         return stage;
@@ -220,6 +221,23 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         //
     }
 
+    public int getMaxStage() {
+        //
+        Resource res = getres();
+
+//        if (res != null && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
+        if (res != null && res.name.startsWith("gfx/terobjs/plants")) {
+            int maxStage = 0;
+            for (FastMesh.MeshRes layer : getres().layers(FastMesh.MeshRes.class)) {
+                if (layer.id / 10 > maxStage) {
+                    maxStage = layer.id / 10;
+                }
+            }
+            return maxStage;
+        } else
+            return 404;
+        //
+    }
     private Class<? extends GAttrib> attrclass(Class<? extends GAttrib> cl) {
         while (true) {
             Class<?> p = cl.getSuperclass();

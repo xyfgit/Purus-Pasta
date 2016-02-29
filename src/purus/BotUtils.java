@@ -161,7 +161,7 @@ public class  BotUtils {
     }
 
 	// Finds nearest crop with x stage
-		 public Gob findNearestStageCrop(int radius, int stage, String... names) {
+		 public Gob findNearestHarvestCrop(int radius, String... names) {
 		        Coord plc = player().rc;
 		        double min = radius;
 		        Gob nearest = null;
@@ -172,7 +172,7 @@ public class  BotUtils {
 		                    boolean matches = false;
 		                    for (String name : names) {
 		                        if (isObjectName(gob, name)) {
-		                        	if (gob.getStage() == stage) {
+		                        	if (gob.getStage() == gob.getMaxStage() && gob.getStage() != 404) {
 		                            matches = true;
 		                            break;
 		                        	}
