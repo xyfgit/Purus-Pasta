@@ -1262,6 +1262,17 @@ public class OptWnd extends Window {
             }
         }, new Coord(260, y));
         y += 35;
+        general.add(new CheckBox("Show plant grow stage") {
+            {
+                a = Config.showplantgrowstage;
+            }
+            public void set(boolean val) {
+                Utils.setprefb("showplantgrowstage", val);
+                Config.showplantgrowstage = val;
+                a = val;
+            }
+        }, new Coord(260, y));
+        y += 35;
         general.add(new CheckBox("Drop Leeches Automatically") {
             {
                 a = Config.dropleeches;
