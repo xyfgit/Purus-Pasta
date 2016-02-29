@@ -83,15 +83,17 @@ public class MusselPicker {
 								Settings.setCancelAuto(false);
 								BotUtils.goToCoord(boat_gob.rc, 30, true);
 								BotUtils.sleep(200);
+									boat_gob = BotUtils.findObjectByNames(BotUtils.player().rc, 150, boat_gob_name);
+									if (boat_gob!=null){
 								BotUtils.doClick(boat_gob, 3, 0);
-								BotUtils.sleep(300);
+								BotUtils.sleep(300);}
 								}
 								window.destroy();
 								BotUtils.MusselPicker.suspend();
 								gob = null;
 								continue;
 							}
-							if (gob!=null &&BotUtils.get_target_gob(gob.rc, 300, avoid_targets, exclude_gobs)!=null){
+							if (gob!=null &&BotUtils.get_target_gob(gob.rc, 100, avoid_targets, exclude_gobs)!=null){
 								gob =null;
 								continue;
 							}
@@ -116,22 +118,24 @@ public class MusselPicker {
 							for (FlowerMenu.Petal opt : menu.opts) {
 								if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
 									menu.choose(opt);
-									menu.destroy();
-//									menu = null;
-									nex_pick = true;
-									BotUtils.doClick(gob, 3, 0);
 									BotUtils.sleep(1000);
-									menu = ui.root.findchild(FlowerMenu.class);
+									nex_pick = true;
+									menu.destroy();
 									break;
 								}
 							}
-//							if (!nex_pick && menu!=null) {
-//								menu.destroy();
-//							}
+							if(nex_pick){
+								BotUtils.doClick(gob, 3, 0);
+								BotUtils.sleep(100);
+								menu = ui.root.findchild(FlowerMenu.class);
+							}else{
+								if (menu!=null) {
+									menu.destroy();
+								}
+							}
 						}
 						}
 						gob = null;
-
 					}
 				}
 			});;

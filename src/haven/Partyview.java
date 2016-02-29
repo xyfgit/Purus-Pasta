@@ -93,10 +93,12 @@ public class Partyview extends Widget {
                                 double dxabs = Math.abs(dx);
                                 double dyabs = Math.abs(dy);
 
-                                String tooltipstr = String.format("  Distance: %s mg.  X: %s  Y: %s",
+                                String tooltipstr = String.format("  Distance: %s mg.  X: %s  Y: %s, total:%s",
                                         df.format(dist),
                                         df.format(a.x > b.x ? -1 * dxabs: dxabs),
-                                        df.format(a.y > b.y ? dyabs : -1 * dyabs));
+                                        df.format(a.y > b.y ? dyabs : -1 * dyabs),
+                                        df.format(a.dist(b))
+                                        );
                                 tooltip = Text.render(tooltipstr).tex();
 
                                 return tooltip;
