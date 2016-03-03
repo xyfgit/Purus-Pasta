@@ -107,6 +107,10 @@ public class CarrotFarmer {
 							BotUtils.sleep(150);
 						}
 						// Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
+						WItem left = ui.gui.getequipory().quickslots[6];
+						if (!left.item.getres().name.contains("scythe")){
+							BotUtils.sleep(750);
+						}
 						BotUtils.sleep(950);
 						GItem item = BotUtils.getItemAtHand();
 
