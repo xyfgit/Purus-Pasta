@@ -1,5 +1,10 @@
 ## Changelog
 
+### 2.11.0
+	- Mini combat icons option
+	- Little fixes
+	- Latest merges from amber and default client
+
 ### 2.10.0
 	- Option to hide horizontal meter
 	- Added some curios to curio.config
