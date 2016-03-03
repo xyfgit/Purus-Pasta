@@ -406,6 +406,10 @@ public class LocalMiniMap extends Widget {
             return;
         }
         this.cc = pl.rc.div(tilesz);
+        if(pl == null)
+            this.cc = mv.cc.div(tilesz);
+        else
+            this.cc = pl.rc.div(tilesz);
 
         if (Config.playerposfile != null && MapGridSave.gul != null) {
             try {
