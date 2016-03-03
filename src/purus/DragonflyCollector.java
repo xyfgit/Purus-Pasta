@@ -35,7 +35,6 @@ public class DragonflyCollector {
 			BotUtils.sysMsg("Target "+ targetName, Color.WHITE);
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			ui.root.findchild(FlowerMenu.class);
-				BotUtils.setSpeed(1);
 				while(BotUtils.getItemAtHand() == null) {
 					GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 					IMeter.Meter stam = gui.getmeter("stam", 0);
@@ -55,7 +54,10 @@ public class DragonflyCollector {
 							BotUtils.doClick(gob, 3, 0);
 						}
 //					}
-						sleep(1000);
+					if (gob.getres().name.contains("terobjs")){
+						sleep(800);
+					}
+						sleep(800);
 				}
 		        window.destroy();
 		       t.stop();

@@ -108,6 +108,7 @@ public class MusselPicker {
 							GItem item = BotUtils.getItemAtHand();
 							if (item!=null){
 								BotUtils.sysMsg("Detect item on hand, picker suspend now", Color.WHITE);
+								Settings.setKeepWalk(true);
 								Settings.setCancelAuto(true);
 							}
 						BotUtils.doClick(gob, 3, 0);

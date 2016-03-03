@@ -209,6 +209,15 @@ public class  BotUtils {
 		}
 		return gob;
 	};
+
+	public boolean waitForMovement(int timeout) {
+		while (!isMoving() && timeout > 0) {
+			sleep(50);
+			timeout -= 50;
+		}
+		return isMoving();
+	}
+
 	public Coord getReachRC(Coord rc_st, Coord rc_end){
 //		if ((rc_end.y - rc_st.y)==0 ||((rc_end.x-rc_st.x)/(rc_end.y-rc_st.y))==0) return rc_end;
 //		float y = (x-rc_st.x)/((rc_end.x-rc_st.x)/(rc_end.y-rc_st.y))+rc_st.y ;
@@ -233,6 +242,7 @@ public class  BotUtils {
 		}
 		sysMsg("gob_dis:"+player().rc.dist(gob_rc), Color.WHITE);
 		Coord reach_rc;
+		int direction=1;
 		while (player().rc.dist(gob_rc) > radiation){
 			if (haven.Settings.getCancelAuto() && cancelable){
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(),  player().rc,1 ,0);
@@ -247,22 +257,25 @@ public class  BotUtils {
 			while (isMoving()){
 				sleep(100);
 			}
+			if (player().rc.dist(gob_rc) <= radiation){
+				// if reached the gob, pick gob, and find next gob
+//			sysMsg("Reached target:"+gob.getres().name, Color.WHITE)
+				return true;
+			}
 			// if bocked try turn around
 			p_st =  player().getrc();
 			p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
-			turn_around(gob_rc, 1);
+			turn_around(gob_rc, direction);
 			sleep(walk_sleep);
-			if (p_st.dist(player().getrc()) < 2){
-				turn_around(gob_rc, -1);
+			if (p_st.dist(player().getrc()) < 4){
+				direction = direction*-1;
+				turn_around(gob_rc,direction);
 				sleep(walk_sleep);
 			}
+			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob_rc,1 ,0);
+			sleep(walk_sleep);
 		}
-		if (player().rc.dist(gob_rc) <= radiation){
-			// if reached the gob, pick gob, and find next gob
-//			sysMsg("Reached target:"+gob.getres().name, Color.WHITE)
-			return true;
-		}
-		return false;
+		return true;
 	}
 	// Finds nearest objects
 	 public Gob findObjectByNames(Coord center_rc,int radius, String... names) {
@@ -294,9 +307,10 @@ public class  BotUtils {
         return ui.gui.map.player();
     }
 
-	public void turn_around(Coord tar_rc, int direction){
+	public void turn_around(Coord tar_rc,int direction){
 		// direction should be 1 or -1
 		Coord pc = player().rc;
+//		int pc_direct = pc.y - tar_rc.y >0 ?3:-3;
 		int turn_x = pc.x+ 20 * direction;
 		Coord target_rc = new Coord(turn_x, get_o_y(pc, tar_rc,turn_x));
 		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), target_rc,1 ,0);
