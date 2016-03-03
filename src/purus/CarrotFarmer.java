@@ -92,7 +92,7 @@ public class CarrotFarmer {
 						BotUtils.goToCoord(gob.rc, 10, false);
 						BotUtils.sleep(100);
 						BotUtils.doClick(gob, 3, 0);
-						BotUtils.sleep(1200);
+						BotUtils.sleep(200);
 //						@SuppressWarnings("deprecation")
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 						if (menu != null) {
@@ -107,7 +107,7 @@ public class CarrotFarmer {
 							BotUtils.sleep(150);
 						}
 						// Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
-						BotUtils.sleep(150);
+						BotUtils.sleep(950);
 						GItem item = BotUtils.getItemAtHand();
 
 						if (item == null) {

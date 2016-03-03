@@ -176,6 +176,11 @@ public class  BotUtils {
 		                            matches = true;
 		                            break;
 		                        	}
+									//special handling for carrot
+									if (gob.getStage() == gob.getMaxStage()-1 && gob.getres().name.contains("Carrot")) {
+										matches = true;
+										break;
+									}
 		                            // TO DO: KEKSI MITEN HARVESTAA VAAN STAGE 4 OLEVAT PORKKANAT
 		                        }
 		                    }
@@ -227,36 +232,28 @@ public class  BotUtils {
 			return false;
 		}
 		sysMsg("gob_dis:"+player().rc.dist(gob_rc), Color.WHITE);
-		Coord reach_rc = getReachRC(player().rc, gob_rc);
-		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
-//			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
-		sleep(200);
+		Coord reach_rc;
 		while (player().rc.dist(gob_rc) > radiation){
 			if (haven.Settings.getCancelAuto() && cancelable){
 				ui.gui.map.wdgmsg("click", getCenterScreenCoord(),  player().rc,1 ,0);
 				return false;
-			}
-			// if distance to gob is larger than 10, still need to force walk
-//				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
+			};
+			//climb the hill need 2 click.
+			reach_rc = getReachRC(player().rc, gob_rc);
+			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
+			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
+			sleep(walk_sleep);
 			// check if player moved
+			while (isMoving()){
+				sleep(100);
+			}
+			// if bocked try turn around
 			p_st =  player().getrc();
 			p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
+			turn_around(gob_rc, 1);
 			sleep(walk_sleep);
-			if ( p_st.dist(player().getrc()) < 5){
-				// if bocked try turn around
-				p_st =  player().getrc();
-				p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
-				turn_around(gob_rc, 1);
-				sleep(walk_sleep);
-				if (p_st.dist(player().getrc()) < 5){
-					turn_around(gob_rc, -1);
-					sleep(walk_sleep);
-				}
-				//climb the hill need 2 click.
-				reach_rc = getReachRC(player().rc, gob_rc);
-				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
-				sleep(100);
-				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
+			if (p_st.dist(player().getrc()) < 2){
+				turn_around(gob_rc, -1);
 				sleep(walk_sleep);
 			}
 		}

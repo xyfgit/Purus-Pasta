@@ -27,7 +27,7 @@ public class MusselPicker {
 	};
 	static ArrayList<String>  targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs", "gfx/terobjs/trees/appletree"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
 	static ArrayList<String>  animal_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/frog", "gfx/kritter/rat", "gfx/kritter/chicken"));
-	static ArrayList<String>  avoid_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/badger", "gfx/kritter/boar", "gfx/kritter/borka/body"));
+	static ArrayList<String>  avoid_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/badger", "gfx/kritter/boar", "gfx/kritter/borka/body", "gfx/kritter/lynx"));
 
 	String boat_gob_name = "gfx/terobjs/vehicle/rowboat";
 	ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
@@ -44,6 +44,7 @@ public class MusselPicker {
 			}catch (Exception e){
 			}
 		}
+		Settings.setKeepWalk(false);
 		Settings.setCancelAuto(false);
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 		boat_gob = BotUtils.findObjectByNames(BotUtils.player().rc, 50, boat_gob_name);
@@ -93,7 +94,7 @@ public class MusselPicker {
 								gob = null;
 								continue;
 							}
-							if (gob!=null &&BotUtils.get_target_gob(gob.rc, 100, avoid_targets, exclude_gobs)!=null){
+							if (gob!=null &&BotUtils.get_target_gob(gob.rc, 250, avoid_targets, exclude_gobs)!=null){
 								gob =null;
 								continue;
 							}
@@ -104,7 +105,11 @@ public class MusselPicker {
 							if (!exclude_gobs.contains(gob_rc)) {
 								exclude_gobs.add(gob_rc);
 							}
-
+							GItem item = BotUtils.getItemAtHand();
+							if (item!=null){
+								BotUtils.sysMsg("Detect item on hand, picker suspend now", Color.WHITE);
+								Settings.setCancelAuto(true);
+							}
 						BotUtils.doClick(gob, 3, 0);
 						BotUtils.sleep(400);
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
@@ -121,12 +126,13 @@ public class MusselPicker {
 									BotUtils.sleep(1000);
 									nex_pick = true;
 									menu.destroy();
+									BotUtils.sleep(100);
 									break;
 								}
 							}
 							if(nex_pick){
 								BotUtils.doClick(gob, 3, 0);
-								BotUtils.sleep(100);
+								BotUtils.sleep(200);
 								menu = ui.root.findchild(FlowerMenu.class);
 							}else{
 								if (menu!=null) {
@@ -149,10 +155,12 @@ public class MusselPicker {
 			private class StatusWindow extends Window {
 				Button cancel_btn =new Button(120, "Cancel") {
 					public void click() {
+						targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs", "gfx/terobjs/trees/appletree"));
+						Settings.setKeepWalk(true);
 						if(BotUtils.MusselPicker != null) {
 							//gob = null; will not work as gob is not static
 							if (curStatus != STATUS.RUNNING) {
-								BotUtils.MusselPicker.suspend();
+								Settings.setCancelAuto(true);
 								window.destroy();
 								curStatus = STATUS.RESTING;
 								return;

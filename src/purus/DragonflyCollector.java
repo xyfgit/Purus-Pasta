@@ -45,13 +45,13 @@ public class DragonflyCollector {
 						t.stop();
 						return;
 					}
-					else if (stam.a <= 30 && nrj.a >= 85) {
+					else if (stam.a <= 30 && nrj.a >= 95) {
 						BotUtils.drink();
 					}
 //					if (!BotUtils.isMoving()) {
 						Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, targetName);
 						if (gob != null) {
-							BotUtils.goToCoord(gob.rc, 100, false);
+							BotUtils.goToCoord(gob.rc, 200, true);
 							BotUtils.doClick(gob, 3, 0);
 						}
 //					}
@@ -80,6 +80,7 @@ public class DragonflyCollector {
 						Settings.setFindTargetName(null);
 	                    window.destroy();
 	                    if(t != null) {
+							Settings.setCancelAuto(true);
 	                    	gameui().info("Dragonfly Collector Cancelled", Color.WHITE);
 	                    	t.stop();
 	                    }
@@ -90,6 +91,7 @@ public class DragonflyCollector {
 	        public void wdgmsg(Widget sender, String msg, Object... args) {
 	            if (sender == this && msg.equals("close")) {
 					Settings.setFindTargetName(null);
+					Settings.setCancelAuto(true);
 	                t.stop();
 	            }
 	            super.wdgmsg(sender, msg, args);
