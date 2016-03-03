@@ -1,5 +1,15 @@
 ## Changelog
 
+### 2.10.0
+	- Option to hide horizontal meter
+	- Added some curios to curio.config
+	- Disable auto-eat option for studyable items
+	- Added oven and smelter filler
+	- Server status on login screen
+	- Fixes and improvements on bots
+	- Improved server time display location
+	- Added automatic leech drop option
+	- Latest merges from amber and default client
 ### 2.9.2
 	- Latest updates from Default client
 	- Various bugfixes

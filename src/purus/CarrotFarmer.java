@@ -17,8 +17,8 @@ public class CarrotFarmer {
 	private final UI ui;
     private haven.Widget w;
     private Inventory i;
-    private Widget window;  
-    
+    private Widget window;
+
     private String Seed = "gfx/invobjs/carrot";
 	// todo: use dict for this
 	private ArrayList<String> Plants =  new ArrayList<String>(Arrays.asList("gfx/terobjs/plants/pumpkin", "gfx/terobjs/plants/wine",
@@ -26,7 +26,7 @@ public class CarrotFarmer {
 			"gfx/terobjs/plants/flax","gfx/terobjs/plants/barley"));
 	private String Plant = null;
 	private int Stage = 4;
-    
+
 	BotUtils BotUtils;
 
 	public CarrotFarmer (UI ui, Widget w, Inventory i) {
@@ -40,37 +40,21 @@ public class CarrotFarmer {
 		if (Plant == null) {
 			Gob gob_temp = null;
 			float distance = 99999;
-			for(String temp :Plants) {
-				if (temp.equals( "gfx/terobjs/plants/flax")){
-					Stage=3;
-				}else if (temp.equals(  "gfx/terobjs/plants/pepper")){
-					Stage=6;
-				}else if (temp.equals(  "gfx/terobjs/plants/barley")){
-					Stage=3;
-				}
-				BotUtils.sysMsg(temp, Color.WHITE);
-				gob_temp = BotUtils.findNearestStageCrop(500, Stage, temp);
+				gob_temp = BotUtils.findNearestHarvestCrop(500, "gfx/terobjs/plants");
 				if (gob_temp != null) {
 					Coord3f f = gob_temp.getrc();
 					Coord3f p1 = ui.sess.glob.oc.getgob(MapView.plgob).getrc();
 					if (distance > f.dist(p1)) {
 						gob = gob_temp;
-						Plant = temp;
+						Plant = gob_temp.getres().name;
 						distance = f.dist(p1);
 						BotUtils.sysMsg(Plant+distance, Color.WHITE);
 					}
-				}
+
 			}
 		}else {
-			if (Plant.equals( "gfx/terobjs/plants/flax")){
-				Stage=3;
-			}else if (Plant.equals(  "gfx/terobjs/plants/pepper")){
-				Stage=6;
-			}else if (Plant.equals(  "gfx/terobjs/plants/barley")){
-				Stage=3;
-			}
-			gob = BotUtils.findNearestStageCrop(500, Stage, Plant);
-			Plants.add(Seed);
+			gob = BotUtils.findNearestHarvestCrop(500, Plant);
+			Plants.add(Plant.replace("terobjs/plants", "invobjs"));
 		}
 		return gob;
 	}
@@ -83,7 +67,7 @@ public class CarrotFarmer {
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			while (true) {
 				try {
-//					BotUtils.drop_item(1);
+					BotUtils.drop_item(1);
 					Gob gob = get_plant_gob();
 					if (gob != null)
 						CarrotsNearby = true;
@@ -102,34 +86,14 @@ public class CarrotFarmer {
 							return;
 						}
 						else if (stam.a <= 30) {
-							WItem item = BotUtils.findDrink(BotUtils.playerInventory());
-							if (item != null) {
-								item.item.wdgmsg("iact", Coord.z, 3);
-								BotUtils.sleep(250);
-								@SuppressWarnings("deprecation")
-								FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-								if (menu != null) {
-									for (FlowerMenu.Petal opt : menu.opts) {
-										if (opt.name.equals("Drink")) {
-											menu.choose(opt);
-											menu.destroy();
-											BotUtils.sysMsg("wait for stam back to 84", Color.WHITE);
-											while (gui.getmeter("stam", 0).a <= 84) {
-												BotUtils.sleep(550);
-											}
-										}
-									}
-								}
-							}
-							else{
-								BotUtils.sysMsg("slowly wait for stam", Color.WHITE);
-								BotUtils.sleep(3000);
-							}
+							BotUtils.drink();
 						}
 						//end of drink
+						BotUtils.goToCoord(gob.rc, 10, false);
+						BotUtils.sleep(100);
 						BotUtils.doClick(gob, 3, 0);
-						BotUtils.sleep(350);
-						@SuppressWarnings("deprecation")
+						BotUtils.sleep(200);
+//						@SuppressWarnings("deprecation")
 						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
 						if (menu != null) {
 							for (FlowerMenu.Petal opt : menu.opts) {
@@ -143,7 +107,11 @@ public class CarrotFarmer {
 							BotUtils.sleep(150);
 						}
 						// Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
-						BotUtils.sleep(150);
+						WItem left = ui.gui.getequipory().quickslots[6];
+						if (!left.item.getres().name.contains("scythe")){
+							BotUtils.sleep(750);
+						}
+						BotUtils.sleep(950);
 						GItem item = BotUtils.getItemAtHand();
 
 						if (item == null) {

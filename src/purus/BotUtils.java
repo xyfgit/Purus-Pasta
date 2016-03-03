@@ -6,34 +6,36 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import haven.Coord;
-import haven.FlowerMenu;
+import haven.*;
 import haven.FlowerMenu.Petal;
 import haven.GAttrib;
 import haven.GItem;
 import haven.GameUI;
 import haven.Gob;
+import haven.HavenPanel;
 import haven.Inventory;
 import haven.ItemInfo;
 import haven.Loading;
 import haven.Moving;
 import haven.Resource;
+import haven.Speedget;
 import haven.UI;
 import haven.WItem;
 import haven.Widget;
+import haven.Window;
 
-public class BotUtils {
+public class  BotUtils {
 
 	private final UI ui;
     private haven.Widget w;
     private haven.Inventory i;
     public Petal[] opts;
     private static Pattern liquidPattern;
-    String liquids =  haven.Utils.join("|", new String[] { "Water", "Piping Hot Tea", "Tea" });
+    String liquids =  haven.Utils.join("|", new String[] { "Bucket", "Water", "Piping Hot Tea", "Tea" });
     String pattern = String.format("[0-9.]+ l of (%s)", liquids);
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
-    
-	public BotUtils (UI ui, Widget w, Inventory i) {
+	public static Thread MusselPicker;
+	public  BotUtils (UI ui, Widget w, Inventory i) {
 		this.ui = ui;
 		this.w = w;
 		this.i = i;
@@ -44,8 +46,41 @@ public class BotUtils {
     	return ui.gui;
     }
     
+    // Drinks water/tea from containers in inventory
+    public void drink() {
+		GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
+		WItem item = findDrinkOnHand();
+		if (item==null) {
+			item = findDrink(playerInventory());
+		}
+		 if (item != null) {
+			 item.item.wdgmsg("iact", Coord.z, 3);
+			 sleep(250);
+				@SuppressWarnings("deprecation")
+				FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+		            if (menu != null) {
+		                for (FlowerMenu.Petal opt : menu.opts) {
+		                    if (opt.name.equals("Drink")) {
+		                        menu.choose(opt);
+		                        menu.destroy();
+		                        while(gui.getmeter("stam", 0).a <= 90) {
+		                        	sleep(100);
+		                        }
+		                    }
+		                }
+		            }
+		 }
+    }
+    
     public void sysMsg(String msg, Color color ) {
     	ui.root.findchild(GameUI.class).info(msg,color);
+    }
+    
+    // Sets speed for player
+    // 0 = Crawl 1 = Walk  2 = Run 3 = Sprint
+    public void setSpeed(int speed) {
+    	haven.Speedget.setSpeed = true;
+    	haven.Speedget.SpeedToSet = speed;
     }
     
 	// Takes item in hand
@@ -98,7 +133,7 @@ public class BotUtils {
 	
 	// Chooses option from flower menu
 	public void Choose(Petal option) {
-        w.wdgmsg("cl", option.num, ui.modflags());
+       w.wdgmsg("cl", option.num, ui.modflags());
 	}
 	public int get_o_y(int x_pc, int y_pc, int x_tar, int y_tar, int turn_x){
 	//（x-x1)(x2-x1)+(y-y1)(y2-y1)=0
@@ -111,13 +146,22 @@ public class BotUtils {
 		}
 		return ((turn_x -pc.x)*(pc.x-tar.x)/(tar.y-pc.y)) + pc.y;
 	};
+	
+	// Click some object with item on hand
+	// Modifier 1 - shift; 2 - ctrl; 4 alt;
+    public void itemClick(Gob gob, int mod) {
+        ui.gui.map.wdgmsg("itemact", Coord.z, gob.rc, mod, 0, (int)gob.id, gob.rc, 0, -1);
+    }
+	
 	// Click some object with specific button and modifier
-	public void doClick(Gob gob, int button, int mod) {
-		 ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
-		}
+	// Button 1 = Left click and 3 = right click
+	// Modifier 1 - shift; 2 - ctrl; 4 - alt;
+    public void doClick(Gob gob, int button, int mod) {
+        ui.gui.map.wdgmsg("click", Coord.z, gob.rc, button, 0, mod, (int)gob.id, gob.rc, 0, -1);
+    }
 
 	// Finds nearest crop with x stage
-		 public Gob findNearestStageCrop(int radius, int stage, String... names) {
+		 public Gob findNearestHarvestCrop(int radius, String... names) {
 		        Coord plc = player().rc;
 		        double min = radius;
 		        Gob nearest = null;
@@ -128,10 +172,15 @@ public class BotUtils {
 		                    boolean matches = false;
 		                    for (String name : names) {
 		                        if (isObjectName(gob, name)) {
-		                        	if (gob.getStage() == stage) {
+		                        	if (gob.getStage() == gob.getMaxStage() && gob.getStage() != 404) {
 		                            matches = true;
 		                            break;
 		                        	}
+									//special handling for carrot
+									if (gob.getStage() == gob.getMaxStage()-1 && gob.getres().name.contains("Carrot")) {
+										matches = true;
+										break;
+									}
 		                            // TO DO: KEKSI MITEN HARVESTAA VAAN STAGE 4 OLEVAT PORKKANAT
 		                        }
 		                    }
@@ -145,16 +194,14 @@ public class BotUtils {
 		        return nearest;
 		    }
 	//
-	public Gob get_target_gob(ArrayList<String> targets, ArrayList<Coord>  exclude_gobs){
-		if (exclude_gobs.size() > 100) {
-			exclude_gobs=  new ArrayList<Coord>();
-		}
+	public Gob get_target_gob(Coord center_rc, int radius, ArrayList<String> targets, ArrayList<Coord>  exclude_gobs){
+
 		Gob gob = null;
 		double near_dis = 9999;
 		for (String target: targets){
-			Gob this_gob = findObjectByNames(800, target);
+			Gob this_gob = findObjectByNames(center_rc,radius, target);
 			if(this_gob != null && !exclude_gobs.contains(this_gob.rc)){
-				double this_gob_dis = player().rc.dist(this_gob.rc);
+				double this_gob_dis = center_rc.dist(this_gob.rc);
 				if(this_gob_dis< near_dis ){
 					near_dis = this_gob_dis;
 					gob = this_gob;
@@ -162,54 +209,81 @@ public class BotUtils {
 		}
 		return gob;
 	};
-	public void goToGob(Gob gob){
 
-		Coord p_st = null;
-		if (gob==null){
-			sysMsg("Get null gob in goToGob function.", Color.RED);
-			return;
+	public boolean waitForMovement(int timeout) {
+		while (!isMoving() && timeout > 0) {
+			sleep(50);
+			timeout -= 50;
 		}
-		sysMsg("gob_dis:"+player().rc.dist(gob.rc), Color.WHITE);
-		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
-//			ui.root.findchild(GameUI.class).info("begin pick", Color.WHITE);
-		while (player().rc.dist(gob.rc) > 20){
-			// if distance to gob is larger than 10, still need to force walk
-//				ui.root.findchild(GameUI.class).info("gob_dis:"+BotUtils.player().rc.dist(gob.rc), Color.WHITE);
-			// check if player moved
-			p_st =  player().rc;
-			p_st = new Coord(p_st.x, p_st.y);
-			sleep(500);
-			if ( p_st.dist(player().rc) < 5){
-				// if bocked try turn around
-				p_st =  player().rc;
-				p_st = new Coord(p_st.x, p_st.y);
-				turn_around(gob.rc, 1);
-				sleep(500);
-				if (p_st.dist(player().rc) < 5){
-					turn_around(gob.rc, -1);
-					sleep(500);
-				}
-				ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
-				sleep(500);
+		return isMoving();
+	}
+
+	public Coord getReachRC(Coord rc_st, Coord rc_end){
+//		if ((rc_end.y - rc_st.y)==0 ||((rc_end.x-rc_st.x)/(rc_end.y-rc_st.y))==0) return rc_end;
+//		float y = (x-rc_st.x)/((rc_end.x-rc_st.x)/(rc_end.y-rc_st.y))+rc_st.y ;
+//		Coord reach_rc = new Coord(x, (int)(y));
+		int x_direction = (player().rc.x >  rc_end.x)?-1:1;
+		int y_direction = (player().rc.y >  rc_end.y)?-1:1;
+		Coord middle_rc = rc_end;
+		while (middle_rc.dist(rc_st)> 600) {
+			middle_rc = new Coord(rc_st.x + Math.abs(middle_rc.x - rc_st.x) / 2 * x_direction, rc_st.y + Math.abs(middle_rc.y - rc_st.y) / 2 * y_direction);
+			if (middle_rc.dist(rc_st) > 3000){
+				sysMsg("getReachRC get a middle rc > 3000!", Color.RED);
 			}
-			sleep(500);
 		}
-		if (player().rc.dist(gob.rc) <= 20){
-			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob.rc,1 ,0);
-			sleep(600);
-			// if reached the gob, pick gob, and find next gob
-			sysMsg("Reached target:"+gob.getres().name, Color.WHITE);
+		return middle_rc;
+	}
+	public boolean goToCoord(Coord gob_rc, int radiation, boolean cancelable){
+		int walk_sleep = Math.max(500, 500 * (2-haven.Speedget.SpeedToSet));
+		Coord3f p_st = null;
+		if (gob_rc==null){
+			sysMsg("Get null gob in goToGob function.", Color.RED);
+			return false;
 		}
-
+		sysMsg("gob_dis:"+player().rc.dist(gob_rc), Color.WHITE);
+		Coord reach_rc;
+		int direction=1;
+		while (player().rc.dist(gob_rc) > radiation){
+			if (haven.Settings.getCancelAuto() && cancelable){
+				ui.gui.map.wdgmsg("click", getCenterScreenCoord(),  player().rc,1 ,0);
+				return false;
+			};
+			//climb the hill need 2 click.
+			reach_rc = getReachRC(player().rc, gob_rc);
+			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
+			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
+			sleep(walk_sleep);
+			// check if player moved
+			while (isMoving()){
+				sleep(100);
+			}
+			if (player().rc.dist(gob_rc) <= radiation){
+				// if reached the gob, pick gob, and find next gob
+//			sysMsg("Reached target:"+gob.getres().name, Color.WHITE)
+				return true;
+			}
+			// if bocked try turn around
+			p_st =  player().getrc();
+			p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
+			turn_around(gob_rc, direction);
+			sleep(walk_sleep);
+			if (p_st.dist(player().getrc()) < 4){
+				direction = direction*-1;
+				turn_around(gob_rc,direction);
+				sleep(walk_sleep);
+			}
+			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob_rc,1 ,0);
+			sleep(walk_sleep);
+		}
+		return true;
 	}
 	// Finds nearest objects
-	 public Gob findObjectByNames(int radius, String... names) {
-	        Coord plc = player().rc;
+	 public Gob findObjectByNames(Coord center_rc,int radius, String... names) {
 	        double min = radius;
 	        Gob nearest = null;
 	        synchronized (ui.sess.glob.oc) {
 	            for (Gob gob : ui.sess.glob.oc) {
-	                double dist = gob.rc.dist(plc);
+	                double dist = gob.rc.dist(center_rc);
 	                if (dist < min) {
 	                    boolean matches = false;
 	                    for (String name : names) {
@@ -233,9 +307,10 @@ public class BotUtils {
         return ui.gui.map.player();
     }
 
-	public void turn_around(Coord tar_rc, int direction){
+	public void turn_around(Coord tar_rc,int direction){
 		// direction should be 1 or -1
 		Coord pc = player().rc;
+//		int pc_direct = pc.y - tar_rc.y >0 ?3:-3;
 		int turn_x = pc.x+ 20 * direction;
 		Coord target_rc = new Coord(turn_x, get_o_y(pc, tar_rc,turn_x));
 		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), target_rc,1 ,0);
@@ -271,6 +346,15 @@ public class BotUtils {
         }
         return null;
     }
+	public WItem findDrinkOnHand() {
+		WItem left = ui.gui.getequipory().quickslots[6];
+		if (left!=null && canDrinkFrom(left))
+				return left;
+		WItem right = ui.gui.getequipory().quickslots[7];
+		if (right!=null && canDrinkFrom(right))
+			return right;
+		return null;
+	}
     public boolean canDrinkFrom(WItem item) {
         ItemInfo.Contents contents = getContents(item);
         if (contents != null && contents.sub != null) {
@@ -292,6 +376,5 @@ public class BotUtils {
         } catch (Loading ignored) {}
         return null;
     }
-    
-    
+
 }

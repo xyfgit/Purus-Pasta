@@ -328,12 +328,12 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
         if (Config.showfps) {
             FastText.aprint(g, new Coord(HavenPanel.w - 50, 15), 0, 1, "FPS: " + fps);
         }
-
+        
         if (Config.showservertime) {
-            if (ui.sess != null && ui.sess.glob != null && ui.sess.glob.servertime != null)
-                FastText.aprint(g, new Coord(HavenPanel.w/2, 15), 1, 1, ui.sess.glob.servertime);
+            if (ui.sess != null && ui.sess.glob != null && ui.sess.glob.servertime != null) 
+            g.image(Text.render(String.format(ui.sess.glob.servertime), Color.WHITE).tex(), new Coord(HavenPanel.w/2, 1));
         }
-
+        
         if (Config.dbtext) {
             int y = h - 150;
             FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));

@@ -813,6 +813,7 @@ public class ChatUI extends Widget {
                             return;
                         }
                     } catch (NumberFormatException nfe) {
+                        Settings.setFindTargetName(line.substring(1));
                     }
                 }
 

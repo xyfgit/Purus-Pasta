@@ -1,11 +1,13 @@
 package purus;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import haven.*;
+import haven.Button;
 import haven.FlowerMenu.Petal;
+import haven.Window;
 
 public class MusselPicker {
 
@@ -13,7 +15,7 @@ public class MusselPicker {
     private haven.Widget w;
     private haven.Inventory i;
     public Petal[] opts;
-    private Widget window; 
+    private static Widget window;
     
 	BotUtils BotUtils;
 
@@ -23,90 +25,174 @@ public class MusselPicker {
 		this.i = i;
 		BotUtils = new BotUtils(ui, w, i);
 	};
-	ArrayList<String> targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs",
-			"gfx/kritter/frog/frog",
-			"gfx/kritter/rat/rat", "gfx/terobjs/trees/appletree",
-			"no gfx/terobjs/bumlings/porphyry2"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
+	static ArrayList<String>  targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs", "gfx/terobjs/trees/appletree"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
+	static ArrayList<String>  animal_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/frog", "gfx/kritter/rat", "gfx/kritter/chicken"));
+	static ArrayList<String>  avoid_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/badger", "gfx/kritter/boar", "gfx/kritter/borka/body", "gfx/kritter/lynx"));
+
 	String boat_gob_name = "gfx/terobjs/vehicle/rowboat";
 	ArrayList<Coord> exclude_gobs=  new ArrayList<Coord>();
-
-	Gob boat_gob = null;
-	public void Run () {
-	t.start();	
+	static Gob boat_gob = null;
+	Gob gob = null;
+	enum STATUS {
+		BACK_TO_BOAT, RUNNING, RESTING
 	}
-	Thread t = new Thread(new Runnable() {
-	public void run()  {
-		boat_gob = BotUtils.findObjectByNames(100, boat_gob_name);
-		boolean on_boat = false;
-		if (boat_gob != null){
-			on_boat = true;
+	static STATUS curStatus = STATUS.RESTING;
+	public void Run () {
+		if (window!=null){
+			try{
+				window.destroy();
+			}catch (Exception e){
+			}
 		}
+		Settings.setKeepWalk(false);
+		Settings.setCancelAuto(false);
 		window = BotUtils.gui().add(new StatusWindow(), 300, 200);
-		Gob gob = null;
-		while (true){
-			while(gob == null) {
-				gob =BotUtils.get_target_gob(targets, exclude_gobs);
-				BotUtils.sleep(500);
-			}
-			if (boat_gob != null && on_boat ){
-				// check ui.modflags(), 2 means press control
-				ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), gob.rc,1, 2);
-				BotUtils.sleep(500);
-			}
-			BotUtils.doClick(gob, 3, 0);
-			BotUtils.sleep(500);
-			BotUtils.goToGob(gob);
-			BotUtils.doClick(gob, 3, 0);
-			BotUtils.sleep(500);
-			FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-			boolean nex_pick = true;
-			while (nex_pick && menu != null) {
-				nex_pick = false;
-				for (FlowerMenu.Petal opt : menu.opts) {
-					if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
-						menu.choose(opt);
-						menu.destroy();
-						nex_pick = true;
-						BotUtils.doClick(gob, 3, 0);
-						BotUtils.sleep(500);
-						menu = ui.root.findchild(FlowerMenu.class);
-						break;
-					}
+		boat_gob = BotUtils.findObjectByNames(BotUtils.player().rc, 50, boat_gob_name);
+
+		if (Config.autoPickAnimal){
+			for (String animal: animal_targets){
+			targets.add(animal);}
+		}else{
+			for (String animal: animal_targets){
+				if(targets.contains(animal)){
+				targets.remove(animal);
 				}
 			}
-			exclude_gobs.add(gob.rc);
-			gob = null;
+		}
+		if (boat_gob != null){
+			// check ui.modflags(), 2 means press control
+			ui.gui.map.wdgmsg("click", BotUtils.getCenterScreenCoord(), boat_gob.rc,1, 2);
+			BotUtils.sleep(300);
+		}
+		gob = null;
+		curStatus = STATUS.RUNNING;
+		if (BotUtils.MusselPicker == null) {
+			BotUtils.MusselPicker = new Thread(new Runnable() {
+				public synchronized void run()  {
+					while (true) {
+						BotUtils.sleep(200);
+						while (gob == null) {
+//							BotUtils.sysMsg("Find target!", Color.WHITE);
+							if (exclude_gobs.size() > 100) {
+								exclude_gobs=  new ArrayList<Coord>();
+							}
+							gob = BotUtils.get_target_gob(BotUtils.player().rc, 600, targets, exclude_gobs);
+// BotUtils.sysMsg("cancel?" +Settings.getCancelAuto(), Color.WHITE);
+							if (Settings.getCancelAuto() ) {
+								if (boat_gob != null){
+								BotUtils.sysMsg("Go back to boat!", Color.WHITE);
+								Settings.setCancelAuto(false);
+								BotUtils.goToCoord(boat_gob.rc, 30, true);
+								BotUtils.sleep(200);
+									boat_gob = BotUtils.findObjectByNames(BotUtils.player().rc, 150, boat_gob_name);
+									if (boat_gob!=null){
+								BotUtils.doClick(boat_gob, 3, 0);
+								BotUtils.sleep(300);}
+								}
+								window.destroy();
+								BotUtils.MusselPicker.suspend();
+								gob = null;
+								continue;
+							}
+							if (gob!=null &&BotUtils.get_target_gob(gob.rc, 250, avoid_targets, exclude_gobs)!=null){
+								gob =null;
+								continue;
+							}
+							BotUtils.sleep(200);
+						}
+						Coord gob_rc = gob.rc;
+						if (BotUtils.goToCoord(gob_rc, 15, true)) {
+							if (!exclude_gobs.contains(gob_rc)) {
+								exclude_gobs.add(gob_rc);
+							}
+							GItem item = BotUtils.getItemAtHand();
+							if (item!=null){
+								BotUtils.sysMsg("Detect item on hand, picker suspend now", Color.WHITE);
+								Settings.setKeepWalk(true);
+								Settings.setCancelAuto(true);
+							}
+						BotUtils.doClick(gob, 3, 0);
+						BotUtils.sleep(400);
+						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+						boolean nex_pick = true;
+						if (menu == null) {
+							BotUtils.doClick(gob, 3, 0);
+							BotUtils.sleep(300);
+						}
+						while (nex_pick && menu != null && !Settings.getCancelAuto()) {
+							nex_pick = false;
+							for (FlowerMenu.Petal opt : menu.opts) {
+								if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
+									menu.choose(opt);
+									BotUtils.sleep(1000);
+									nex_pick = true;
+									menu.destroy();
+									BotUtils.sleep(100);
+									break;
+								}
+							}
+							if(nex_pick){
+								BotUtils.doClick(gob, 3, 0);
+								BotUtils.sleep(200);
+								menu = ui.root.findchild(FlowerMenu.class);
+							}else{
+								if (menu!=null) {
+									menu.destroy();
+								}
+							}
+						}
+						}
+						gob = null;
+					}
+				}
+			});;
+			BotUtils.MusselPicker.start();
+		}else{
+			BotUtils.MusselPicker.resume();
 		}
 	}
-	});
 
 	// This thingy makes that stupid window with cancel button, todo: make it better
 			private class StatusWindow extends Window {
+				Button cancel_btn =new Button(120, "Cancel") {
+					public void click() {
+						targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs", "gfx/terobjs/trees/appletree"));
+						Settings.setKeepWalk(true);
+						if(BotUtils.MusselPicker != null) {
+							//gob = null; will not work as gob is not static
+							if (curStatus != STATUS.RUNNING) {
+								Settings.setCancelAuto(true);
+								window.destroy();
+								curStatus = STATUS.RESTING;
+								return;
+							}
+
+							gameui().info("Mussel Picker Status: " + curStatus , Color.WHITE);
+							if(boat_gob != null&&curStatus != STATUS.BACK_TO_BOAT){
+							curStatus = STATUS.BACK_TO_BOAT;
+							}
+							Settings.setCancelAuto(true);
+						}
+						gameui().info("Mussel Picker Cancelled, handle cancel: " + haven.Settings.getCancelAuto() , Color.WHITE);
+					}
+				};
+
 		        public StatusWindow() {
 		            super(Coord.z, "Mussel Picker");
 		            setLocal(true);
-		            add(new Button(120, "Cancel") {
-		                public void click() {
-		                    if(t != null) {
-		                    	gameui().info("Mussel Picker Cancelled", Color.WHITE);
-		                    	t.stop();
-								if (boat_gob !=null) {
-//									BotUtils.goToGob(boat_gob);
-									BotUtils.doClick(boat_gob, 3, 0);
-								}
-		                    }
-							window.destroy();
-		                }
-		            });
+		            add(cancel_btn);
 		            pack();
 		        }
 		        public void wdgmsg(Widget sender, String msg, Object... args) {
-		            if (sender == this && msg.equals("close")) {
-		                t.stop();
-		            }
-		            super.wdgmsg(sender, msg, args);
+					// comment out as this code can cause bug
+//		            if (sender == this && msg.equals("close")) {
+					if (BotUtils.MusselPicker.isAlive()){
+					BotUtils.MusselPicker.suspend();;
+					}
+					window.destroy();
+//		            }
+					curStatus = STATUS.RESTING;
 		        }
-
 			}
 			//
 }

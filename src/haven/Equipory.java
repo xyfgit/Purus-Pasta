@@ -28,6 +28,7 @@ package haven;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static haven.Inventory.invsq;
 
@@ -69,6 +70,7 @@ public class Equipory extends Widget implements DTarget {
 
     Map<GItem, WItem[]> wmap = new HashMap<GItem, WItem[]>();
     public WItem[] quickslots = new WItem[ecoords.length];
+    private List<GItem> checkForDrop = new LinkedList<GItem>();
 
     @RName("epry")
     public static class $_ implements Factory {
@@ -107,6 +109,22 @@ public class Equipory extends Widget implements DTarget {
         }, new Coord(34, 0));
         ava.color = null;
     }
+    
+    @Override
+    public void tick(double dt) throws InterruptedException {
+	super.tick(dt);
+	try {
+	    if (!checkForDrop.isEmpty()) {
+		GItem g = checkForDrop.get(0);
+		if (g.resname().equals("gfx/invobjs/leech")) {
+			 g.drop = true; 
+			//ui.gui.map.wdgmsg("drop", Coord.z);
+		}
+		checkForDrop.remove(0);
+	    }
+	} catch (Resource.Loading ignore) {
+	}
+    }
 
     public void addchild(Widget child, Object... args) {
         if (child instanceof GItem) {
@@ -118,6 +136,9 @@ public class Equipory extends Widget implements DTarget {
                 v[i] = quickslots[ep] = add(new WItem(g), ecoords[ep].add(1, 1));
             }
             wmap.put(g, v);
+	    if(Config.dropleeches){
+		checkForDrop.add(g);
+	    }
 
             if (armorclass != null) {
                 armorclass.dispose();
