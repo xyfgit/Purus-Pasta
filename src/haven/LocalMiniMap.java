@@ -51,7 +51,7 @@ public class LocalMiniMap extends Widget {
     private static final Resource playeralarmRed = Resource.local().loadwait("sfx/alarmRed");
     private Coord doff = Coord.z;
     private Coord delta = Coord.z;
-	private final HashSet<Long> sgobs = new HashSet<Long>();
+    private final HashSet<Long> sgobs = new HashSet<Long>();
     private final HashMap<Coord, BufferedImage> maptiles = new HashMap<Coord, BufferedImage>(28, 0.75f);
     @SuppressWarnings("serial")
     private final Map<Pair<MCache.Grid, Integer>, Defer.Future<MapTile>> cache = new LinkedHashMap<Pair<MCache.Grid, Integer>, Defer.Future<MapTile>>(7, 0.75f, true) {
@@ -285,7 +285,7 @@ public class LocalMiniMap extends Widget {
                 } catch (Loading l) {
                 }
             }
-            
+
             for (Gob gob : oc) {
                 try {
                     if (Config.showplayersmmap || Config.autohearth) {
@@ -319,26 +319,26 @@ public class LocalMiniMap extends Widget {
                                         if (!sgobs.contains(gob.id)) {
                                             sgobs.add(gob.id);
                                             Audio.play(playeralarmRed, Config.alarmredvol);
+                                        }
                                     }
-                                  }
                                 }
                             }
                         } catch (Exception e) {
                         }
                     }
                     if (Config.alarmram) {
-                    	 try {
-                             Resource res = gob.getres();
-                             if (res != null && "bram".equals(res.basename())) {
-                                 if (!sgobs.contains(gob.id)) {
-                                     sgobs.add(gob.id);
-                                     Audio.play(ramalarmsfx, Config.timersalarmvol);
-                                 }
-                             }
-                    } 
-                    	 catch (Exception e) { 
-                    	 }
-                    	 }
+                        try {
+                            Resource res = gob.getres();
+                            if (res != null && "bram".equals(res.basename())) {
+                                if (!sgobs.contains(gob.id)) {
+                                    sgobs.add(gob.id);
+                                    Audio.play(ramalarmsfx, Config.timersalarmvol);
+                                }
+                            }
+                        }
+                        catch (Exception e) {
+                        }
+                    }
                 } catch (Loading l) {
                 }
             }
@@ -413,6 +413,29 @@ public class LocalMiniMap extends Widget {
                 plcrel = pl.rc.sub((MapGridSave.gul.x + 50) * tilesz.x, (MapGridSave.gul.y + 50) * tilesz.y);
             } catch (NullPointerException npe) {
             }
+        }
+    }
+    public int get_o_y( Coord pc, Coord tar, int turn_x){
+        //（x-x1)(x2-x1)+(y-y1)(y2-y1)=0
+        if ((tar.y-pc.y) == 0){
+            return pc.y;
+        }
+        return ((turn_x -pc.x)*(pc.x-tar.x)/(tar.y-pc.y)) + pc.y;
+    };
+    public Coord turnAroundCoord(Coord tar_rc,int direction, int back_rate){
+        // direction should be 1 or -1
+        Coord pc = mv.player().rc;
+        int pc_direct_y = pc.y - tar_rc.y >0 ?back_rate:-1*back_rate;
+        int pc_direct_x = pc.x - tar_rc.x >0 ?back_rate:-1*back_rate;
+        int turn_x = pc.x+ 20 * direction;
+        Coord target_rc = new Coord(turn_x+pc_direct_x, get_o_y(pc, tar_rc,turn_x) + pc_direct_y);
+        return target_rc;
+    }
+
+    private void sleep(int t){
+        try {
+            Thread.sleep(t);
+        } catch (InterruptedException ie) {
         }
     }
 
@@ -496,12 +519,12 @@ public class LocalMiniMap extends Widget {
                 Gob player = mv.player();
                 Coord rc = new Coord();
                 if (player != null)
-		rc = p2c(player.rc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz));
-		g.chcolor(VIEW_BG_COLOR);
-		g.frect(rc, VIEW_SZ);
-		g.chcolor(VIEW_BORDER_COLOR);
-		g.rect(rc, VIEW_SZ);
-		g.chcolor();
+                    rc = p2c(player.rc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz));
+                g.chcolor(VIEW_BG_COLOR);
+                g.frect(rc, VIEW_SZ);
+                g.chcolor(VIEW_BORDER_COLOR);
+                g.rect(rc, VIEW_SZ);
+                g.chcolor();
             }
 
             try {
@@ -538,71 +561,59 @@ public class LocalMiniMap extends Widget {
     private Coord last_mini_target = null;
     private float get_y(float x1, float y1, float x2, float y2, float pianyi){
 //（x-x1)(x2-x1)+(y-y1)(y2-y1)=0 10*(x2-x1)-x1x2+x1y1 + y(y2-y1)-y1(y2-y1)=0
-    return (((x1 + pianyi)-x1)*(x1-x2)/(y2-y1)) + y1;
+        return (((x1 + pianyi)-x1)*(x1-x2)/(y2-y1)) + y1;
     };
     Thread t = new Thread(new Runnable() {
         public void run() {
+            int radiation = 50;
+            Coord3f p_st;
+            int direction =1 ;
+            Object[] temp_args = walk_args.clone();
+            int turn_degree = 5;
+            Coord3f player_rc;
             while (true) {
                 mv.wdgmsg("click", walk_args);
                 last_mini_target = (Coord) walk_args[1];
-                try {
-                    Thread.sleep(800);
-                } catch (InterruptedException ie) {
-                }
+                sleep(200);
+                direction = direction*-1;
                 while (Settings.getKeepWalk()) {
-                    if (last_mini_target.dist((Coord) walk_args[1]) > 1) {
-                        mv.wdgmsg("click", walk_args);
-                    }
-                    Coord3f player = mv.player().getrc();
-                    Coord3f player_start = new Coord3f(player.x, player.y, player.z);
-                    float x = player.x - ((Coord) walk_args[1]).x;
-                    float y = player.y - ((Coord) walk_args[1]).y;
-                    if (walk_args[1] instanceof Coord && Math.abs(x) <= 20 && Math.abs(y) <= 20) {
-                        try {
-//                            ui.root.findchild(GameUI.class).info(player + " " + walk_args[1] + " x dis:" + (player.x - ((Coord) walk_args[1]).x)
-//                                    + " y dis " + (player.y - ((Coord) walk_args[1]).y) + "reached suspend", Color.WHITE);
-                            t.suspend();
-                        } catch (Exception e) {
+                    player_rc = mv.player().getrc();
+                    player_rc = new Coord3f(player_rc.x, player_rc.y, player_rc.z);
+                    mv.wdgmsg("click", walk_args);
+                    last_mini_target = (Coord) walk_args[1];
+                    sleep(600);
+                    turn_degree = 2;
+                    while(player_rc.dist(mv.player().getrc()) > 3){
+                        player_rc = mv.player().getrc();
+                        player_rc = new Coord3f(player_rc.x, player_rc.y, player_rc.z);
+                        sleep(500);
+                        if (last_mini_target.dist((Coord) walk_args[1]) > 3) {
+                            mv.wdgmsg("click", walk_args);
+                            last_mini_target = (Coord) walk_args[1];
+                            temp_args = walk_args.clone();
+                            sleep(200);
                         }
-                    };
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ie) {
                     }
-                    Coord3f player_moved = mv.player().getrc();
-//                    ui.root.findchild(GameUI.class).info("x dis: "+ (player_start.x -player_moved.x)+" y dis: "+ (player_start.y -player_moved.y), Color.WHITE);
-                    if (player_start.dist(player_moved) <= 3) {
-                        Object[] temp_args = walk_args.clone();
-                        float o_x = player.x + 20;
-                        float o_y = get_y(player.x, player.y, ((Coord) walk_args[1]).x, ((Coord) walk_args[1]).y, 20);
-                        float o_x2 = player.x - 20;
-                        float o_y2 = get_y(player.x, player.y, ((Coord) walk_args[1]).x, ((Coord) walk_args[1]).y, -20);
+                    if (mv.player().rc.dist(last_mini_target) <= radiation){
+                        break;
+                    }
 
-                        temp_args[1] = new Coord((int) (o_x), (int) (o_y));
-//                        ui.root.findchild(GameUI.class).info("Change direction", Color.WHITE);
+                    // if bocked try turn around
+                    player_rc = mv.player().getrc();
+                    player_rc = new Coord3f(player_rc.x, player_rc.y, player_rc.z);
+                    temp_args[1] = turnAroundCoord(last_mini_target, direction, turn_degree%20);
+                    mv.wdgmsg("click", temp_args);
+                    sleep(700);
+
+                    if(player_rc.dist(mv.player().getrc())<2){
+                        // if not able to move then turn around another direction
+                        turn_degree += 4;
+                        direction=direction*-1;
+                        temp_args[1] = turnAroundCoord(last_mini_target, direction, turn_degree%20);
                         mv.wdgmsg("click", temp_args);
-                        try {
-                            Thread.sleep(600);
-                        } catch (InterruptedException ie) {
-                        }
-                        // not to check move after climb
-                        if (Math.abs(player_start.z - mv.player().getrc().z) <= 1){
-                            player_moved = mv.player().getrc();
-                            if (player_start.dist(player_moved) <= 3) {
-                                temp_args[1] = new Coord((int) (o_x2), (int) (o_y2));
-                                mv.wdgmsg("click", temp_args);
-                                try {
-                                    Thread.sleep(600);
-                                } catch (InterruptedException ie) {
-                                }
-                            }
-                        }
-                        mv.wdgmsg("click", walk_args);
-                        try {
-                            Thread.sleep(600);
-                        } catch (InterruptedException ie) {
-                        }
+                        sleep(500);
                     }
+
                 }
                 try {
 //                    ui.root.findchild(GameUI.class).info("not keep walk, so suspend", Color.WHITE);
