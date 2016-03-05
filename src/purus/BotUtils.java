@@ -245,7 +245,6 @@ public class  BotUtils {
 		int direction=1;
 		while (player().rc.dist(gob_rc) > radiation){
 			if (haven.Settings.getCancelAuto() && cancelable){
-				ui.gui.map.wdgmsg("click", getCenterScreenCoord(),  player().rc,1 ,0);
 				return false;
 			};
 			//climb the hill need 2 click.
@@ -255,7 +254,10 @@ public class  BotUtils {
 			sleep(walk_sleep);
 			// check if player moved
 			while (isMoving()){
-				sleep(100);
+				sleep(200);
+				if (haven.Settings.getCancelAuto() && cancelable){
+					return false;
+				};
 			}
 			if (player().rc.dist(gob_rc) <= radiation){
 				// if reached the gob, pick gob, and find next gob
@@ -265,11 +267,11 @@ public class  BotUtils {
 			// if bocked try turn around
 			p_st =  player().getrc();
 			p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
-			turn_around(gob_rc, direction);
+			turn_around(gob_rc, direction, 5);
 			sleep(walk_sleep);
-			if (p_st.dist(player().getrc()) < 4){
+			if (p_st.dist(player().getrc()) < 3){
 				direction = direction*-1;
-				turn_around(gob_rc,direction);
+				turn_around(gob_rc,direction, 5);
 				sleep(walk_sleep);
 			}
 			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob_rc,1 ,0);
@@ -307,12 +309,13 @@ public class  BotUtils {
         return ui.gui.map.player();
     }
 
-	public void turn_around(Coord tar_rc,int direction){
+	public void turn_around(Coord tar_rc,int direction, int back_rate){
 		// direction should be 1 or -1
 		Coord pc = player().rc;
-//		int pc_direct = pc.y - tar_rc.y >0 ?3:-3;
+		int pc_direct_y = pc.y - tar_rc.y >0 ?back_rate:-1*back_rate;
+		int pc_direct_x = pc.x - tar_rc.x >0 ?back_rate:-1*back_rate;
 		int turn_x = pc.x+ 20 * direction;
-		Coord target_rc = new Coord(turn_x, get_o_y(pc, tar_rc,turn_x));
+		Coord target_rc = new Coord(turn_x+pc_direct_x, get_o_y(pc, tar_rc,turn_x) + pc_direct_y);
 		ui.gui.map.wdgmsg("click", getCenterScreenCoord(), target_rc,1 ,0);
 	}
 	public void sleep(int t){

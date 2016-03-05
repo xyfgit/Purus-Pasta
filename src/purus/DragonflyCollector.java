@@ -44,20 +44,21 @@ public class DragonflyCollector {
 						t.stop();
 						return;
 					}
-					else if (stam.a <= 30 && nrj.a >= 95) {
+					else if (stam.a <= 30 && nrj.a >= 85) {
 						BotUtils.drink();
 					}
 //					if (!BotUtils.isMoving()) {
 						Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, targetName);
 						if (gob != null) {
 							BotUtils.goToCoord(gob.rc, 200, true);
+							boolean isPlant = gob.getres().name.contains("terobjs");
 							BotUtils.doClick(gob, 3, 0);
+							if (isPlant){
+								sleep(800);
+							}
 						}
 //					}
-					if (gob.getres().name.contains("terobjs")){
-						sleep(800);
-					}
-						sleep(800);
+						sleep(600);
 				}
 		        window.destroy();
 		       t.stop();
@@ -79,7 +80,6 @@ public class DragonflyCollector {
 	            setLocal(true);
 	            add(new Button(120, "Cancel") {
 	                public void click() {
-						Settings.setFindTargetName(null);
 	                    window.destroy();
 	                    if(t != null) {
 							Settings.setCancelAuto(true);
@@ -91,6 +91,7 @@ public class DragonflyCollector {
 	            pack();
 	        }
 	        public void wdgmsg(Widget sender, String msg, Object... args) {
+				Settings.setFindTargetName(null);
 	            if (sender == this && msg.equals("close")) {
 					Settings.setFindTargetName(null);
 					Settings.setCancelAuto(true);

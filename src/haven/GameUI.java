@@ -188,7 +188,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         quickslots = new QuickSlotsWdg();
         if (!Config.quickslots)
             quickslots.hide();
-        add(quickslots, Utils.getprefc("quickslotsc", new Coord(430, HavenPanel.h - 160)));
+        add(quickslots, Utils.getprefc("quickslotsc", new Coord(430, HavenPanel.h - 190)));
 
         statuswindow = new StatusWdg();
         if (!Config.statuswdgvisible)

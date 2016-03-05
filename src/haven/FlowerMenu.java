@@ -107,7 +107,7 @@ public class FlowerMenu extends Widget {
             for (Petal p : opts) {
                 p.move(p.ta + ((1 - s) * PI), p.tr * s);
                 p.a = s;
-                if (p.name.contains("Pick"))
+                if (p.name.equals("Pick"))
                     pick = p;
                 else if (p.name.equals("Harvest"))
                     harvest = p;
