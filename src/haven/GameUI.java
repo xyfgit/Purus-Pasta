@@ -85,6 +85,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private boolean crimeautotgld = false;
     private boolean trackautotgld = false;
 
+    private int fkey_x = 430;
     public abstract class Belt extends Widget {
         public Belt(Coord sz) {
             super(sz);
@@ -703,7 +704,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public void draw(GOut g) {
         beltwdg.c = new Coord(chat.c.x, Math.min(chat.c.y - beltwdg.sz.y + 4, sz.y - beltwdg.sz.y));
-        beltwdg_f.c = new Coord(chat.c.x+430, Math.min(chat.c.y - beltwdg_f.sz.y + 4, sz.y - beltwdg_f.sz.y));
+        beltwdg_f.c = new Coord(chat.c.x+fkey_x, Math.min(chat.c.y - beltwdg_f.sz.y + 4, sz.y - beltwdg_f.sz.y));
         super.draw(g);
         if (prog >= 0)
             drawprog(g, prog);
@@ -1398,7 +1399,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     {
         String val = Utils.getpref("belttype", "n");
-        beltwdg_f = add(new FKeyBelt(), new Coord(430, HavenPanel.h -50));
+        beltwdg_f = add(new FKeyBelt(), new Coord(fkey_x, HavenPanel.h -50));
 //        if (val.equals("n")) {
 //            beltwdg = add(new NKeyBelt());
 //        }
@@ -1437,7 +1438,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         cmdmap.put("belt", new Console.Command() {
             public void run(Console cons, String[] args) {
                 beltwdg_f.destroy();
-                beltwdg_f = add(new FKeyBelt(), new Coord(430, HavenPanel.h -60));
+                beltwdg_f = add(new FKeyBelt(), new Coord(fkey_x, HavenPanel.h -60));
 //                Utils.setpref("belttype", "f");
 //                resize(sz);
                 beltwdg.destroy();

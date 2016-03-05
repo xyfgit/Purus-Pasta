@@ -633,11 +633,11 @@ public class LocalMiniMap extends Widget {
                     player_rc = new Coord3f(player_rc.x, player_rc.y, player_rc.z);
                     temp_args[1] = turnAroundCoord(last_mini_target, direction, turn_degree%20);
                     mv.wdgmsg("click", temp_args);
-                    sleep(700);
+                    sleep(800);
 
                     if(player_rc.dist(mv.player().getrc())<2){
                         // if not able to move then turn around another direction
-                        turn_degree += 4;
+                        turn_degree = 16;
                         direction=direction*-1;
                         temp_args[1] = turnAroundCoord(last_mini_target, direction, turn_degree%20);
                         mv.wdgmsg("click", temp_args);

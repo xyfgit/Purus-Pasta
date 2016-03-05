@@ -267,15 +267,21 @@ public class  BotUtils {
 			// if bocked try turn around
 			p_st =  player().getrc();
 			p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
-			turn_around(gob_rc, direction, 5);
+			turn_around(gob_rc, direction, 3);
 			sleep(walk_sleep);
 			if (p_st.dist(player().getrc()) < 3){
 				direction = direction*-1;
-				turn_around(gob_rc,direction, 5);
+				turn_around(gob_rc,direction, 3);
 				sleep(walk_sleep);
 			}
+			p_st =  player().getrc();
+			p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
 			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob_rc,1 ,0);
 			sleep(walk_sleep);
+			if (p_st.dist(player().getrc()) < 5){
+				turn_around(gob_rc,direction, 15);
+				sleep(walk_sleep);
+			}
 		}
 		return true;
 	}
