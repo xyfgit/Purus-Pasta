@@ -112,6 +112,7 @@ public class Config {
     public static double sfxsqueakvol = Utils.getprefd("sfxsqueakvol", 1.0);
     public static double sfxquernvol = Utils.getprefd("sfxquernvol", 1.0);
     public static boolean showcraftcap = Utils.getprefb("showcraftcap", true);
+    public static double sfxfirevol = Utils.getprefd("sfxfirevol", 1.0);
     public static boolean showgobhp = Utils.getprefb("showgobhp", false);
     public static boolean showplantgrowstage = Utils.getprefb("showplantgrowstage", false);
     public static boolean notifykinonline = Utils.getprefb("notifykinonline", false);
@@ -185,6 +186,14 @@ public class Config {
     public static boolean isCraftAssist = Utils.getprefb("isCraftAssist", false);
     public static boolean autoPickAnimal = Utils.getprefb("autoPickAnimal", false);
     public static boolean showboundingboxes = Utils.getprefb("showboundingboxes", false);
+    public static boolean disablespacebar = Utils.getprefb("disablespacebar", false);
+    public static boolean alarmonforagables = Utils.getprefb("alarmonforagables", false);
+    public static double alarmonforagablesvol = Utils.getprefd("alarmonforagablesvol", 0.8);
+    public static boolean alarmbears = Utils.getprefb("alarmbears", false);
+    public static double alarmbearsvol = Utils.getprefd("alarmbearsvol", 0.8);
+    public static boolean showcooldown = Utils.getprefb("showcooldown", false);
+    public static boolean nodropping = Utils.getprefb("nodropping", false);
+    public static boolean pf = false;
     public static String playerposfile;
     public static byte[] authck = null;
     public static String prefspec = "hafen";
@@ -233,7 +242,10 @@ public class Config {
     public final static Set<String> dangerousgobres = new HashSet<String>(Arrays.asList(
             "gfx/kritter/bat/bat", "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx",
             "gfx/kritter/badger/badger"));
-    
+
+    public final static Set<String> foragables = new HashSet<String>(Arrays.asList(
+            "gfx/terobjs/herbs/flotsam", "gfx/terobjs/herbs/chimingbluebell", "gfx/terobjs/herbs/edelweiss"));
+
     static {
         Arrays.sort(Config.boulders);
         Arrays.sort(Config.bushes);

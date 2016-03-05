@@ -607,6 +607,72 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(250, y));
+        y += 20;
+        audio.add(new CheckBox("Alarm on bluebells, flotsams, edelweiß") {
+            {
+                a = Config.alarmonforagables;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("alarmonforagables", val);
+                Config.alarmonforagables = val;
+                a = val;
+            }
+        }, new Coord(250, y));
+        y += 15;
+        audio.add(new HSlider(200, 0, 1000, 0) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+                val = (int) (Config.alarmonforagablesvol * 1000);
+            }
+
+            public void changed() {
+                double vol = val / 1000.0;
+                Config.alarmonforagablesvol = vol;
+                Utils.setprefd("alarmonforagablesvol", vol);
+            }
+        }, new Coord(250, y));
+        y += 20;
+        audio.add(new CheckBox("Alarm on bears & lynx") {
+            {
+                a = Config.alarmbears;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("alarmbears", val);
+                Config.alarmbears = val;
+                a = val;
+            }
+        }, new Coord(250, y));
+        y += 15;
+        audio.add(new HSlider(200, 0, 1000, 0) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+                val = (int) (Config.alarmbearsvol * 1000);
+            }
+
+            public void changed() {
+                double vol = val / 1000.0;
+                Config.alarmbearsvol = vol;
+                Utils.setprefd("alarmbearsvol", vol);
+            }
+        }, new Coord(250, y));
+        y += 20;
+        audio.add(new Label("Fireplace sound volume (req. restart)"), new Coord(250, y));
+        y += 15;
+        audio.add(new HSlider(200, 0, 1000, 0) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+                val = (int) (Config.sfxfirevol * 1000);
+            }
+
+            public void changed() {
+                double vol = val / 1000.0;
+                Config.sfxfirevol = vol;
+                Utils.setprefd("sfxfirevol", vol);
+            }
+        }, new Coord(250, y));
+
         audio.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         audio.pack();
 
@@ -1567,6 +1633,18 @@ public class OptWnd extends Window {
             public void set(boolean val) {
                 Utils.setprefb("hwcursor", val);
                 Config.hwcursor = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        control.add(new CheckBox("Disable dropping items over water (overridable with Ctrl)") {
+            {
+                a = Config.nodropping;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("nodropping", val);
+                Config.nodropping = val;
                 a = val;
             }
         }, new Coord(0, y));

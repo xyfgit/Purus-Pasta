@@ -529,7 +529,10 @@ public class ChatUI extends Widget {
 
         protected void clicked(CharPos pos) {
             AttributedCharacterIterator inf = pos.part.ti();
-            inf.setIndex(pos.ch.getCharIndex());
+            try {
+                inf.setIndex(pos.ch.getCharIndex());
+            } catch (IllegalArgumentException iae) {
+            }
             FuckMeGentlyWithAChainsaw url = (FuckMeGentlyWithAChainsaw) inf.getAttribute(ChatAttribute.HYPERLINK);
             if ((url != null) && (WebBrowser.self != null)) {
                 try {
@@ -908,7 +911,9 @@ public class ChatUI extends Widget {
                     Message cmsg = new InMessage(line, iw());
                     append(cmsg);
                     notify(cmsg, 3);
-                    save(cmsg.text().text, getparent(GameUI.class).buddies.find(other).name);
+                    
+                    BuddyWnd.Buddy buddy = getparent(GameUI.class).buddies.find(other);
+                    save(cmsg.text().text, buddy != null ? buddy.name : "???");
 
                     long time = System.currentTimeMillis();
                     if (lastmsg == 0 || (time - lastmsg) / 1000 / 60 > 10) {

@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.pathfinder.Pathfinder;
+
 import java.util.*;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class OCache implements Iterable<Gob> {
     private Glob glob;
     private Map<Long, DamageSprite> gobdmgs = new HashMap<Long, DamageSprite>();
     public boolean isfight = false;
+    private Pathfinder pf;
 
     public OCache(Glob glob) {
         this.glob = glob;
@@ -164,6 +167,11 @@ public class OCache implements Iterable<Gob> {
     public synchronized void linbeg(Gob g, Coord s, Coord t, int c) {
         LinMove lm = new LinMove(g, s, t, c);
         g.setattr(lm);
+        if (pf != null && g.isplayer()) {
+            synchronized (Pathfinder.class) {
+                pf.moveCount(c);
+            }
+        }
     }
 
     public synchronized void linstep(Gob g, int l) {
@@ -171,10 +179,22 @@ public class OCache implements Iterable<Gob> {
         if ((m == null) || !(m instanceof LinMove))
             return;
         LinMove lm = (LinMove) m;
-        if ((l < 0) || (l >= lm.c))
+        if ((l < 0) || (l >= lm.c)) {
             g.delattr(Moving.class);
-        else
+            if (pf != null && g.isplayer() && l < 0) {
+                synchronized (Pathfinder.class) {
+                    pf.moveStop(l);
+                }
+            }
+        }
+        else {
             lm.setl(l);
+            if (pf != null && g.isplayer()) {
+                synchronized (Pathfinder.class) {
+                    pf.moveStep(l);
+                }
+            }
+        }
     }
 
     public synchronized void speak(Gob g, float zo, String text) {
@@ -368,5 +388,9 @@ public class OCache implements Iterable<Gob> {
             g.delattr(GobIcon.class);
         else
             g.setattr(new GobIcon(g, res));
+    }
+
+    public void setPathfinder(Pathfinder pf) {
+        this.pf = pf;
     }
 }
