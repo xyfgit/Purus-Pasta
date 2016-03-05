@@ -27,6 +27,9 @@
 package haven;
 
 import static haven.MCache.tilesz;
+import haven.GLProgram.VarID;
+import haven.pathfinder.*;
+import haven.resutil.BPRadSprite;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -49,7 +52,7 @@ import haven.GLProgram.VarID;
 import haven.resutil.BPRadSprite;
 
 
-public class MapView extends PView implements DTarget, Console.Directory {
+public class MapView extends PView implements DTarget, Console.Directory, PFListener {
     public static long plgob = -1;
     public Coord cc;
     public final Glob glob;
@@ -1399,12 +1402,22 @@ public class MapView extends PView implements DTarget, Console.Directory {
         return (-1);
     }
 
+    private Pathfinder pf;
+    public Thread pfthread;
+
     private class Click extends Hittest {
         int clickb;
 
         private Click(Coord c, int b) {
             super(c);
             clickb = b;
+
+            synchronized (Pathfinder.class) {
+                if (pf != null) {
+                    pf.terminate = true;
+                    pfthread.interrupt();
+                }
+            }
         }
 
         protected void hit(Coord pc, Coord mc, ClickInfo inf) {
@@ -1413,7 +1426,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     mc.x = mc.x / 11 * 11 + 5;
                     mc.y = mc.y / 11 * 11 + 5;
                 }
-                wdgmsg("click", pc, mc, clickb, ui.modflags());
+
+                if (Config.pf && clickb == 1) {
+                    pfLeftClick(mc, null);
+                } else {
+                    wdgmsg("click", pc, mc, clickb, ui.modflags());
+                }
             } else {
                 if (ui.modmeta && clickb == 1) {
                     for (Widget w = gameui().chat.lchild; w != null; w = w.prev) {
@@ -1427,12 +1445,77 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     }
                 }
                 if (inf.ol == null) {
-                    wdgmsg("click", pc, mc, clickb, ui.modflags(), 0, (int) inf.gob.id, inf.gob.rc, 0, getid(inf.r));
+                    if (Config.pf) {
+                        pfRightClick(inf.gob, getid(inf.r), clickb, null);
+                    } else {
+                        wdgmsg("click", pc, mc, clickb, ui.modflags(), 0, (int) inf.gob.id, inf.gob.rc, 0, getid(inf.r));
+                    }
                 } else {
                     wdgmsg("click", pc, mc, clickb, ui.modflags(), 1, (int) inf.gob.id, inf.gob.rc, inf.ol.id, getid(inf.r));
                 }
             }
         }
+    }
+
+    public void pfLeftClick(Coord mc, String action) {
+        synchronized (Pathfinder.class) {
+            if (pf != null) {
+                pf.terminate = true;
+                pfthread.interrupt();
+                if (player().getattr(Moving.class) != null) {
+                    // cancel movement by clicking slightly along the vector of movement
+                    // clicking at player's position leads to jerky movement
+                    double px = player().rc.x;
+                    double py = player().rc.y;
+                    double dx = pf.mc.x;
+                    double dy = pf.mc.y;
+                    double dist = 4.0;
+                    double atan = Math.atan2(dy - py, dx - px);
+                    double x = px + dist * Math.cos(atan);
+                    double y = py + dist * Math.sin(atan);
+                    wdgmsg("click", Coord.z, new Coord((int)x, (int)y), 1, 0);
+                }
+            }
+
+            Coord src = player().rc;
+            int gcx = haven.pathfinder.Map.origin - (src.x - mc.x);
+            int gcy = haven.pathfinder.Map.origin - (src.y - mc.y);
+            if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
+                return;
+
+            pf = new Pathfinder(mapview(), new Coord(gcx, gcy), action);
+            glob.oc.setPathfinder(pf);
+            pf.addListener(this);
+            pfthread = new Thread(pf);
+            pfthread.start();
+        }
+    }
+
+    public void pfRightClick(Gob gob, int meshid, int clickb, String action) {
+        synchronized (Pathfinder.class) {
+            if (pf != null) {
+                pf.terminate = true;
+                pfthread.interrupt();
+                if (player().getattr(Moving.class) != null)
+                    wdgmsg("click", Coord.z, player().rc, 1, 0); // ui.modflags()
+            }
+
+            Coord src = player().rc;
+            int gcx = haven.pathfinder.Map.origin - (src.x - gob.rc.x);
+            int gcy = haven.pathfinder.Map.origin - (src.y - gob.rc.y);
+            if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
+                return;
+
+            pf = new Pathfinder(mapview(), new Coord(gcx, gcy), gob, meshid, clickb, action);
+            glob.oc.setPathfinder(pf);
+            pf.addListener(this);
+            pfthread = new Thread(pf);
+            pfthread.start();
+        }
+    }
+
+    public void pfDone(final Pathfinder thread) {
+        System.out.println("PF DONE");
     }
 
     public void grab(Grabber grab) {
@@ -1566,6 +1649,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public boolean drop(final Coord cc, final Coord ul) {
         delay(new Hittest(cc) {
             public void hit(Coord pc, Coord mc, ClickInfo inf) {
+                if (Config.nodropping && !ui.modctrl) {
+                    int t = glob.map.gettile(player().rc.div(tilesz));
+                    Resource res = glob.map.tilesetr(t);
+                    if (res != null && (res.name.equals("gfx/tiles/water") || res.name.equals("gfx/tiles/deep")))
+                        return;
+                }
                 wdgmsg("drop", pc, mc, ui.modflags());
             }
         });
@@ -1903,5 +1992,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
                 wdgmsg("click", pl.sc, pl.rc, 3, 0);
             }
         }
+    }
+
+    public MapView mapview() {
+        return this;
     }
 }

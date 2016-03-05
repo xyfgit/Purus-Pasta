@@ -26,10 +26,14 @@
 
 package haven;
 
-import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Fightsess extends Widget {
     public static final Tex lframe = Resource.loadtex("gfx/hud/combat/lframe");
@@ -145,7 +149,7 @@ public class Fightsess extends Widget {
         }
 
         if (now < fv.atkct) {
-            int w = (int) ((fv.atkct - now) * 20);
+        	int w = (int) ((fv.atkct - now) * 20);
             g.chcolor(255, 0, 128, 255);
             g.frect(pcc.add(-w, 20), new Coord(w * 2, 15));
             g.chcolor();
@@ -182,7 +186,7 @@ public class Fightsess extends Widget {
             } catch (Loading l) {
             }
             ca.x += actpitch;
-        }
+        	}
     }
 
     private Widget prevtt = null;
