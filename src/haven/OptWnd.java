@@ -1033,6 +1033,25 @@ public class OptWnd extends Window {
             }
         }, new Coord(520, y));
         // -------------------------------------------- display 3rd column
+        y += 35;
+        display.add(new CheckBox("Show F-key toolbar") {
+            {
+                a = Config.fbelt;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("fbelt", val);
+                Config.fbelt = val;
+                a = val;
+                FBelt fbelt = gameui().fbelt;
+                if (fbelt != null) {
+                    if (val)
+                        fbelt.show();
+                    else
+                        fbelt.hide();
+                }
+            }
+        }, new Coord(560, y));
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override
