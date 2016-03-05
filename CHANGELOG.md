@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.11.1
+	- Latest amber merges
+
 ### 2.11.0
 	- Mini combat icons option
 	- Little fixes
