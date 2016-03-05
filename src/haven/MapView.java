@@ -656,8 +656,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 
             if (res != null && dangerousanimalrad.contains(res.name)) {
                 if (Config.showanimalrad) {
-                    if (!gob.ols.contains(animalradius))
-                        gob.ols.add(animalradius);
+                    if (!gob.ols.contains(animalradius)) {
+                        GAttrib drw = gob.getattr(Drawable.class);
+                        if (drw != null && ((Composite) drw).pseq != 1)
+                            gob.ols.add(animalradius);
+                    }
                 } else {
                     gob.ols.remove(animalradius);
                 }
@@ -1423,13 +1426,14 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 
         protected void hit(Coord pc, Coord mc, ClickInfo inf) {
             updateDebugInformation(inf, pc, mc);
+            Resource curs = ui.root.getcurs(c);
             if (inf == null) {
                 if (Config.tilecenter && clickb == 3) {
                     mc.x = mc.x / 11 * 11 + 5;
                     mc.y = mc.y / 11 * 11 + 5;
                 }
 
-                if (Config.pf && clickb == 1) {
+                if (Config.pf && clickb == 1 && curs != null && !curs.name.equals("gfx/hud/curs/study")) {
                     pfLeftClick(mc, null);
                 } else {
                     wdgmsg("click", pc, mc, clickb, ui.modflags());
@@ -1447,7 +1451,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
                     }
                 }
                 if (inf.ol == null) {
-                    if (Config.pf) {
+                    if (Config.pf && curs != null && !curs.name.equals("gfx/hud/curs/study")) {
                         pfRightClick(inf.gob, getid(inf.r), clickb, null);
                     } else {
                         wdgmsg("click", pc, mc, clickb, ui.modflags(), 0, (int) inf.gob.id, inf.gob.rc, 0, getid(inf.r));
@@ -1460,32 +1464,37 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     }
 
     public void pfLeftClick(Coord mc, String action) {
+        Gob player = player();
+        if (player == null)
+            return;
         synchronized (Pathfinder.class) {
             if (pf != null) {
                 pf.terminate = true;
                 pfthread.interrupt();
-                if (player().getattr(Moving.class) != null) {
+                if (player.getattr(Moving.class) != null) {
                     // cancel movement by clicking slightly along the vector of movement
                     // clicking at player's position leads to jerky movement
-                    double px = player().rc.x;
-                    double py = player().rc.y;
-                    double dx = pf.mc.x;
-                    double dy = pf.mc.y;
-                    double dist = 4.0;
-                    double atan = Math.atan2(dy - py, dx - px);
-                    double x = px + dist * Math.cos(atan);
-                    double y = py + dist * Math.sin(atan);
-                    wdgmsg("click", Coord.z, new Coord((int) x, (int) y), 1, 0);
+                    if (pf.mc != null) {
+                        double px = player().rc.x;
+                        double py = player().rc.y;
+                        double dx = pf.mc.x;
+                        double dy = pf.mc.y;
+                        double dist = 4.0;
+                        double atan = Math.atan2(dy - py, dx - px);
+                        double x = px + dist * Math.cos(atan);
+                        double y = py + dist * Math.sin(atan);
+                        wdgmsg("click", Coord.z, new Coord((int) x, (int) y), 1, 0);
+                    }
                 }
             }
 
-            Coord src = player().rc;
+            Coord src = player.rc;
             int gcx = haven.pathfinder.Map.origin - (src.x - mc.x);
             int gcy = haven.pathfinder.Map.origin - (src.y - mc.y);
             if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
                 return;
 
-            pf = new Pathfinder(mapview(), new Coord(gcx, gcy), action);
+            pf = new Pathfinder(this, new Coord(gcx, gcy), action);
             glob.oc.setPathfinder(pf);
             pf.addListener(this);
             pfthread = new Thread(pf);
@@ -1494,21 +1503,24 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     }
 
     public void pfRightClick(Gob gob, int meshid, int clickb, String action) {
+        Gob player = player();
+        if (player == null)
+            return;
         synchronized (Pathfinder.class) {
             if (pf != null) {
                 pf.terminate = true;
                 pfthread.interrupt();
-                if (player().getattr(Moving.class) != null)
+                if (player.getattr(Moving.class) != null)
                     wdgmsg("click", Coord.z, player().rc, 1, 0); // ui.modflags()
             }
 
-            Coord src = player().rc;
+            Coord src = player.rc;
             int gcx = haven.pathfinder.Map.origin - (src.x - gob.rc.x);
             int gcy = haven.pathfinder.Map.origin - (src.y - gob.rc.y);
             if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
                 return;
 
-            pf = new Pathfinder(mapview(), new Coord(gcx, gcy), gob, meshid, clickb, action);
+            pf = new Pathfinder(this, new Coord(gcx, gcy), gob, meshid, clickb, action);
             glob.oc.setPathfinder(pf);
             pf.addListener(this);
             pfthread = new Thread(pf);
@@ -1517,7 +1529,8 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     }
 
     public void pfDone(final Pathfinder thread) {
-        System.out.println("PF DONE");
+        if (haven.pathfinder.Map.DEBUG_TIMINGS)
+            System.out.println("-= PF DONE =-");
     }
 
     public void grab(Grabber grab) {
