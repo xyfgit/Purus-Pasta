@@ -48,22 +48,29 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
     public Collection<Overlay> ols = new LinkedList<Overlay>();
     private static final Text.Foundry gobhpf = new Text.Foundry(Text.sansb, 14).aa(true);
+    private static final Text.Foundry stagemax = new Text.Foundry(Text.sansb, 20).aa(true);
     private static final Tex[] gobhp = new Tex[] {
             Text.renderstroked("25%", Color.WHITE, Color.BLACK, gobhpf).tex(),
             Text.renderstroked("50%", Color.WHITE, Color.BLACK, gobhpf).tex(),
             Text.renderstroked("75%", Color.WHITE, Color.BLACK, gobhpf).tex()
     };
     private static final Color stagecolor = new Color(235, 235, 235);
+    private static final Color stagemaxcolor = new Color(254, 100, 100);
     private static final Tex[] cropstg = new Tex[] {
             Text.renderstroked("2", stagecolor, Color.BLACK, gobhpf).tex(),
             Text.renderstroked("3", stagecolor, Color.BLACK, gobhpf).tex(),
             Text.renderstroked("4", stagecolor, Color.BLACK, gobhpf).tex(),
             Text.renderstroked("5", stagecolor, Color.BLACK, gobhpf).tex()
     };
+    private static final Tex cropstgmax = Text.renderstroked("\u2022", stagemaxcolor, Color.BLACK, stagemax).tex();
     private PView.Draw2D[] cropstgd = new PView.Draw2D[4];
+    private PView.Draw2D cropstgdmax;
+    private int cropstgmaxval = 0;
     private Overlay gobpath = null;
     private static final Map<String, Tex> plantTex = new  HashMap<>();
     private static final Tex[] treestg = new Tex[90];
+    private static final Material.Colors dframeEmpty = new Material.Colors(new Color(0, 255, 0, 255));
+    private static final Material.Colors dframeDone = new Material.Colors(new Color(255, 0, 0, 255));
 
     public static class Overlay implements Rendered {
         public Indir<Resource> res;
@@ -139,6 +146,13 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 }
             };
         }
+        cropstgdmax = new PView.Draw2D() {
+            public void draw2d(GOut g) {
+                if (sc != null) {
+                    g.image(cropstgmax, sc);
+                }
+            }
+        };
     }
 
     public Gob(Glob glob, Coord c) {
@@ -293,6 +307,37 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             }
         }
 
+        Resource res = null;
+        try {
+            res = getres();
+        } catch (Loading l) {
+        }
+
+        if (Config.showdframestatus && res != null && res.name.equals("gfx/terobjs/dframe")) {
+            boolean done = true;
+            boolean empty = true;
+            for (Overlay ol : ols) {
+                empty = false;
+                try {
+                    Indir<Resource> olires = ol.res;
+                    if (olires != null) {
+                        Resource olres = olires.get();
+                        if (olres != null) {
+                            if (olres.name.endsWith("-blood")) {
+                                done = false;
+                                break;
+                            }
+                        }
+                    }
+                } catch (Loading l) {
+                }
+            }
+            if (done && !empty)
+                rl.prepc(dframeDone);
+            else if (empty)
+                rl.prepc(dframeEmpty);
+        }
+
         GobHighlight highlight = getattr(GobHighlight.class);
         if (highlight != null) {
             if (highlight.cycle <= 0)
@@ -306,7 +351,6 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             boolean hide = false;
             if (Config.hideall) {
             	 try {
-                Resource res = getres();
                 if (res != null) {
                     Resource.Neg neg = res.layer(Resource.Neg.class);
                     hide = true;
@@ -317,7 +361,6 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             }
             } else if (Config.hidegobs) {
                 try {
-                    Resource res = getres();
                     if (Config.hidetrees && res != null) {
                         if (res != null && res.name.startsWith("gfx/terobjs/trees")
                                 && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) {
@@ -392,7 +435,6 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
             if (Config.showplantgrowstage) {
                 try {
-                    Resource res = getres();
                     if (res != null && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
                     	GAttrib rd = getattr(ResDrawable.class);
                     	final int stage = ((ResDrawable) rd).sdt.peekrbuf(0);
@@ -414,30 +456,54 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 												Tex tex = plantTex.get(str);
 												g.image(tex, sc.sub(tex.sz().div(2)));
 											}
-										}
-									};
-									rl.add(staged, null);
-                    }
+										}	
+	                                };
+	                                rl.add(staged, null);
 
-                    if (res != null && (res.name.startsWith("gfx/terobjs/trees") || res.name.startsWith("gfx/terobjs/bushes"))) {
-                        ResDrawable rd = getattr(ResDrawable.class);
-                        if (rd != null && !rd.sdt.eom()) {
-                            try {
-                                final int stage = rd.sdt.peekrbuf(0);
-                                if (stage < 100) {
-                                    PView.Draw2D treestgdrw = new PView.Draw2D() {
-                                        public void draw2d(GOut g) {
-                                            if (sc != null)
-                                                g.image(treestg[stage - 10], sc.sub(10, 5));
-                                        }
-                                    };
-                                    rl.add(treestgdrw, null);
+	                            }
+	                            
+                } catch (ArrayIndexOutOfBoundsException e) { // ignored
+                }   
+                /** Use "better one" above
+                if (res != null && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
+                    GAttrib rd = getattr(ResDrawable.class);
+                    if (rd != null) {
+                        try {
+                            int stage = ((ResDrawable) rd).sdt.peekrbuf(0);
+                            if (cropstgmaxval == 0) {
+                                for (FastMesh.MeshRes layer : res.layers(FastMesh.MeshRes.class)) {
+                                    int stg = layer.id / 10;
+                                    if (stg > cropstgmaxval)
+                                        cropstgmaxval = stg;
                                 }
-                            } catch (ArrayIndexOutOfBoundsException e) { // ignored
                             }
+                            if (stage == cropstgmaxval)
+                                rl.add(cropstgdmax, null);
+                            else if (stage > 0 && stage < 5)
+                                rl.add(cropstgd[stage - 1], null);
+                        } catch (ArrayIndexOutOfBoundsException e) { // ignored
                         }
                     }
-                } catch (Loading le) {
+                }
+                **/
+
+                if (res != null && (res.name.startsWith("gfx/terobjs/trees") || res.name.startsWith("gfx/terobjs/bushes"))) {
+                    ResDrawable rd = getattr(ResDrawable.class);
+                    if (rd != null && !rd.sdt.eom()) {
+                        try {
+                            final int stage = rd.sdt.peekrbuf(0);
+                            if (stage < 100)    {   
+                                PView.Draw2D treestgdrw = new PView.Draw2D() {
+                                    public void draw2d(GOut g) {
+                                        if (sc != null)
+                                            g.image(treestg[stage - 10], sc.sub(10, 5));
+                                    	}
+                                };
+                                rl.add(treestgdrw, null);
+                            }
+                        } catch (ArrayIndexOutOfBoundsException e) { // ignored
+                        }  
+                    }
                 }
             }
         }

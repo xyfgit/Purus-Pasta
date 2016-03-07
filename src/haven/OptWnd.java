@@ -805,7 +805,7 @@ public class OptWnd extends Window {
 
         // -------------------------------------------- display 2nd column
         y = 0;
-        display.add(new Label("Chat font size (requires restart): Small"), new Coord(260, y + 1));
+        display.add(new Label("Chat font size (req. restart): Small"), new Coord(260, y + 1));
         display.add(new HSlider(40, 0, 3, 0) {
             protected void attach(UI ui) {
                 super.attach(ui);
@@ -815,8 +815,8 @@ public class OptWnd extends Window {
                 Config.chatfontsize = val;
                 Utils.setprefi("chatfontsize", val);
             }
-        }, new Coord(452, y));
-        display.add(new Label("Large"), new Coord(495, y + 1));
+        }, new Coord(432, y));
+        display.add(new Label("Large"), new Coord(475, y + 1));
         y += 35;
         display.add(new CheckBox("Show quick hand slots") {
             {
@@ -1051,7 +1051,19 @@ public class OptWnd extends Window {
                         fbelt.hide();
                 }
             }
-        }, new Coord(560, y));
+        }, new Coord(520, y));
+        y += 35;
+        display.add(new CheckBox("Highlight empty/finished drying frames") {
+            {
+                a = Config.showdframestatus;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("showdframestatus", val);
+                Config.showdframestatus = val;
+                a = val;
+            }
+        }, new Coord(520, y));
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override
@@ -1333,6 +1345,18 @@ public class OptWnd extends Window {
             public void set(boolean val) {
                 Utils.setprefb("dropleeches", val);
                 Config.dropleeches = val;
+                a = val;
+            }
+        }, new Coord(260, y));
+        y += 35;
+        general.add(new CheckBox("Auto-miner: drop mined ore") {
+            {
+                a = Config.dropore;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("dropore", val);
+                Config.dropore = val;
                 a = val;
             }
         }, new Coord(260, y));
@@ -1631,6 +1655,18 @@ public class OptWnd extends Window {
             public void set(boolean val) {
                 Utils.setprefb("nodropping", val);
                 Config.nodropping = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        control.add(new CheckBox("Enable full zoom-out in Ortho cam") {
+            {
+                a = Config.enableorthofullzoom;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("enableorthofullzoom", val);
+                Config.enableorthofullzoom = val;
                 a = val;
             }
         }, new Coord(0, y));
