@@ -113,34 +113,7 @@ public class MusselPicker {
 							}
 						BotUtils.doClick(gob, 3, 0);
 						BotUtils.sleep(400);
-						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-						boolean nex_pick = true;
-						if (menu == null) {
-							BotUtils.doClick(gob, 3, 0);
-							BotUtils.sleep(300);
-						}
-						while (nex_pick && menu != null && !Settings.getCancelAuto()) {
-							nex_pick = false;
-							for (FlowerMenu.Petal opt : menu.opts) {
-								if (opt.name.contains("Pick") || opt.name.equals("Chip stone")) {
-									menu.choose(opt);
-									BotUtils.sleep(1000);
-									nex_pick = true;
-									menu.destroy();
-									BotUtils.sleep(100);
-									break;
-								}
-							}
-							if(nex_pick){
-								BotUtils.doClick(gob, 3, 0);
-								BotUtils.sleep(200);
-								menu = ui.root.findchild(FlowerMenu.class);
-							}else{
-								if (menu!=null) {
-									menu.destroy();
-								}
-							}
-						}
+						BotUtils.opGob(gob, "Pick");
 						}
 						gob = null;
 					}
