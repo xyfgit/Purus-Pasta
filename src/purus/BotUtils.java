@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import haven.*;
@@ -54,18 +55,28 @@ public class  BotUtils {
 			item = findDrink(playerInventory());
 		}
 		 if (item != null) {
-			 item.item.wdgmsg("iact", Coord.z, 3);
-			 sleep(250);
-				@SuppressWarnings("deprecation")
-				FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+			 IMeter.Meter stam = gui.getmeter("stam", 0);
+			 int try_menu = 3;
+			 FlowerMenu menu = null;
+			 while(try_menu >= 0&&menu==null) {
+				 item.item.wdgmsg("iact", Coord.z, 3);
+				 sleep(150);
+//				 @SuppressWarnings("deprecation")
+				 menu = ui.root.findchild(FlowerMenu.class);
+				 try_menu-=1;
+			 }
 		            if (menu != null) {
 		                for (FlowerMenu.Petal opt : menu.opts) {
 		                    if (opt.name.equals("Drink")) {
 		                        menu.choose(opt);
-		                        menu.destroy();
-		                        while(gui.getmeter("stam", 0).a <= 90) {
-		                        	sleep(100);
-		                        }
+								sleep(150);
+								menu.destroy();
+								int count = 0;
+								while(stam.a <= 90&&count<=20) {
+									sleep(300);
+									count += 1;
+								}
+								break;
 		                    }
 		                }
 		            }
@@ -130,7 +141,41 @@ public class  BotUtils {
 		else
 			return true;
 	}
-	
+
+	public void opGob(Gob gob,  String action){
+		int actionSleep = 1000;
+		if (action.toLowerCase().contains("chop")){
+			actionSleep = 5000;
+		};
+		FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+		boolean nex_action = true;
+		int try_menu = 3;
+		while (menu==null && try_menu >=0) {
+			doClick(gob, 3, 0);
+			sleep(200);
+			menu = ui.root.findchild(FlowerMenu.class);
+			try_menu -= 1;
+		}
+		sysMsg(action, Color.WHITE);
+		while (nex_action && menu != null && !Settings.getCancelAuto()) {
+			for (FlowerMenu.Petal opt : menu.opts) {
+				if (opt.name.toLowerCase().contains(action.toLowerCase().replaceAll("\\W", ""))) {
+					sleep(100);
+					menu.choose(opt);
+					sleep(actionSleep);
+					menu.destroy();
+					menu=null;
+					break;
+				}
+			}
+			if (menu!=null && menu.opts.length > 0) {
+				sleep(100);
+				menu.destroy();
+			}
+		}
+//		sysMsg("op menu finished", Color.WHITE);
+	}
+
 	// Chooses option from flower menu
 	public void Choose(Petal option) {
        w.wdgmsg("cl", option.num, ui.modflags());
@@ -248,21 +293,28 @@ public class  BotUtils {
 				return false;
 			};
 			//climb the hill need 2 click.
+			double start_dis = player().rc.dist(gob_rc);
 			reach_rc = getReachRC(player().rc, gob_rc);
 			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
 			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
 			sleep(walk_sleep);
 			// check if player moved
-			while (isMoving()){
-				sleep(200);
-				if (haven.Settings.getCancelAuto() && cancelable){
+			while (Math.abs(start_dis - player().rc.dist(gob_rc)) > 1&&isMoving()){
+				start_dis = player().rc.dist(gob_rc);
+				sleep(300);
+//				sysMsg("temp gob_dis:"+player().rc.dist(gob_rc), Color.WHITE);
+				if ((haven.Settings.getCancelAuto() && cancelable)){
 					return false;
 				};
 			}
+//			sysMsg("stop move ", Color.WHITE);
 			if (player().rc.dist(gob_rc) <= radiation){
 				// if reached the gob, pick gob, and find next gob
 //			sysMsg("Reached target:"+gob.getres().name, Color.WHITE)
 				return true;
+			}else if (start_dis+2 < player().rc.dist(gob_rc)&& cancelable){
+				sysMsg("Give up reach target as identified as opposite direction ", Color.WHITE);
+				return false;
 			}
 			// if bocked try turn around
 			p_st =  player().getrc();
@@ -274,14 +326,8 @@ public class  BotUtils {
 				turn_around(gob_rc,direction, 3);
 				sleep(walk_sleep);
 			}
-			p_st =  player().getrc();
-			p_st = new Coord3f(p_st.x, p_st.y, p_st.z);
 			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob_rc,1 ,0);
 			sleep(walk_sleep);
-			if (p_st.dist(player().getrc()) < 5){
-				turn_around(gob_rc,direction, 15);
-				sleep(walk_sleep);
-			}
 		}
 		return true;
 	}
@@ -295,7 +341,6 @@ public class  BotUtils {
 	                if (dist < min) {
 	                    boolean matches = false;
 	                    for (String name : names) {
-
 	                        if (isObjectName(gob, name)) {
 	                            matches = true;
 	                            break;
@@ -338,10 +383,24 @@ public class  BotUtils {
     public static boolean isObjectName(Gob gob, String name) {
         try {
             Resource res = gob.getres();
-            return (res != null) && res.name.contains(name);
+			if (res != null && res.name.contains(name)){
+				return true;
+			}
+				String[] nameParts = name.split("\\^");
+				if (nameParts.length >= 2) {
+					if (res != null && res.name.contains(nameParts[0])) {
+						for (int i = 1; i < nameParts.length; i++) {
+							if (res.name.contains(nameParts[i])) {
+								return false;
+							}
+						}
+						return true;
+					}
+				}
         } catch (Loading e) {
             return false;
-        }   
+        }
+		return false;
     }
     
     public FlowerMenu getMenu() {

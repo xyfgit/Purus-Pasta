@@ -31,7 +31,27 @@ public class DragonflyCollector {
 		}
 		Thread t = new Thread(new Runnable() {
 		public void run()  {
+			Gob gob =null;
+			Settings.setCancelAuto(false);
+			int stopEnergy = 81;
+			String action = null;
 			targetName = (Settings.getFindTargetName()==null)? "gfx/kritter/dragonfly/dragonfly": Settings.getFindTargetName();
+			if (targetName.contains(" ")){
+				 String[] keywords = targetName.split("\\s+");
+				 if (keywords.length >= 2){
+					 action = keywords[0];
+					 targetName = keywords[1];
+					 try {
+						 if (keywords.length > 2) stopEnergy = Integer.parseInt(keywords[2]);
+					 }catch (Exception e){stopEnergy = 10;
+					 BotUtils.sysMsg("Energy set wrong, set it to 10 by default.", Color.RED);
+					 }
+				 }else if (keywords.length == 1){
+					 targetName = keywords[0];
+				 }else{
+					 targetName = "gfx/kritter/dragonfly/dragonfly";
+				 }
+			}
 			BotUtils.sysMsg("Target "+ targetName, Color.WHITE);
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			ui.root.findchild(FlowerMenu.class);
@@ -40,21 +60,22 @@ public class DragonflyCollector {
 					IMeter.Meter stam = gui.getmeter("stam", 0);
 					// Check energy stop if it is lower than 1500
 					IMeter.Meter nrj = gui.getmeter("nrj", 0);
-					if (nrj.a <= 30){
-						t.stop();
-						return;
-					}
-					else if (stam.a <= 30 && nrj.a >= 85) {
+					if (stam.a <= 30 && nrj.a >= stopEnergy) {
 						BotUtils.drink();
+						BotUtils.sysMsg("drink finished.", Color.WHITE);
 					}
 //					if (!BotUtils.isMoving()) {
-						Gob gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, targetName);
+						gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, targetName);
+
 						if (gob != null) {
-							BotUtils.goToCoord(gob.rc, 200, true);
 							boolean isPlant = gob.getres().name.contains("terobjs");
+							int targetR = isPlant? 12:200;
+//							BotUtils.sysMsg("Start go to the point!", Color.WHITE);
+							BotUtils.goToCoord(gob.rc, targetR, true);
+//							BotUtils.sysMsg("Get to the point!", Color.WHITE);
 							BotUtils.doClick(gob, 3, 0);
-							if (isPlant){
-								sleep(800);
+							if (action!=null){
+								BotUtils.opGob(gob, action);
 							}
 						}
 //					}
