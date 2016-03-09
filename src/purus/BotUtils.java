@@ -299,7 +299,7 @@ public class  BotUtils {
 			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), reach_rc,1 ,0);
 			sleep(walk_sleep);
 			// check if player moved
-			while (Math.abs(start_dis - player().rc.dist(gob_rc)) > 1&&isMoving()){
+			while (Math.abs(start_dis - player().rc.dist(gob_rc)) > 0&&isMoving()){
 				start_dis = player().rc.dist(gob_rc);
 				sleep(300);
 //				sysMsg("temp gob_dis:"+player().rc.dist(gob_rc), Color.WHITE);

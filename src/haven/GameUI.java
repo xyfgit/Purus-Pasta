@@ -162,8 +162,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             @Override
             public boolean use(Glob.Pagina pagina) {
                 boolean result = super.use(pagina);
-                if (result)
+                Settings.setlastAction(pagina);
+                if (result) {
                     makewnd.setLastAction(pagina);
+                }
                 return result;
             }}, 20, 34);
         brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), 0, 0);

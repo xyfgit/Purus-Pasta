@@ -29,4 +29,11 @@ public class Settings {
     public static void setFindTargetName(String val) {
         FindTargetName=val;
     }
+    private static Glob.Pagina lastAction = null;
+    public static Glob.Pagina getlastAction() {
+        return lastAction;
+    }
+    public static void setlastAction(Glob.Pagina val) {
+        lastAction=val;
+    }
 }

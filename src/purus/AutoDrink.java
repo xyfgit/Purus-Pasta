@@ -35,53 +35,47 @@ public class AutoDrink {
 		}
 		Thread t = new Thread(new Runnable() {
 		public void run()  {
+			String targetName = Settings.getFindTargetName();
+			if (targetName!=null)
+				BotUtils.sysMsg("Target "+ targetName, Color.WHITE);
 			BotUtils.sysMsg("Auto Drink Started", Color.WHITE);
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
+			Gob gob;
+			Glob.Pagina pagina;
 			while (true) {
 				BotUtils.sleep(1000);
 				GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 				IMeter.Meter stam = gui.getmeter("stam", 0);
 				// Check energy stop if it is lower than 1500
 				IMeter.Meter nrj = gui.getmeter("nrj", 0);
-				if (nrj.a <= 30){
-					BotUtils.sysMsg("Auto Drink Stop as run out of energy.", Color.WHITE);
-					t.stop();
-					return;
+			 	if (stam.a <= 30&&nrj.a > 20) {
+					 BotUtils.drink();
 				}
-				else if (stam.a <= 30) {
-					WItem item = BotUtils.findDrink(BotUtils.playerInventory());
-					if (item != null) {
-						item.item.wdgmsg("iact", Coord.z, 3);
-						BotUtils.sleep(500);
-						@SuppressWarnings("deprecation")
-						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-						if (menu != null) {
-							for (FlowerMenu.Petal opt : menu.opts) {
-								if (opt.name.equals("Drink")) {
-									menu.choose(opt);
-									menu.destroy();
-									BotUtils.sysMsg("wait for stam back to 84", Color.WHITE);
-									while (gui.getmeter("stam", 0).a <= 84) {
-										BotUtils.sleep(500);
-									}
-									//
-									CraftWindow makewnd = BotUtils.gui().gameui().makewnd;
-									if (makewnd != null && makewnd.activeWdgmsgArgs!=null){
-										Widget sender = (Widget) makewnd.activeWdgmsgArgs.get(0);
-										String msg = (String) makewnd.activeWdgmsgArgs.get(1);
-										Object[] args = (Object[]) makewnd.activeWdgmsgArgs.get(2);
-										makewnd.wdgmsg(sender, msg, args);
-									}
-								}
-							}
-						}
+				CraftWindow makewnd=null;
+				if(BotUtils.gui().gameui()!=null)
+					makewnd = BotUtils.gui().gameui().makewnd;
+				if (makewnd != null && makewnd.activeWdgmsgArgs!=null){
+					BotUtils.sysMsg("repeat craft", Color.WHITE);
+					Widget sender = (Widget) makewnd.activeWdgmsgArgs.get(0);
+					String msg = (String) makewnd.activeWdgmsgArgs.get(1);
+					Object[] args = (Object[]) makewnd.activeWdgmsgArgs.get(2);
+					makewnd.wdgmsg(sender, msg, args);
+				}else if(Settings.getlastAction()!=null && targetName!=null){
+					BotUtils.sysMsg("repeat last action", Color.WHITE);
+					pagina = Settings.getlastAction();
+					ui.gui.wdgmsg("act", (Object[])pagina.act().ad);
+					pagina.act();
+					gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, targetName);
+					if (gob != null) {
+						boolean isPlant = gob.getres().name.contains("terobjs");
+						int targetR = isPlant? 12:200;
+//							BotUtils.sysMsg("Start go to the point!", Color.WHITE);
+						BotUtils.goToCoord(gob.rc, targetR, true);
+//							BotUtils.sysMsg("Get to the point!", Color.WHITE);
+						BotUtils.doClick(gob, 1, 0);
+						BotUtils.sleep(4000);
 					}
-					else{
-						// no drink available
-						BotUtils.sleep(3000);
-					}
-
-			}
+				}
 
 		}}});
 		// This thingy makes that stupid window with cancel button, TODO: make it better
@@ -104,6 +98,8 @@ public class AutoDrink {
 	            if (sender == this && msg.equals("close")) {
 	                t.stop();
 	            }
+				Settings.setFindTargetName(null);
+				Settings.setlastAction(null);
 	            super.wdgmsg(sender, msg, args);
 	        }
 	        
