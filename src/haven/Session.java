@@ -32,7 +32,7 @@ import java.io.*;
 import java.lang.ref.*;
 
 public class Session {
-    public static final int PVER = 4;
+    public static final int PVER = 5;
 
     public static final int MSG_SESS = 0;
     public static final int MSG_REL = 1;
@@ -63,6 +63,7 @@ public class Session {
     public static final int OD_CMPMOD = 17;
     public static final int OD_CMPEQU = 18;
     public static final int OD_ICON = 19;
+    public static final int OD_RESATTR = 20;
     public static final int OD_END = 255;
     public static final int SESSERR_AUTH = 1;
     public static final int SESSERR_BUSY = 2;
@@ -339,17 +340,17 @@ public class Session {
                                 if (modid == 65535)
                                     break;
                                 Indir<Resource> modr = getres(modid);
-				List<ResData> tex = new LinkedList<ResData>();
+                                List<ResData> tex = new LinkedList<ResData>();
                                 while (true) {
                                     int resid = msg.uint16();
                                     if (resid == 65535)
                                         break;
-				    Message sdt = Message.nil;
-				    if((resid & 0x8000) != 0) {
-					resid &= ~0x8000;
-					sdt = new MessageBuf(msg.bytes(msg.uint8()));
-				    }
-				    tex.add(new ResData(getres(resid), sdt));
+                                    Message sdt = Message.nil;
+                                    if ((resid & 0x8000) != 0) {
+                                        resid &= ~0x8000;
+                                        sdt = new MessageBuf(msg.bytes(msg.uint8()));
+                                    }
+                                    tex.add(new ResData(getres(resid), sdt));
                                 }
                                 mod.add(new Composited.MD(modr, tex));
                             }
@@ -465,14 +466,20 @@ public class Session {
                         } else if (type == OD_ICON) {
                             int resid = msg.uint16();
                             if (resid == 65535) {
-				if(gob != null)
-				    oc.icon(gob, null);
+                                if (gob != null)
+                                    oc.icon(gob, null);
                             } else {
                             	@SuppressWarnings("unused")
-								int ifl = msg.uint8();
-                            	if(gob != null)
-				    oc.icon(gob, getres(resid));
+                                int ifl = msg.uint8();
+                                if (gob != null)
+                                    oc.icon(gob, getres(resid));
                             }
+                        } else if (type == OD_RESATTR) {
+                            Indir<Resource> resid = getres(msg.uint16());
+                            int len = msg.uint8();
+                            Message dat = (len > 0) ? new MessageBuf(msg.bytes(len)) : null;
+                            if (gob != null)
+                                oc.resattr(gob, resid, dat);
                         } else if (type == OD_END) {
                             break;
                         } else {
@@ -705,7 +712,7 @@ public class Session {
                         now = System.currentTimeMillis();
                         boolean beat = true;
             /*
-			  if((closing != -1) && (now - closing > 500)) {
+              if((closing != -1) && (now - closing > 500)) {
 			  Message cm = new Message(MSG_CLOSE);
 			  sendmsg(cm);
 			  closing = now;

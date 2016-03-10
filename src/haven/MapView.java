@@ -28,6 +28,8 @@ package haven;
 
 import static haven.MCache.tilesz;
 import haven.GLProgram.VarID;
+import haven.automation.GobSelectCallback;
+import haven.automation.SteelRefueler;
 import haven.pathfinder.*;
 import haven.resutil.BPRadSprite;
 
@@ -82,6 +84,10 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     private Coord lasthittestc = Coord.z;
     private final PartyHighlight partyHighlight;
     public AreaMine areamine;
+    private GobSelectCallback gobselcb;
+    private Pathfinder pf;
+    public Thread pfthread;
+    public SteelRefueler steelrefueler;
 
     private static final  Set<String> dangerousanimalrad = new HashSet<String>(Arrays.asList(
             "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger", "gfx/kritter/moose/moose"));
@@ -1403,9 +1409,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
         return (-1);
     }
 
-    private Pathfinder pf;
-    public Thread pfthread;
-
     private class Click extends Hittest {
         int clickb;
 
@@ -1436,6 +1439,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
                 }
             } else {
                 if (ui.modmeta && clickb == 1) {
+                    if (gobselcb != null)
+                        gobselcb.gobselect(inf.gob);
+
                     for (Widget w = gameui().chat.lchild; w != null; w = w.prev) {
                         if (w instanceof ChatUI.MultiChat) {
                             ChatUI.MultiChat chat = (ChatUI.MultiChat) w;
@@ -1448,7 +1454,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
                 }
                 if (inf.ol == null) {
                     if (Config.pf && curs != null && !curs.name.equals("gfx/hud/curs/study")) {
-                        pfRightClick(inf.gob, getid(inf.r), clickb, null);
+                        pfRightClick(inf.gob, getid(inf.r), clickb, 0, null);
                     } else {
                         wdgmsg("click", pc, mc, clickb, ui.modflags(), 0, (int) inf.gob.id, inf.gob.rc, 0, getid(inf.r));
                     }
@@ -1457,6 +1463,14 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
                 }
             }
         }
+    }
+
+    public void registerGobSelect(GobSelectCallback callback) {
+        this.gobselcb = callback;
+    }
+
+    public void unregisterGobSelect() {
+        this.gobselcb = null;
     }
 
     public void pfLeftClick(Coord mc, String action) {
@@ -1498,7 +1512,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
         }
     }
 
-    public void pfRightClick(Gob gob, int meshid, int clickb, String action) {
+    public void pfRightClick(Gob gob, int meshid, int clickb, int modflags, String action) {
         Gob player = player();
         if (player == null)
             return;
@@ -1516,7 +1530,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
                 return;
 
-            pf = new Pathfinder(this, new Coord(gcx, gcy), gob, meshid, clickb, action);
+            pf = new Pathfinder(this, new Coord(gcx, gcy), gob, meshid, clickb, modflags, action);
             glob.oc.setPathfinder(pf);
             pf.addListener(this);
             pfthread = new Thread(pf);
@@ -2003,5 +2017,14 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
                 wdgmsg("click", pl.sc, pl.rc, 3, 0);
             }
         }
+    }
+
+    public void canceltasks() {
+        if (pf != null)
+            pf.terminate = true;
+        if (areamine != null)
+            areamine.terminate();
+        if (steelrefueler != null)
+            steelrefueler.terminate();
     }
 }

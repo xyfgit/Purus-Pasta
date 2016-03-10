@@ -180,8 +180,7 @@ public class OCache implements Iterable<Gob> {
             g.delattr(Moving.class);
             if (pf != null && g.isplayer() && l < 0)
                 pf.moveStop(l);
-        }
-        else {
+        } else {
             lm.setl(l);
             if (pf != null && g.isplayer())
                 pf.moveStep(l);
@@ -386,5 +385,12 @@ public class OCache implements Iterable<Gob> {
 
     public void setPathfinder(Pathfinder pf) {
         this.pf = pf;
+    }
+
+    public synchronized void resattr(Gob g, Indir<Resource> resid, Message dat) {
+        if (dat != null)
+            g.setrattr(resid, dat);
+        else
+            g.delrattr(resid);
     }
 }
