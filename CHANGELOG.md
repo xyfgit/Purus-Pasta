@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.11.3
+	- Latest default and amber client merges
+
 ### 2.11.2
 	- Latest amber merges
 

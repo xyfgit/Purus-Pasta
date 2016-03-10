@@ -50,6 +50,15 @@ import purus.DragonflyCollector;
 import purus.FillOven;
 import purus.FillSmelter;
 import purus.MusselPicker;
+import haven.automation.AddCoalToSmelter;
+import haven.Resource.AButton;
+import haven.Glob.Pagina;
+import haven.automation.GobSelectCallback;
+import haven.automation.SteelRefueler;
+
+import java.util.*;
+import java.util.concurrent.Executors;
+
 
 public class MenuGrid extends Widget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
@@ -138,15 +147,25 @@ public class MenuGrid extends Widget {
     	super.attach(ui);
     	Glob glob = ui.sess.glob;
     	ObservableCollection<Pagina> p = glob.paginae;
+    	// Purus Cor Stuff
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/timer")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/study")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/mussel")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/carrotfarm")));
         p.add(glob.paginafor(Resource.local().load("paginae/custom/drink")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/flycollect")));
-    	p.add(glob.paginafor(Resource.local().load("paginae/custom/fillsmelter")));
+    	// Disable this for now because amber has one
+    	//p.add(glob.paginafor(Resource.local().load("paginae/custom/fillsmelter")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/oven")));
+    	// Amber Stuff
+        if (!Config.hidexmenu) {
+            p.add(glob.paginafor(Resource.local().load("paginae/amber/coal11")));
+            p.add(glob.paginafor(Resource.local().load("paginae/amber/coal12")));
+            p.add(glob.paginafor(Resource.local().load("paginae/amber/steel")));
+        }
     }
+
+
     private static Comparator<Pagina> sorter = new Comparator<Pagina>() {
         public int compare(Pagina a, Pagina b) {
             AButton aa = a.act(), ab = b.act();
@@ -318,6 +337,26 @@ public class MenuGrid extends Widget {
         return (ui.sess.glob.paginafor(res));
     }
 
+    private void use(String[] ad) {
+        GameUI gui = gameui();
+        if (gui == null)
+            return;
+        if (ad[1].equals("coal")) {
+            Executors.newSingleThreadExecutor().submit(() -> {
+                new AddCoalToSmelter(gui, Integer.parseInt(ad[2])).fuel();
+            });
+        } else if (ad[1].equals("steel")) {
+            if (gui.getwnd("Steel Refueler") == null) {
+                SteelRefueler sw = new SteelRefueler();
+                gui.map.steelrefueler = sw;
+                gui.add(sw, new Coord(gui.sz.x / 2 - sw.sz.x / 2, gui.sz.y / 2 - sw.sz.y / 2 - 200));
+                synchronized (GobSelectCallback.class) {
+                    gui.map.registerGobSelect(sw);
+                }
+            }
+        }
+    }
+
     private void use(Pagina r, boolean reset) {
         Collection<Pagina> sub = new LinkedList<Pagina>(),
                 cur = new LinkedList<Pagina>();
@@ -337,6 +376,12 @@ public class MenuGrid extends Widget {
         } else {
             r.newp = 0;
             use(r);
+            String[] ad = r.act().ad;
+            if(ad[0].equals("@")) {
+                use(ad);
+            } else {
+                wdgmsg("act", (Object[]) ad);
+            }
             if (reset)
                 this.cur = null;
             curoff = 0;
