@@ -154,8 +154,10 @@ public class MenuGrid extends Widget {
     	//p.add(glob.paginafor(Resource.local().load("paginae/custom/fillsmelter")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/oven")));
     	// Amber Stuff
-        p.add(glob.paginafor(Resource.local().load("paginae/amber/coal11")));
-        p.add(glob.paginafor(Resource.local().load("paginae/amber/coal12")));
+        if (!Config.hidexmenu) {
+            p.add(glob.paginafor(Resource.local().load("paginae/amber/coal11")));
+            p.add(glob.paginafor(Resource.local().load("paginae/amber/coal12")));
+        }
     }
 
 

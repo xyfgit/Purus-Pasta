@@ -1064,6 +1064,18 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(520, y));
+        y += 35;
+        display.add(new CheckBox("Hide extensions menu (req. restart)") {
+            {
+                a = Config.hidexmenu;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("hidexmenu", val);
+                Config.hidexmenu = val;
+                a = val;
+            }
+        }, new Coord(520, y));
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override
