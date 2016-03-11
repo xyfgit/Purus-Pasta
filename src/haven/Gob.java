@@ -301,7 +301,13 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 //        if (res != null && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
         if (res != null && res.name.startsWith("gfx/terobjs/plants")) {
     	GAttrib rd = getattr(ResDrawable.class);
-    	final int stage = ((ResDrawable) rd).sdt.peekrbuf(0);
+            int stage = 0;
+            try{
+    	    stage = ((ResDrawable) rd).sdt.peekrbuf(0);
+            }
+            catch(Exception e){
+                stage = 404;
+            }
         return stage;
         } else
         return 404;
