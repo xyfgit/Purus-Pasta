@@ -47,8 +47,8 @@ public class CarrotFarmer {
 					if (distance > f.dist(p1)) {
 						gob = gob_temp;
 						Plant = gob_temp.getres().name;
-						distance = f.dist(p1);
-						BotUtils.sysMsg(Plant+distance, Color.WHITE);
+//						distance = f.dist(p1);
+//						BotUtils.sysMsg(Plant+distance, Color.WHITE);
 					}
 
 			}
@@ -67,14 +67,8 @@ public class CarrotFarmer {
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			while (true) {
 				try {
-					BotUtils.drop_item(1);
 					Gob gob = get_plant_gob();
-					if (gob != null)
-						CarrotsNearby = true;
-					else
-						CarrotsNearby = false;
-					while (CarrotsNearby = true) {
-
+					while (true) {
 						// Start of drink TODO: Make separate function of this maybe yeah?
 						GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 						IMeter.Meter stam = gui.getmeter("stam", 0);
@@ -88,45 +82,61 @@ public class CarrotFarmer {
 						else if (stam.a <= 30) {
 							BotUtils.drink();
 						}
-						//end of drink
-						BotUtils.goToCoord(gob.rc, 10, false);
-						BotUtils.sleep(100);
-						BotUtils.doClick(gob, 3, 0);
-						BotUtils.sleep(200);
+						if (gob!=null) {
+							//start harvest
+							BotUtils.goToCoord(gob.rc, 20, false);
+							BotUtils.doClick(gob, 3, 0);
+							BotUtils.sleep(100);
 //						@SuppressWarnings("deprecation")
-						FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
-						if (menu != null) {
-							for (FlowerMenu.Petal opt : menu.opts) {
-								if (opt.name.equals("Harvest")) {
-									menu.choose(opt);
-									menu.destroy();
+							FlowerMenu menu = ui.root.findchild(FlowerMenu.class);
+							if (menu != null) {
+								for (FlowerMenu.Petal opt : menu.opts) {
+									if (opt.name.equals("Harvest")) {
+										menu.choose(opt);
+										menu.destroy();
+									}
 								}
 							}
-						}
+
+						BotUtils.sleep(100);
 						while (gui.prog >= 0) {
 							BotUtils.sleep(150);
 						}
 						// Some better method should be implemented, but now it just waits a bit for items to appear on inventory and stuff
-						WItem left = ui.gui.getequipory().quickslots[6];
-						if (!left.item.getres().name.contains("scythe")){
-							BotUtils.sleep(750);
-						}
-						BotUtils.sleep(950);
+//						WItem left = ui.gui.getequipory().quickslots[6];
+//						if (!left.item.getres().name.contains("scythe")){
+//							BotUtils.sleep(200);
+//						}
+						BotUtils.sleep(300);
+						}//end harvest
 						GItem item = BotUtils.getItemAtHand();
+						Inventory inv = BotUtils.playerInventory();
 
+						double maxQ = 0;
+						double minQ = 9999;
+						GItem toDrop = null;
 						if (item == null) {
-							Inventory inv = BotUtils.playerInventory();
 							for (Widget w = inv.child; w != null; w = w.next) {
-								if (w instanceof GItem && isCarrot((GItem) w)) {
-									item = (GItem) w;
-									break;
+								if (w instanceof GItem && isSeed((GItem) w)) {
+									if (((GItem) w).quality().max>maxQ) {
+										item = (GItem) w;
+										maxQ = ((GItem) w).quality().max;
+
+									}
+									else if (((GItem) w).quality().max<minQ && inv.getFreeSpace() <= 3*w.sz.x*w.sz.y/ (inv.sqsz.x * inv.sqsz.y)) {
+										minQ = ((GItem) w).quality().max;
+										toDrop = (GItem) w;
+									}
+								}else if(w instanceof GItem && isCarrot((GItem)w)){
+										w.wdgmsg("drop", Coord.z);
+										BotUtils.sleep(150);
+
 								}
 							}
-						} else if (!isCarrot(item)) {
-							BotUtils.sysMsg("Item in hand is not seed", Color.WHITE);
-							BotUtils.sysMsg("Carrot Farmer Cancelled, not carrot", Color.WHITE);
-//							t.stop();
-//							return;
+							if (toDrop !=null){
+								toDrop.wdgmsg("drop", Coord.z);
+								BotUtils.sleep(150);
+							}
 						}
 						if (item != null) {
 							BotUtils.takeItem(item);
@@ -138,14 +148,12 @@ public class CarrotFarmer {
 						}
 						// Planttaa, siemen käteen tähän vaiheeseen mennessä
 						BotUtils.mapInteractClick(1);
-						//  TODO Droppaa kaikki siemenet tms. invistä + kädestä = saa toimimaan kaikkiin siemeniin
-						//
-						gob = get_plant_gob();
-						if (gob != null)
-							CarrotsNearby = true;
-						else
-							break;
 						BotUtils.sleep(100);
+						gob = get_plant_gob();
+						BotUtils.sleep(100);
+						if(Settings.getCancelAuto()){
+							break;
+						}
 					}
 					window.destroy();
 					if (t != null) {
@@ -171,6 +179,13 @@ public class CarrotFarmer {
 	       }
 	        return false;
 	    }
+			protected boolean isSeed(final GItem item) {
+				String resName = item.resname();
+				if (resName != null && !resName.isEmpty()&&resName.contains("/seed")) {
+					return true;
+				}
+				return false;
+			}
 		});
 		// This thingy makes that stupid window with cancel button, TODO: make it better
 		private class StatusWindow extends Window {

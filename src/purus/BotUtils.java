@@ -326,8 +326,6 @@ public class  BotUtils {
 				turn_around(gob_rc,direction, 3);
 				sleep(walk_sleep);
 			}
-			ui.gui.map.wdgmsg("click", getCenterScreenCoord(), gob_rc,1 ,0);
-			sleep(walk_sleep);
 		}
 		return true;
 	}
