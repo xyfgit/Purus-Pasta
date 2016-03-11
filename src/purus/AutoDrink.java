@@ -35,6 +35,7 @@ public class AutoDrink {
 		}
 		Thread t = new Thread(new Runnable() {
 		public void run()  {
+			Settings.setCancelAuto(false);
 			String targetName = Settings.getFindTargetName();
 			if (targetName!=null)
 				BotUtils.sysMsg("Target "+ targetName, Color.WHITE);
