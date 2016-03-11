@@ -108,7 +108,7 @@ public class CarrotFarmer {
 //							BotUtils.sleep(200);
 //						}
 						BotUtils.sleep(300);
-						}//end harvest
+
 						GItem item = BotUtils.getItemAtHand();
 						Inventory inv = BotUtils.playerInventory();
 
@@ -127,13 +127,13 @@ public class CarrotFarmer {
 										minQ = ((GItem) w).quality().max;
 										toDrop = (GItem) w;
 									}
-								}else if(w instanceof GItem && isCarrot((GItem)w)){
+								}else if(w instanceof GItem && isCarrot((GItem)w)&&gob!=null){
 										w.wdgmsg("drop", Coord.z);
 										BotUtils.sleep(150);
 
 								}
 							}
-							if (toDrop !=null){
+							if (toDrop !=null&&gob!=null){
 								toDrop.wdgmsg("drop", Coord.z);
 								BotUtils.sleep(150);
 							}
@@ -154,6 +154,7 @@ public class CarrotFarmer {
 						if(Settings.getCancelAuto()){
 							break;
 						}
+						}//end harvest
 					}
 					window.destroy();
 					if (t != null) {
@@ -162,7 +163,6 @@ public class CarrotFarmer {
 					}
 					return;
 				} catch (Exception e) {
-
 					BotUtils.sysMsg(e.getMessage(), Color.RED);
 					BotUtils.sleep(350);
 				}
