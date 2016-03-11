@@ -395,7 +395,8 @@ public class MenuGrid extends Widget {
         if(ad[0].equals("@")) {
             usecustom(ad);
         } else {
-            wdgmsg("act", (Object[])ad);
+        	// Disable to prevent double toggling
+           // wdgmsg("act", (Object[])ad);
         }
         return true;
     }
