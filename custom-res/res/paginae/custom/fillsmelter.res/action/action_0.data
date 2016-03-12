@@ -1,10 +1,10 @@
 #ABUTTON LAYER FOR RES dout//timer.res
 #String pr
-paginae/custom/add
+paginae/amber/amber
 #uint16 pver
 1
 #String name
-Fill Smelter
+Fill Smelt
 #String preq
 
 #uint16 hk
