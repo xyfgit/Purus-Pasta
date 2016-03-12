@@ -39,7 +39,7 @@ public class UpdateWnd extends Window {
                 Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
                 if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
                     try {
-                        desktop.browse(new URI("https://github.com/puruscor/hafen-launcher/releases"));
+                        desktop.browse(new URI("https://github.com/puruscor/Pasta-Launcher/releases/latest"));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
