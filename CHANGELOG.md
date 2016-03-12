@@ -1,22 +1,19 @@
 ## Changelog
 
+### 2.12.0
+	- Modifications for compatibility with new launcher
 ### 2.11.4		
 	- Some critical bugfixes
-
 ### 2.11.3
 	- Latest default and amber client merges
-
 ### 2.11.2
 	- Latest amber merges
-
 ### 2.11.1
 	- Latest amber merges
-
 ### 2.11.0
 	- Mini combat icons option
 	- Little fixes
 	- Latest merges from amber and default client
-
 ### 2.10.0
 	- Option to hide horizontal meter
 	- Added some curios to curio.config
