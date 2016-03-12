@@ -63,6 +63,7 @@ public class CarrotFarmer {
 		}
 		Thread t = new Thread(new Runnable() {
 		public void run()  {
+			Settings.setCancelAuto(false);
 			BotUtils.sysMsg("Modified Carrot Farmer Started", Color.WHITE);
 			window = BotUtils.gui().add(new StatusWindow(), 300, 200);
 			while (true) {
@@ -121,7 +122,7 @@ public class CarrotFarmer {
 									toPlantItem = (GItem) w;
 									maxQ = ((GItem) w).quality().max;
 								}
-								else if (((GItem) w).quality().max<minQ && inv.getFreeSpace() <= 3*w.sz.x*w.sz.y/ (inv.sqsz.x * inv.sqsz.y)) {
+								else if (((GItem) w).quality().max<minQ && inv.getFreeSpace() <= 5*w.sz.x*w.sz.y/ (inv.sqsz.x * inv.sqsz.y)) {
 									minQ = ((GItem) w).quality().max;
 									toDrop = (GItem) w;
 								}
@@ -135,8 +136,13 @@ public class CarrotFarmer {
 							toDrop.wdgmsg("drop", Coord.z);
 							BotUtils.sleep(150);
 						}
-						if (BotUtils.getItemAtHand()!= null &&(maxQ-10>= BotUtils.getItemAtHand().quality().max||BotUtils.getItemAtHand().num <5)){
-							BotUtils.drop_item(1);
+							BotUtils.sysMsg(maxQ+"", Color.WHITE);
+						if (BotUtils.getItemAtHand()!= null ){
+							GItem.NumberInfo ninf = ItemInfo.find(GItem.NumberInfo.class, BotUtils.getItemAtHand().info());
+							if ((maxQ-10)>= BotUtils.getItemAtHand().quality().max||ninf.itemnum() <5){
+							BotUtils.sysMsg("drop on hand, number " + ninf.itemnum(), Color.WHITE);
+							BotUtils.getItemAtHand().wdgmsg("drop", Coord.z);
+							BotUtils.sleep(150);}
 						}
 						if (BotUtils.getItemAtHand()== null) {
 							BotUtils.takeItem(toPlantItem);
@@ -161,7 +167,7 @@ public class CarrotFarmer {
 					}
 					return;
 				} catch (Exception e) {
-					BotUtils.sysMsg(e.getMessage(), Color.RED);
+					BotUtils.sysMsg(e +"", Color.RED);
 					BotUtils.sleep(350);
 				}
 				BotUtils.sleep(150);
