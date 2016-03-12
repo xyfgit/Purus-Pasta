@@ -115,7 +115,7 @@ public class  BotUtils {
 	
 	// Use item in hand to ground below player, for example, plant carrot
 	public void mapInteractClick(int mod) {
-		 ui.gui.map.wdgmsg("itemact", getCenterScreenCoord(), player().rc, 3, ui.modflags());
+		 ui.gui.map.wdgmsg("itemact", getCenterScreenCoord(), player().rc, mod, ui.modflags());
 	}
 	
 	// return center of screen

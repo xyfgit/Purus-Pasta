@@ -68,7 +68,7 @@ public class CarrotFarmer {
 			while (true) {
 				try {
 					Gob gob = get_plant_gob();
-					while (true) {
+					while (!Settings.getCancelAuto()) {
 						// Start of drink TODO: Make separate function of this maybe yeah?
 						GameUI gui = HavenPanel.lui.root.findchild(GameUI.class);
 						IMeter.Meter stam = gui.getmeter("stam", 0);
@@ -109,37 +109,37 @@ public class CarrotFarmer {
 //						}
 						BotUtils.sleep(300);
 
-						GItem item = BotUtils.getItemAtHand();
+						GItem toPlantItem = null;
 						Inventory inv = BotUtils.playerInventory();
 
 						double maxQ = 0;
 						double minQ = 9999;
 						GItem toDrop = null;
-						if (item == null) {
-							for (Widget w = inv.child; w != null; w = w.next) {
-								if (w instanceof GItem && isSeed((GItem) w)) {
-									if (((GItem) w).quality().max>maxQ) {
-										item = (GItem) w;
-										maxQ = ((GItem) w).quality().max;
-
-									}
-									else if (((GItem) w).quality().max<minQ && inv.getFreeSpace() <= 3*w.sz.x*w.sz.y/ (inv.sqsz.x * inv.sqsz.y)) {
-										minQ = ((GItem) w).quality().max;
-										toDrop = (GItem) w;
-									}
-								}else if(w instanceof GItem && isCarrot((GItem)w)&&gob!=null){
-										w.wdgmsg("drop", Coord.z);
-										BotUtils.sleep(150);
-
+						for (Widget w = inv.child; w != null; w = w.next) {
+							if (w instanceof GItem && isSeed((GItem) w)) {
+								if (((GItem) w).quality().max>maxQ) {
+									toPlantItem = (GItem) w;
+									maxQ = ((GItem) w).quality().max;
 								}
-							}
-							if (toDrop !=null&&gob!=null){
-								toDrop.wdgmsg("drop", Coord.z);
-								BotUtils.sleep(150);
+								else if (((GItem) w).quality().max<minQ && inv.getFreeSpace() <= 3*w.sz.x*w.sz.y/ (inv.sqsz.x * inv.sqsz.y)) {
+									minQ = ((GItem) w).quality().max;
+									toDrop = (GItem) w;
+								}
+							}else if(w instanceof GItem && isCarrot((GItem)w)&&gob!=null){
+									w.wdgmsg("drop", Coord.z);
+									BotUtils.sleep(150);
+
 							}
 						}
-						if (item != null) {
-							BotUtils.takeItem(item);
+						if (toDrop !=null&&gob!=null){
+							toDrop.wdgmsg("drop", Coord.z);
+							BotUtils.sleep(150);
+						}
+						if (BotUtils.getItemAtHand()!= null &&(maxQ-10>= BotUtils.getItemAtHand().quality().max||BotUtils.getItemAtHand().num <5)){
+							BotUtils.drop_item(1);
+						}
+						if (BotUtils.getItemAtHand()== null) {
+							BotUtils.takeItem(toPlantItem);
 						} else {
 //							BotUtils.sysMsg("Couldnt find any "+Plant, Color.WHITE);
 //							BotUtils.sysMsg("Carrot Farmer Cancelled", Color.WHITE);
@@ -151,9 +151,7 @@ public class CarrotFarmer {
 						BotUtils.sleep(100);
 						gob = get_plant_gob();
 						BotUtils.sleep(100);
-						if(Settings.getCancelAuto()){
-							break;
-						}
+
 						}//end harvest
 					}
 					window.destroy();
