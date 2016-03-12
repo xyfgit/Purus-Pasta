@@ -1,17 +1,15 @@
-#ABUTTON LAYER FOR RES dout//timer.res
+#ABUTTON LAYER FOR RES dout//add.res
 #String pr
-paginae/custom/add
+
 #uint16 pver
-1
+0
 #String name
-Timer
+Xtended
 #String preq
 
 #uint16 hk
-84
+88
 #uint16 ad length
-2
+1
 #String ad[0]
-@
-#String ad[1]
-timer
+
