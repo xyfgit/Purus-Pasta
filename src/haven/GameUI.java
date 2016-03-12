@@ -84,7 +84,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public static boolean trackon = false;
     private boolean crimeautotgld = false;
     private boolean trackautotgld = false;
-    public FBelt fbelt;
+//    public FBelt fbelt;
 
     private int fkey_x = 430;
     public abstract class Belt extends Widget {
@@ -210,11 +210,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             opts.setMapSettings();
         }
 
-        fbelt = new FBelt(chrid, Utils.getprefb("fbelt_vertical", true));
-        fbelt.load();
-        add(fbelt, Utils.getprefc("fbelt_c", new Coord(20, 200)));
-        if (!Config.fbelt)
-            fbelt.hide();
+//        fbelt = new FBelt(chrid, Utils.getprefb("fbelt_vertical", true));
+//        fbelt.load();
+//        add(fbelt, Utils.getprefc("fbelt_c", new Coord(20, 200)));
+//        if (!Config.fbelt)
+//            fbelt.hide();
     }
 
     @Override

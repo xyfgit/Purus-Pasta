@@ -71,10 +71,11 @@ public class AutoDrink {
 						boolean isPlant = gob.getres().name.contains("terobjs");
 						int targetR = isPlant? 12:200;
 //							BotUtils.sysMsg("Start go to the point!", Color.WHITE);
+						BotUtils.doClick(gob, 3, 0);
 						BotUtils.goToCoord(gob.rc, targetR, true);
 //							BotUtils.sysMsg("Get to the point!", Color.WHITE);
 						BotUtils.doClick(gob, 1, 0);
-						BotUtils.sleep(4000);
+						BotUtils.sleep(3000);
 					}
 				}
 
