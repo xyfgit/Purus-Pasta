@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/puruscor/Purus-Pasta.svg?branch=master)](https://travis-ci.org/puruscor/Purus-Pasta)
 
 Download client using launcher:
-https://github.com/puruscor/hafen-launcher/releases
+https://github.com/puruscor/Pasta-Launcher/releases/latest
 
 Includes all features that Amber client has + some additional ones. You can check them out below.
 
