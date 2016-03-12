@@ -62,10 +62,7 @@ public class AutoDrink {
 					Object[] args = (Object[]) makewnd.activeWdgmsgArgs.get(2);
 					makewnd.wdgmsg(sender, msg, args);
 				}else if(Settings.getlastAction()!=null && targetName!=null){
-					BotUtils.sysMsg("repeat last action", Color.WHITE);
-					pagina = Settings.getlastAction();
-					ui.gui.wdgmsg("act", (Object[])pagina.act().ad);
-					pagina.act();
+
 					gob = BotUtils.findObjectByNames(BotUtils.player().rc, 1000, targetName);
 					if (gob != null) {
 						boolean isPlant = gob.getres().name.contains("terobjs");
@@ -73,6 +70,10 @@ public class AutoDrink {
 //							BotUtils.sysMsg("Start go to the point!", Color.WHITE);
 						BotUtils.doClick(gob, 3, 0);
 						BotUtils.goToCoord(gob.rc, targetR, true);
+						BotUtils.sysMsg("repeat last action", Color.WHITE);
+						pagina = Settings.getlastAction();
+						ui.gui.wdgmsg("act", (Object[])pagina.act().ad);
+						pagina.act();
 //							BotUtils.sysMsg("Get to the point!", Color.WHITE);
 						BotUtils.doClick(gob, 1, 0);
 						BotUtils.sleep(3000);
