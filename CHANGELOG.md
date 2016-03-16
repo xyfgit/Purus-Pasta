@@ -1,5 +1,7 @@
 ## Changelog
 
+### 2.12.1
+	- Latest merges from Amber & Default client
 ### 2.12.0
 	- Modifications for compatibility with new launcher
 ### 2.11.4		
