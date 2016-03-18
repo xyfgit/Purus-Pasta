@@ -1450,6 +1450,18 @@ public class OptWnd extends Window {
         y = 0;
         hide.add(new Label("Ctrl + h to toggle hide"), new Coord(0, y));
         y += 35;
+        hide.add(new CheckBox("Disable highlight boxes") {
+            {
+                a = Config.nohidebox;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("nohidebox", val);
+                Config.nohidebox = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
         hide.add(new CheckBox("Hide Everything") {
             {
                 a = Config.hideall;
@@ -1520,6 +1532,18 @@ public class OptWnd extends Window {
                     }
                 }, new Coord(0, y));
                 y += 35;
+                hide.add(new CheckBox("Hide Drying Frames") {
+                    {
+                        a = Config.hidedframes;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidedframes", val);
+                        Config.hidedframes = val;
+                        a = val;
+                    }
+                }, new Coord(0, y));
+                y += 35;
                 hide.add(new CheckBox("Hide Houses (Hides also door)") {
                     {
                         a = Config.hidehouses;
@@ -1531,6 +1555,30 @@ public class OptWnd extends Window {
                         a = val;
                     }
                 }, new Coord(0, y));
+                y = 0;
+                hide.add(new CheckBox("Hide Hearth Fires") {
+                    {
+                        a = Config.hidehfs;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidehfs", val);
+                        Config.hidehfs = val;
+                        a = val;
+                    }
+                	}, new Coord(260, y));
+                y += 35;
+                hide.add(new CheckBox("Hide Dream Catchers") {
+                    {
+                        a = Config.hidedcatchers;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidedcatchers", val);
+                        Config.hidedcatchers = val;
+                        a = val;
+                    }
+                	}, new Coord(260, y));
                 y = 0;
                 hide.add(new Label("Red"), new Coord(550, y));
                 y += 15;

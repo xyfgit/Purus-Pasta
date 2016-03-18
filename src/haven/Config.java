@@ -81,6 +81,7 @@ public class Config {
     public static boolean alarmred = Utils.getprefb("alarmred", false);
     public static double alarmredvol = Utils.getprefd("alarmredvol", 0.32);
     public static boolean showquality = Utils.getprefb("showquality", false);
+    public static boolean nohidebox = Utils.getprefb("nohidebox", false);
     public static int showqualitymode = Utils.getprefi("showqualitymode", 0);
     public static boolean arithavg = Utils.getprefb("arithavg", false);
     public static boolean qualitywhole = Utils.getprefb("qualitywhole", true);
@@ -127,6 +128,9 @@ public class Config {
     public static boolean hidewagons = Utils.getprefb("hidewagons", false);
     public static boolean hidehouses = Utils.getprefb("hidehouses", false);
     public static boolean hidebushes = Utils.getprefb("hidebushes", false);
+    public static boolean hidedframes = Utils.getprefb("hidedframes", false);
+    public static boolean hidehfs = Utils.getprefb("hidehfs", false);
+    public static boolean hidedcatchers = Utils.getprefb("hidedcatchers", false);
     public static boolean hideall = Utils.getprefb("hideall", false);
     public static double hidered = Utils.getprefd("hidered", 155);
     public static double hidegreen = Utils.getprefd("hidegreen", 155);
