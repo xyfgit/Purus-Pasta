@@ -37,9 +37,6 @@ import haven.resutil.Ridges;
 
 public class LocalMiniMap extends Widget {
     private static final Tex gridred = Resource.loadtex("gfx/hud/mmap/gridred");
-    public static final Coord VIEW_SZ = MCache.sgridsz.mul(9).div(tilesz);// view radius is 9x9 "server" grids
-    public static final Color VIEW_BG_COLOR = new Color(255, 255, 255, 60);
-    public static final Color VIEW_BORDER_COLOR = new Color(0, 0, 0, 128);
     public static final Text.Foundry bushf = new Text.Foundry(Text.sansb, 12);
     private static final Text.Foundry partyf = bushf;
     public final MapView mv;
@@ -51,6 +48,7 @@ public class LocalMiniMap extends Widget {
     private static final Resource playeralarmRed = Resource.local().loadwait("sfx/alarmRed");
     private Coord doff = Coord.z;
     private Coord delta = Coord.z;
+    private Coord off = Coord.z;
 	private static final Resource alarmplayersfx = Resource.local().loadwait("sfx/alarmplayer");
     private static final Resource foragablesfx = Resource.local().loadwait("sfx/awwyeah");
     private static final Resource bearsfx = Resource.local().loadwait("sfx/bear");
@@ -534,30 +532,18 @@ public class LocalMiniMap extends Widget {
                 }
             }
 
-            if (Config.mapshowviewdist) {
-                Gob player = mv.player();
-                Coord rc = new Coord();
-                if (player != null)
-		rc = p2c(player.rc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz));
-		g.chcolor(VIEW_BG_COLOR);
-		g.frect(rc, VIEW_SZ);
-		g.chcolor(VIEW_BORDER_COLOR);
-		g.rect(rc, VIEW_SZ);
-		g.chcolor();
-            }
-
             try {
                 synchronized (ui.sess.glob.party.memb) {
                     Collection<Party.Member> members = ui.sess.glob.party.memb.values();
                     for (Party.Member m : members) {
-                        Coord ptc;
+                        Coord mc;
                         try {
-                            ptc = m.getc();
+                            mc = m.getc();
                         } catch (MCache.LoadingMap e) {
                             continue;
                         }
                         try {
-                            ptc = p2c(ptc);
+                            Coord ptc = p2c(mc);
                             Tex tex = xmap.get(m.col);
                             if (tex == null) {
                                 tex = Text.renderstroked("\u2716",  m.col, Color.BLACK, partyf).tex();
@@ -565,6 +551,16 @@ public class LocalMiniMap extends Widget {
                             }
                             g.image(tex, ptc.add(delta).sub(6, 6));
                         } catch (NullPointerException npe) { // in case chars are in different words
+                        }
+                        if (Config.mapshowviewdist) {
+                            // view radius is 9x9 "server" grids
+                            Coord rc = p2c(mc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz)).sub(off);
+                            Coord rs = MCache.sgridsz.mul(9).div(tilesz);
+                            g.chcolor(255, 255, 255, 60);
+                            g.frect(rc, rs);
+                            g.chcolor(0, 0, 0, 128);
+                            g.rect(rc, rs);
+                            g.chcolor();
                         }
                     }
                 }
@@ -576,6 +572,7 @@ public class LocalMiniMap extends Widget {
 
     public void center() {
         delta = Coord.z;
+        off = Coord.z;
     }
 
     public boolean mousedown(Coord c, int button) {
@@ -612,6 +609,7 @@ public class LocalMiniMap extends Widget {
 
     public void mousemove(Coord c) {
         if (dragging != null) {
+        	 off = off.add(doff.sub(c));
             delta = delta.add(c.sub(doff));
             doff = c;
         }
