@@ -25,7 +25,9 @@ public class MusselPicker {
 		this.i = i;
 		BotUtils = new BotUtils(ui, w, i);
 	};
-	static ArrayList<String>  targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs", "gfx/terobjs/trees/appletree"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
+	static ArrayList<String>  studyTargets =  new ArrayList<String>(Arrays.asList("bloatedbolete", "royaltoadstool",
+			"ladysmantle"));
+	static ArrayList<String>  targets =  new ArrayList<String>(Arrays.asList("gfx/terobjs/herbs", "-dead"));// "gfx/terobjs/herbs/mussels","gfx/terobjs/herbs/blueberry", "gfx/terobjs/herbs/stingingnettle"));
 	static ArrayList<String>  animal_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/frog", "gfx/kritter/rat", "gfx/kritter/chicken"));
 	static ArrayList<String>  avoid_targets = new ArrayList<String>(Arrays.asList("gfx/kritter/badger", "gfx/kritter/boar", "gfx/kritter/borka/body", "gfx/kritter/lynx"));
 
@@ -76,7 +78,9 @@ public class MusselPicker {
 							if (exclude_gobs.size() > 100) {
 								exclude_gobs=  new ArrayList<Coord>();
 							}
-							gob = BotUtils.get_target_gob(BotUtils.player().rc, 600, targets, exclude_gobs);
+							gob = BotUtils.get_target_gob(BotUtils.player().rc, 1000, studyTargets, exclude_gobs);
+							if (gob ==null){
+							gob = BotUtils.get_target_gob(BotUtils.player().rc, 1000, targets, exclude_gobs);}
 // BotUtils.sysMsg("cancel?" +Settings.getCancelAuto(), Color.WHITE);
 							if (Settings.getCancelAuto() ) {
 								if (boat_gob != null){

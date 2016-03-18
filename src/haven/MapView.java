@@ -2030,7 +2030,13 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
         lastPC = pc;
         lastMC = mc;
     }
-
+    public GItem getItemAtHand() {
+        for (GameUI.DraggedItem item : ui.gui.hand)
+            return item.item;
+        for (GameUI.DraggedItem item : ui.gui.handSave)
+            return item.item;
+        return null;
+    }
     private void drawDebugInformation(GOut g) {
         if (!Settings.getSettings()) return;
         try {
@@ -2064,6 +2070,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
                         }
                     }
                 }
+            }
+            if (getItemAtHand() !=null){
+                g.text("On hand:" +getItemAtHand().getres().name, new Coord(x, y += offsetY));
             }
         } catch (Exception ex) {
 
