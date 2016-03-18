@@ -540,9 +540,10 @@ public class LocalMiniMap extends Widget {
                         try {
                             mc = m.getc();
                         } catch (MCache.LoadingMap e) {
-                            continue;
+                            mc = null;
                         }
-                        try {
+                        if(mc == null)
+            			    continue;
                             Coord ptc = p2c(mc);
                             Tex tex = xmap.get(m.col);
                             if (tex == null) {
@@ -550,9 +551,7 @@ public class LocalMiniMap extends Widget {
                                 xmap.put(m.col, tex);
                             }
                             g.image(tex, ptc.add(delta).sub(6, 6));
-                        } catch (NullPointerException npe) { // in case chars are in different words
-                        }
-                        if (Config.mapshowviewdist) {
+                        if (Config.mapshowviewdist && m.gobid == MapView.plgob) {
                             // view radius is 9x9 "server" grids
                             Coord rc = p2c(mc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz)).sub(off);
                             Coord rs = MCache.sgridsz.mul(9).div(tilesz);
