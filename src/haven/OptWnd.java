@@ -614,7 +614,7 @@ public class OptWnd extends Window {
             }
         }, new Coord(250, y));
         y += 20;
-        audio.add(new CheckBox("Alarm on bluebells, flotsams, edelweiß") {
+        audio.add(new CheckBox("Alarm on rare curios (bluebells, glimmers, ...)") {
             {
                 a = Config.alarmonforagables;
             }

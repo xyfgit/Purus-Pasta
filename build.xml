@@ -3,12 +3,12 @@
 <project name="hafen" default="deftgt">
   <property name="name" value="Purus Pasta"/>
 	<!-- MUISTA PÄIVITTÄÄ VERSIO -->
-  <property name="version" value="2.11.4"/>
+  <property name="version" value="2.12.1"/>
 
   <target name="build-env">
     <mkdir dir="build" />
     <mkdir dir="build/classes" />
-    <available property="has-res-jar" file="build/hafen-res.jar" />
+    <available property="has-res-jar" file="build/lib/hafen-res.jar" />
     <available property="has-buildinfo" file="build/classes/buildinfo" />
     <available property="unpacked-lib" file="build/classes-lib" />
   </target>
@@ -70,7 +70,7 @@
     	<zipgroupfileset dir="lib" includes="gson-2.3.1.jar"/>
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="jogl.jar gluegen-rt.jar builtin-res.jar hafen-res.jar amber-res.jar pasta-res.jar " />
+	<attribute name="Class-Path" value="lib/jogl.jar lib/gluegen-rt.jar lib/builtin-res.jar lib/hafen-res.jar lib/amber-res.jar lib/pasta-res.jar " />
       </manifest>
     </jar>
     <chmod file="build/hafen.jar" perm="a+x" />
@@ -90,13 +90,13 @@
 	  </target>
 
 	  <target name="custom-jar" depends="custom-encode">
-	    <jar basedir="build/custom-res" destfile="build/pasta-res.jar"/>
+	    <jar basedir="build/custom-res" destfile="build/lib/pasta-res.jar"/>
 	    <delete dir="build/custom-res" />
 	  </target>
 
   
   <target name="jars" depends="build-env, jar, res-jar, custom-jar">
-    <copy todir="build">
+    <copy todir="build/lib">
       <fileset dir="lib">
 	<include name="jogl.jar" />
 	<include name="gluegen-rt.jar" />
