@@ -874,7 +874,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             if (Config.agroclosest && key == 9)
                 return super.globtype(key, ev);
 
-            if ((gkey != -1) && (key == gkey)) {
+            if (key == gkey) {
                 click();
                 return (true);
             }
@@ -1006,7 +1006,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             if (map != null)
                 map.aggroclosest();
             return true;
-        } else if (ev.isControlDown() && ev.getKeyCode() == KeyEvent.VK_I) {
+        } else if (ev.isShiftDown() && ev.getKeyCode() == KeyEvent.VK_I) {
             Config.resinfo = !Config.resinfo;
             Utils.setprefb("resinfo", Config.resinfo);
             info("Resource info on shift/shift+ctrl is now turned " + (Config.resinfo ? "on" : "off"), Color.WHITE);
@@ -1163,6 +1163,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public IMeter.Meter getmeter(String name, int midx) {
         if (getmeters(name) != null || midx < getmeters(name).size())
             return getmeters(name).get(midx);
+        List<IMeter.Meter> meters = getmeters(name);
+        if (meters != null && midx < meters.size())
+            return meters.get(midx);
         return null;
     }
 

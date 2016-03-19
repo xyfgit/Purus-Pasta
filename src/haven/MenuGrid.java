@@ -49,6 +49,7 @@ import purus.DragonflyCollector;
 import purus.FillOven;
 import purus.FillSmelter;
 import purus.MusselPicker;
+import haven.automation.AddBranchesToOven;
 import haven.automation.AddCoalToSmelter;
 import haven.Resource.AButton;
 import haven.Glob.Pagina;
@@ -56,7 +57,6 @@ import haven.automation.GobSelectCallback;
 import haven.automation.SteelRefueler;
 
 import java.util.*;
-import java.util.concurrent.Executors;
 
 
 public class MenuGrid extends Widget {
@@ -150,6 +150,7 @@ public class MenuGrid extends Widget {
         if (!Config.hidexmenu) {
             p.add(glob.paginafor(Resource.local().load("paginae/amber/coal11")));
             p.add(glob.paginafor(Resource.local().load("paginae/amber/coal12")));
+            p.add(glob.paginafor(Resource.local().load("paginae/amber/branchoven")));
             p.add(glob.paginafor(Resource.local().load("paginae/amber/steel")));
         }
     	// Purus Cor Stuff
@@ -160,7 +161,7 @@ public class MenuGrid extends Widget {
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/flycollect")));
     	// Disable this for now because amber has one
     	//p.add(glob.paginafor(Resource.local().load("paginae/custom/fillsmelter")));
-    	p.add(glob.paginafor(Resource.local().load("paginae/custom/oven")));
+    	//p.add(glob.paginafor(Resource.local().load("paginae/custom/oven")));
     }
 
 
@@ -340,9 +341,11 @@ public class MenuGrid extends Widget {
         if (gui == null)
             return;
         if (ad[1].equals("coal")) {
-            Executors.newSingleThreadExecutor().submit(() -> {
-                new AddCoalToSmelter(gui, Integer.parseInt(ad[2])).fuel();
-            });
+            Thread t = new Thread(new AddCoalToSmelter(gui, Integer.parseInt(ad[2])), "AddCoalToSmelter");
+            t.start();
+        } else if (ad[1].equals("branchoven")) {
+            Thread t = new Thread(new AddBranchesToOven(gui, Integer.parseInt(ad[2])), "AddBranchesToOven");
+            t.start();
         } else if (ad[1].equals("steel")) {
             if (gui.getwnd("Steel Refueler") == null) {
                 SteelRefueler sw = new SteelRefueler();

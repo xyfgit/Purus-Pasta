@@ -70,7 +70,7 @@
     	<zipgroupfileset dir="lib" includes="gson-2.3.1.jar"/>
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="lib/jogl.jar lib/gluegen-rt.jar lib/builtin-res.jar lib/hafen-res.jar lib/amber-res.jar lib/pasta-res.jar " />
+	<attribute name="Class-Path" value="lib/jogl.jar lib/gluegen-rt.jar lib/builtin-res.jar lib/hafen-res.jar lib/amber-res.jar lib/pasta-res.jar lib/l10n.jar" />
       </manifest>
     </jar>
     <chmod file="build/hafen.jar" perm="a+x" />
@@ -93,9 +93,15 @@
 	    <jar basedir="build/custom-res" destfile="build/lib/pasta-res.jar"/>
 	    <delete dir="build/custom-res" />
 	  </target>
+	
+  <target name="l10n-jar" depends="build-env">
+    <jar destfile="build/lib/l10n.jar">
+      <fileset dir="." includes="l10n/*.properties" excludes="l10n/*_new.properties"/>
+    </jar>
+  </target>
 
   
-  <target name="jars" depends="build-env, jar, res-jar, custom-jar">
+  <target name="jars" depends="build-env, jar, res-jar, custom-jar, l10n-jar">
     <copy todir="build/lib">
       <fileset dir="lib">
 	<include name="jogl.jar" />

@@ -26,8 +26,16 @@
 
 package haven;
 
+
+import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 public class OptWnd extends Window {
-    public final Panel main, video, audio, display, map, general, combat, hide, control;
+    public final Panel main, video, audio, display, map, general, combat, hide, control, uis;
     public Panel current;
 
     public void chpanel(Panel p) {
@@ -291,6 +299,7 @@ public class OptWnd extends Window {
         combat = add(new Panel());
         hide = add(new Panel());
         control = add(new Panel());
+        uis = add(new Panel());
         
         int y;
 
@@ -301,7 +310,8 @@ public class OptWnd extends Window {
         main.add(new PButton(200, "General settings", 'g', general), new Coord(210, 0));
         main.add(new PButton(200, "Combat settings", 'c', combat), new Coord(210, 30));
         main.add(new PButton(200, "Hide settings", 'h', hide), new Coord(210, 60));
-        main.add(new PButton(200, "Control settings", 'k', control), new Coord(210, 90));
+        main.add(new PButton(200, "Control settings", 'k', control), new Coord(210, 60));
+        main.add(new PButton(200, "UI settings", 'u', uis), new Coord(210, 90));
 
         if (gopts) {
             main.add(new Button(200, "Switch character") {
@@ -678,7 +688,31 @@ public class OptWnd extends Window {
                 Utils.setprefd("sfxfirevol", vol);
             }
         }, new Coord(250, y));
+        y += 20;
+        audio.add(new CheckBox("Alarm on trolls") {
+            {
+                a = Config.alarmtroll;
+            }
 
+            public void set(boolean val) {
+                Utils.setprefb("alarmtroll", val);
+                Config.alarmtroll = val;
+                a = val;
+            }
+        }, new Coord(250, y));
+        y += 15;
+        audio.add(new HSlider(200, 0, 1000, 0) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+                val = (int) (Config.alarmtrollvol * 1000);
+            }
+
+            public void changed() {
+                double vol = val / 1000.0;
+                Config.alarmtrollvol = vol;
+                Utils.setprefd("alarmtrollvol", vol);
+            }
+        }, new Coord(250, y));
         audio.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         audio.pack();
 
@@ -1100,6 +1134,8 @@ public class OptWnd extends Window {
                 Utils.delpref("gui-ur-visible");
                 Utils.delpref("menu-visible");
                 Utils.delpref("haven.study.position");
+                Utils.delpref("fbelt_c");
+                Utils.delpref("fbelt_vertical");
             }
         }, new Coord(260, 320));
         display.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
@@ -1737,11 +1773,89 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(0, y));
+        y = 0;
+        control.add(new CheckBox("Transfer items in ascending order instead of descending") {
+            {
+                a = Config.sortascending;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("sortascending", val);
+                Config.sortascending = val;
+                a = val;
+            }
+        }, new Coord(320, y));
 
         control.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         control.pack();
 
+        // -------------------------------------------- uis
+
+        y = 0;
+        uis.add(new Label("Language (req. restart): "), new Coord(0, y));
+        uis.add(langDropdown(), new Coord(120, y));
+
+        uis.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
+        uis.pack();
+
         chpanel(main);
+    }
+
+    private Dropbox<Locale> langDropdown() {
+        List<Locale> languages = enumerateLanguages();
+        Dropbox<Locale> lang = new Dropbox<Locale>(120, 5, 16) {
+            @Override
+            protected Locale listitem(int i) {
+                return languages.get(i);
+            }
+
+            @Override
+            protected int listitems() {
+                return languages.size();
+            }
+
+            @Override
+            protected void drawitem(GOut g, Locale item, int i) {
+                g.text(item.getDisplayName(), Coord.z);
+            }
+
+            @Override
+            public void change(Locale item) {
+                super.change(item);
+                Resource.language = item.toString();
+                Utils.setpref("language", item.toString());
+            }
+        };
+        lang.change(new Locale(Resource.language));
+        return lang;
+    }
+
+    private List<Locale> enumerateLanguages() {
+        Set<Locale> languages = new HashSet<>();
+        languages.add(new Locale("en"));
+
+        Enumeration<URL> en;
+        try {
+            en = this.getClass().getClassLoader().getResources("l10n");
+            if (en.hasMoreElements()) {
+                URL url = en.nextElement();
+                JarURLConnection urlcon = (JarURLConnection) (url.openConnection());
+                try (JarFile jar = urlcon.getJarFile()) {
+                    Enumeration<JarEntry> entries = jar.entries();
+                    while (entries.hasMoreElements()) {
+                        String name = entries.nextElement().getName();
+                        // we assume that if tooltip localization exists then the rest exist as well
+                        // up to dev to make sure that it's true
+                        if (name.startsWith("l10n/" + Resource.BUNDLE_TOOLTIP))
+                            languages.add(new Locale(name.substring(13, 15)));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<Locale>(languages);
     }
 
     public OptWnd() {

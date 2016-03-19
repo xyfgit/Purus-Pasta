@@ -136,6 +136,9 @@ public class AreaMine implements Runnable {
             if (nrj.a < 30)
                 break mine;
 
+            if (terminate)
+                break mine;
+
             // discard mining cursor so we could move
             mv.wdgmsg("click", Coord.z, tc.mul(11).add(5, 5), 3, 0);
 
@@ -147,7 +150,7 @@ public class AreaMine implements Runnable {
                 break mine;
             }
 
-            while (true) {
+            while (!terminate) {
                 if (!Config.dropore && gui.maininv.getFreeSpace() == 0) {
                     if (gui.vhand != null)
                         mv.wdgmsg("drop", Coord.z, gui.map.player().rc, 0);

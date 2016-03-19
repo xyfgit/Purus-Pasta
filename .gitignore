@@ -8,6 +8,4 @@
 amber-*.zip
 /bin/
 CHANGELOG
-CHANGELOG
-CHANGELOG
-CHANGELOG
+/l10n/*_new.properties
