@@ -92,7 +92,7 @@ public static boolean MusselsNearby;
 		                public void click() {
 		                    window.destroy();
 		                    if(t != null) {
-		                    	gameui().info("Mussel Picker Cancelled", Color.WHITE);
+		                    	gameui().msg("Mussel Picker Cancelled", Color.WHITE);
 		                    	t.stop();
 		                    }
 		                }

@@ -147,7 +147,7 @@ public class CarrotFarmer {
 	                public void click() {
 	                    window.destroy();
 	                    if(t != null) {
-	                    	gameui().info("Carrot Farmer Cancelled", Color.WHITE);
+	                    	gameui().msg("Carrot Farmer Cancelled", Color.WHITE);
 	                    	t.stop();
 	                    }
 	                }

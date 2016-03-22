@@ -72,7 +72,7 @@ public class DragonflyCollector {
 	                public void click() {
 	                    window.destroy();
 	                    if(t != null) {
-	                    	gameui().info("Dragonfly Collector Cancelled", Color.WHITE);
+	                    	gameui().msg("Dragonfly Collector Cancelled", Color.WHITE);
 	                    	t.stop();
 	                    }
 	                }
