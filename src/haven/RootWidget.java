@@ -64,9 +64,8 @@ public class RootWidget extends ConsoleHost {
             } else if (ev.isControlDown() && ev.getKeyCode() == KeyEvent.VK_X) {
                 Config.tilecenter = !Config.tilecenter;
                 Utils.setprefb("tilecenter", Config.tilecenter);
-                @SuppressWarnings("deprecation")
-				GameUI gi = findchild(GameUI.class);
-                gi.info("Tile centering is " + (Config.tilecenter ? "ON" : "OFF"), Color.WHITE);
+                GameUI gi = findchild(GameUI.class);
+                gi.msg("Tile centering is now turned " + (Config.tilecenter ? "on." : "off."), Color.WHITE);
             } else if (key == ':') {
                 entercmd();
             } else if (key != 0) {

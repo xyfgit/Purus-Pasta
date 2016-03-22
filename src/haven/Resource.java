@@ -56,14 +56,16 @@ public class Resource implements Serializable {
     public static Class<Tooltip> tooltip = Tooltip.class;
 
     public static String language = Utils.getpref("language", "en");
-    public static Map<String, String> l10nTooltip, l10nPagina, l10nWindow, l10nButton, l10nFlower;
+    public static Map<String, String> l10nTooltip, l10nPagina, l10nWindow, l10nButton, l10nFlower, l10nMsg, l10nLabel;
     public static final String BUNDLE_TOOLTIP = "tooltip";
     public static final String BUNDLE_PAGINA = "pagina";
     public static final String BUNDLE_WINDOW = "window";
     public static final String BUNDLE_BUTTON = "button";
     public static final String BUNDLE_FLOWER = "flower";
+    public static final String BUNDLE_MSG = "msg";
+    public static final String BUNDLE_LABEL = "label";
 
-    public static final boolean L10N_DEBUG = true;
+    public static final boolean L10N_DEBUG = false;
 
     private Collection<Layer> layers = new LinkedList<Layer>();
     public final String name;
@@ -785,6 +787,8 @@ public class Resource implements Serializable {
             l10nWindow = l10n(BUNDLE_WINDOW, language);
             l10nButton = l10n(BUNDLE_BUTTON, language);
             l10nFlower = l10n(BUNDLE_FLOWER, language);
+            l10nMsg = l10n(BUNDLE_MSG, language);
+            l10nLabel = l10n(BUNDLE_LABEL, language);
         }
 
         for (Class<?> cl : dolda.jglob.Loader.get(LayerName.class).classes()) {
@@ -1809,7 +1813,7 @@ public class Resource implements Serializable {
 
     public static Map<String, String> saveStrings(String bundle, Map<String, String> map, String key, String val) {
         synchronized (Resource.class) {
-            if (key == null)
+            if (key == null || key.equals(""))
                 return map;
 
             if (map != null && map.containsKey(key))
@@ -1818,12 +1822,28 @@ public class Resource implements Serializable {
             if (val == null)
                 val = key;
 
+            try {
+                Integer.parseInt(key);
+                return map;
+            } catch (NumberFormatException nfe) {
+            }
+            try {
+                Integer.parseInt(val);
+                return map;
+            } catch (NumberFormatException nfe) {
+            }
+
+            if (key.startsWith("Village shield:") || key.startsWith("Essence:") ||  // inspect tool
+                    key.endsWith("is ONLINE") || key.endsWith("is offline") ||      // kin online/offline
+                    key.startsWith("Experience points gained:"))
+                return map;
+
             CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
             encoder.onMalformedInput(CodingErrorAction.REPORT);
             encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
             BufferedWriter out = null;
             try {
-                key = key.replace(" ", "\\ ");
+                key = key.replace(" ", "\\ ").replace(":", "\\:").replace("=", "\\=");
                 val = val.replace("\\", "\\\\").replace("\n", "\\n").replace("\u0000", "");
                 out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("../l10n/" + bundle + "_new.properties", true), encoder));
                 out.write(key + " = " + val);

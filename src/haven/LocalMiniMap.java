@@ -610,7 +610,6 @@ public class LocalMiniMap extends Widget {
                 dragging = ui.grabmouse(this);
             }
         }
-
         return true;
     }
 

@@ -1009,7 +1009,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         } else if (ev.isShiftDown() && ev.getKeyCode() == KeyEvent.VK_I) {
             Config.resinfo = !Config.resinfo;
             Utils.setprefb("resinfo", Config.resinfo);
-            info("Resource info on shift/shift+ctrl is now turned " + (Config.resinfo ? "on" : "off"), Color.WHITE);
+            msg("Resource info on shift/shift+ctrl is now turned " + (Config.resinfo ? "on" : "off"), Color.WHITE);
             return true;
         } else if (ev.isShiftDown() && ev.getKeyCode() == KeyEvent.VK_B) {
             Config.showboundingboxes = !Config.showboundingboxes;
@@ -1017,7 +1017,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             return true;
         } else if (ev.isControlDown() && ev.getKeyCode() == KeyEvent.VK_Z) {
             Config.pf = !Config.pf;
-            info("Pathfinding is now turned " + (Config.pf ? "on" : "off"), Color.WHITE);
+            msg("Pathfinding is now turned " + (Config.pf ? "on" : "off"), Color.WHITE);
             return true;
         }
         return (super.globtype(key, ev));
@@ -1080,6 +1080,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public void msg(String msg, Color color, Color logcol) {
         msgtime = System.currentTimeMillis();
+
+        if (Resource.L10N_DEBUG)
+            Resource.l10nMsg = Resource.saveStrings(Resource.BUNDLE_MSG, Resource.l10nMsg, msg, msg);
+
+        if (!Resource.language.equals("en") || Resource.L10N_DEBUG) {
+            if (Resource.l10nMsg != null && Resource.l10nMsg.containsKey(msg))
+                msg = Resource.l10nMsg.get(msg);
+        }
+
         lastmsg = msgfoundry.render(msg, color);
         syslog.append(msg, logcol);
         if (color == Color.WHITE)
@@ -1104,12 +1113,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public void msg(String msg) {
         msg(msg, Color.WHITE, Color.WHITE);
-    }
-
-    public void info(String msg, Color color) {
-        msgtime = System.currentTimeMillis();
-        lastmsg = msgfoundry.render(msg, color);
-        syslog.append(msg, color);
     }
 
     public void act(String... args) {
