@@ -309,7 +309,7 @@ public class OptWnd extends Window {
         main.add(new PButton(200, "Map settings", 'm', map), new Coord(0, 90));
         main.add(new PButton(200, "General settings", 'g', general), new Coord(210, 0));
         main.add(new PButton(200, "Combat settings", 'c', combat), new Coord(210, 30));
-        main.add(new PButton(200, "Hide settings", 'h', hide), new Coord(210, 60));
+        main.add(new PButton(200, "Hide settings", 'h', hide), new Coord(0, 120));
         main.add(new PButton(200, "Control settings", 'k', control), new Coord(210, 60));
         main.add(new PButton(200, "UI settings", 'u', uis), new Coord(210, 90));
 
