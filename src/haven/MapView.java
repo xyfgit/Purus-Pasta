@@ -1180,6 +1180,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
         if (placing != null)
             placing.ctick((int) (dt * 1000));
         	partyHighlight.update();
+
     }
 
     public void resize(Coord sz) {
