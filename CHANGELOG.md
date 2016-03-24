@@ -1,5 +1,10 @@
 ## Changelog
 
+### 2.13.0
+	- Fixed crash due to latest patch
+	- Added option to hide Hearth Fires, Drying Frames and Dreamcatchers
+	- Fixed map view radius
+	- Various small fixes
 ### 2.12.1
 	- Latest merges from Amber & Default client
 ### 2.12.0
