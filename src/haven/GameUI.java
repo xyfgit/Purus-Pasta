@@ -647,6 +647,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
                     destroy();
                 }
             };
+            if (Config.noquests)
+                questpanel.hide();
+
             add(questpanel);
         } else if (place == "misc") {
             add(child, (Coord) args[1]);

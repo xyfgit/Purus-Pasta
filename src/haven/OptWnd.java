@@ -893,7 +893,7 @@ public class OptWnd extends Window {
             }
         }, new Coord(260, y));
         y += 35;
-        display.add(new CheckBox("Show study remaining time (req. restart)") {
+        display.add(new CheckBox("Show study remaining time") {
             {
                 a = Config.showstudylefttime;
             }
@@ -1803,18 +1803,27 @@ public class OptWnd extends Window {
             }
         }, new Coord(0, y));
         y += 35;
-        uis.add(new Label("Chat font size (req. restart): Small"), new Coord(0, y + 1));
-        uis.add(new HSlider(40, 0, 3, 0) {
-            protected void attach(UI ui) {
-                super.attach(ui);
-                val = Config.chatfontsize;
+        uis.add(new Label("Chat font size (req. restart):"), new Coord(0, y + 1));
+        uis.add(chatFntSzDropdown(), new Coord(155, y));
+        y += 35;
+        uis.add(new CheckBox("Hide quests panel") {
+            {
+                a = Config.noquests;
             }
-            public void changed() {
-                Config.chatfontsize = val;
-                Utils.setprefi("chatfontsize", val);
+
+            public void set(boolean val) {
+                Utils.setprefb("noquests", val);
+                Config.noquests = val;
+                try {
+                    if (val)
+                        gameui().questpanel.hide();
+                    else
+                        gameui().questpanel.show();
+                } catch (NullPointerException npe) { // ignored
+                }
+                a = val;
             }
-        }, new Coord(172, y));
-        uis.add(new Label("Large"), new Coord(215, y + 1));
+        }, new Coord(0, y));
 
         uis.add(new Button(220, "Reset Windows (req. logout)") {
             @Override
@@ -1870,6 +1879,42 @@ public class OptWnd extends Window {
         };
         lang.change(new Locale(Resource.language));
         return lang;
+    }
+
+    private static final Pair[] chatFntSz = new Pair[]{
+            new Pair<>("0", 0),
+            new Pair<>("1", 1),
+            new Pair<>("2", 2),
+            new Pair<>("3", 3)
+    };
+
+    @SuppressWarnings("unchecked")
+    private Dropbox<Pair<String, Integer>> chatFntSzDropdown() {
+        Dropbox<Pair<String, Integer>> sizes = new Dropbox<Pair<String, Integer>>(80, 4, 16) {
+            @Override
+            protected Pair<String, Integer> listitem(int i) {
+                return chatFntSz[i];
+            }
+
+            @Override
+            protected int listitems() {
+                return chatFntSz.length;
+            }
+
+            @Override
+            protected void drawitem(GOut g, Pair<String, Integer> item, int i) {
+                g.text(item.a, Coord.z);
+            }
+
+            @Override
+            public void change(Pair<String, Integer> item) {
+                super.change(item);
+                Config.chatfontsize = item.b;
+                Utils.setprefi("chatfontsize", item.b);
+            }
+        };
+        sizes.change(new Pair<String, Integer>(Config.chatfontsize + "", Config.chatfontsize));
+        return sizes;
     }
 
     private List<Locale> enumerateLanguages() {

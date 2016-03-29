@@ -46,7 +46,7 @@ public class Button extends SIWidget {
     public boolean lg;
     public Text text;
     public BufferedImage cont;
-    static Text.Foundry tf = new Text.Foundry(Text.serif.deriveFont(Font.BOLD, 12)).aa(true);
+    static Text.Foundry tf = new Text.Foundry(Text.sans.deriveFont(Font.BOLD, Resource.language.equals("en") ? 12 : 10)).aa(true);
     static Text.Furnace nf = new PUtils.BlurFurn(new PUtils.TexFurn(tf, Window.ctex), 1, 1, new Color(80, 40, 0));
     boolean a = false;
     UI.Grab d = null;
@@ -95,6 +95,8 @@ public class Button extends SIWidget {
         }
         this.text = nf.render(text);
         this.cont = this.text.img;
+        if (!Resource.language.equals("en") && this.text != null)
+            this.resize(new Coord(Math.max(w, this.text.sz().x + 10), sz.y));
     }
 
     public Button(int w, String text) {
@@ -107,12 +109,16 @@ public class Button extends SIWidget {
         }
         this.text = nf.render(text);
         this.cont = this.text.img;
+        if (!Resource.language.equals("en") && this.text != null)
+            this.resize(new Coord(Math.max(w, this.text.sz().x + 10), sz.y));
     }
 
     public Button(int w, Text text) {
         this(w);
         this.text = text;
         this.cont = text.img;
+        if (!Resource.language.equals("en") && this.text != null)
+            this.resize(new Coord(Math.max(w, this.text.sz().x + 10), sz.y));
     }
 
     public Button(int w, BufferedImage cont) {

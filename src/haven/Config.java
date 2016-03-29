@@ -203,6 +203,8 @@ public class Config {
     public static boolean enableorthofullzoom = Utils.getprefb("enableorthofullzoom", false);
     public static boolean hidexmenu = Utils.getprefb("hidexmenu", true);
     public static boolean sortascending = Utils.getprefb("sortascending", false);
+    public static boolean partycircles =  Utils.getprefb("partycircles", false);
+    public static boolean noquests =  Utils.getprefb("noquests", false);
     public static boolean pf = false;
     public static String playerposfile;
     public static byte[] authck = null;

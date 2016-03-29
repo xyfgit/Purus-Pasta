@@ -88,9 +88,8 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     private Pathfinder pf;
     public Thread pfthread;
     public SteelRefueler steelrefueler;
-
-    private static final  Set<String> dangerousanimalrad = new HashSet<String>(Arrays.asList(
-            "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger", "gfx/kritter/moose/moose"));
+    private static final Set<String> dangerousanimalrad = new HashSet<String>(Arrays.asList(
+            "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger"));
 
     public interface Delayed {
         public void run(GOut g);
@@ -1286,6 +1285,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             placing = null;
         } else if (msg == "move") {
             cc = (Coord) args[0];
+        } else if (msg == "plob") {
+            if (args[0] == null)
+                plgob = -1;
+            else
+                plgob = (Integer) args[0];
         } else if (msg == "flashol") {
             unflashol();
             olflash = (Integer) args[0];
