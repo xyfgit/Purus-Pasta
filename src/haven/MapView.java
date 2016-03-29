@@ -28,6 +28,7 @@ package haven;
 
 import static haven.MCache.tilesz;
 import haven.GLProgram.VarID;
+import haven.automation.AutoLeveler;
 import haven.automation.GobSelectCallback;
 import haven.automation.SteelRefueler;
 import haven.pathfinder.*;
@@ -88,6 +89,8 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     private Pathfinder pf;
     public Thread pfthread;
     public SteelRefueler steelrefueler;
+    public AutoLeveler autoleveler;
+
     private static final Set<String> dangerousanimalrad = new HashSet<String>(Arrays.asList(
             "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger"));
 
@@ -1517,7 +1520,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             pf = new Pathfinder(this, new Coord(gcx, gcy), action);
             glob.oc.setPathfinder(pf);
             pf.addListener(this);
-            pfthread = new Thread(pf);
+            pfthread = new Thread(pf, "Pathfinder");
             pfthread.start();
         }
     }
@@ -1543,7 +1546,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             pf = new Pathfinder(this, new Coord(gcx, gcy), gob, meshid, clickb, modflags, action);
             glob.oc.setPathfinder(pf);
             pf.addListener(this);
-            pfthread = new Thread(pf);
+            pfthread = new Thread(pf, "Pathfinder");
             pfthread.start();
         }
     }
@@ -1571,6 +1574,10 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
                 if (areamine != null) {
                     areamine.terminate();
                     areamine = null;
+                }
+                if (autoleveler != null && autoleveler.running) {
+                    autoleveler.terminate();
+                    autoleveler = null;
                 }
                 Resource curs = ui.root.getcurs(c);
                 if (curs != null && curs.name.equals("gfx/hud/curs/mine")) {
@@ -2036,5 +2043,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             areamine.terminate();
         if (steelrefueler != null)
             steelrefueler.terminate();
+        if (autoleveler != null)
+            autoleveler.terminate();
     }
 }

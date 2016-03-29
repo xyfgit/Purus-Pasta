@@ -22,6 +22,7 @@ public class Pathfinder implements Runnable {
     private int step = -200;
     public Coord mc;
     private int modflags;
+    private int interruptedRetries = 5;
 
     public Pathfinder(MapView mv, Coord dest, String action) {
         this.dest = dest;
@@ -84,6 +85,33 @@ public class Pathfinder implements Runnable {
             }
         }
 
+        // if player is located at a position occupied by a gob (can happen when starting too close to gobs)
+        // move it 1 unit away from it
+        if (m.isOriginBlocked()) {
+            Pair<Integer, Integer> freeloc = m.getFreeLocation();
+
+            if (freeloc == null) {
+                terminate = true;
+                return;
+            }
+
+            mc = new Coord(src.x + freeloc.a - Map.origin, src.y + freeloc.b - Map.origin);
+            mv.wdgmsg("click", Coord.z, mc, 1, 0);
+
+            // FIXME
+            try {
+                Thread.sleep(30);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // need to recalculate map
+            moveinterupted = true;
+            return;
+        }
+
+
+
         // exclude any bounding boxes overlapping the destination gob
         if (this.gob != null)
             m.excludeGob(this.gob);
@@ -98,6 +126,7 @@ public class Pathfinder implements Runnable {
         m.dbgdump();
 
         Iterator<Edge> it = path.iterator();
+        lastmsg = System.currentTimeMillis();
         while (it.hasNext() && !moveinterupted && !terminate) {
             count = -100;
             step = -200;
@@ -131,15 +160,22 @@ public class Pathfinder implements Runnable {
                 // no step/count notification will be send by the server for last segment
                 // and player's position won't match mc either
                 // therefore we just wait for a bit
-                if (gob != null && !it.hasNext() && System.currentTimeMillis() - lastmsg > 400) {
+                if (gob != null && !it.hasNext() && System.currentTimeMillis() - lastmsg > 500) {
                     break;
-                } else if (System.currentTimeMillis() - lastmsg > 2000) { // just in case...
+                } else if (System.currentTimeMillis() - lastmsg > 3000) { // just in case...
                     break;
                 }
 
                 synchronized (oc) {
                     done = step < count - 1;
                 }
+            }
+
+            if (moveinterupted) {
+                interruptedRetries--;
+                if (interruptedRetries == 0)
+                    terminate = true;
+                return;
             }
         }
 
