@@ -122,15 +122,6 @@
   		</copy>
   </target>
 
- <target name="dist" depends="rebuild">
-    <zip destfile="${basedir}/${name}-${version}.zip" update="false">
-        <fileset dir="${basedir}" includes="README"/>
-    	<fileset dir="build" includes="hafen.jar"/>
-    	<fileset dir="build" includes="lib/*.jar"/>
-        <fileset dir="etc" includes="*.bat"/>
-    </zip>
-  </target>
-
   <target name="deftgt" depends="jars" />
 
   <target name="run" depends="jars">

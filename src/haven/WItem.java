@@ -335,11 +335,11 @@ public class WItem extends Widget implements DTarget {
     private void drawamountbar(GOut g, double content, boolean isseeds) {
         double capacity;
         String name = item.getname();
-        if (name.equals("Waterskin"))
+        if (name.contains("Waterskin"))
             capacity = 3.0D;
-        else if (name.equals("Bucket"))
+        else if (name.contains("Bucket"))
             capacity = isseeds ? 1000D : 10.0D;
-        else if (name.equals("Waterflask"))
+        else if (name.contains("Waterflask"))
             capacity = 2.0D;
         else
             return;
@@ -431,22 +431,25 @@ public class WItem extends Widget implements DTarget {
     }
 
     private boolean replacecurio(Window wnd, Resource res) {
-        for (Widget invwdg = wnd.lchild; invwdg != null; invwdg = invwdg.prev) {
-            if (invwdg instanceof Inventory) {
-                Inventory inv = (Inventory) invwdg;
-                for (Widget witm = inv.lchild; witm != null; witm = witm.prev) {
-                    if (witm instanceof WItem) {
-                        GItem ngitm = ((WItem) witm).item;
-                        Resource nres = ngitm.resource();
-                        if (nres != null && nres.name.equals(res.name)) {
-                            ngitm.wdgmsg("take", witm.c);
-                            ((Inventory) parent).drop(Coord.z, c);
-                            return true;
+        try {
+            for (Widget invwdg = wnd.lchild; invwdg != null; invwdg = invwdg.prev) {
+                if (invwdg instanceof Inventory) {
+                    Inventory inv = (Inventory) invwdg;
+                    for (Widget witm = inv.lchild; witm != null; witm = witm.prev) {
+                        if (witm instanceof WItem) {
+                            GItem ngitm = ((WItem) witm).item;
+                            Resource nres = ngitm.resource();
+                            if (nres != null && nres.name.equals(res.name)) {
+                                ngitm.wdgmsg("take", witm.c);
+                                ((Inventory) parent).drop(Coord.z, c);
+                                return true;
+                            }
                         }
                     }
+                    return false;
                 }
-                return false;
             }
+        } catch (Exception e) { // ignored
         }
         return false;
     }

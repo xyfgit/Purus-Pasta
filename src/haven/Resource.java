@@ -56,7 +56,7 @@ public class Resource implements Serializable {
     public static Class<Tooltip> tooltip = Tooltip.class;
 
     public static String language = Utils.getpref("language", "en");
-    public static Map<String, String> l10nTooltip, l10nPagina, l10nWindow, l10nButton, l10nFlower, l10nMsg, l10nLabel;
+    public static Map<String, String> l10nTooltip, l10nPagina, l10nWindow, l10nButton, l10nFlower, l10nMsg, l10nLabel, l10nAction;
     public static final String BUNDLE_TOOLTIP = "tooltip";
     public static final String BUNDLE_PAGINA = "pagina";
     public static final String BUNDLE_WINDOW = "window";
@@ -64,7 +64,7 @@ public class Resource implements Serializable {
     public static final String BUNDLE_FLOWER = "flower";
     public static final String BUNDLE_MSG = "msg";
     public static final String BUNDLE_LABEL = "label";
-
+    public static final String BUNDLE_ACTION = "action";
     public static final boolean L10N_DEBUG = false;
 
     private Collection<Layer> layers = new LinkedList<Layer>();
@@ -781,7 +781,7 @@ public class Resource implements Serializable {
     }
 
     static {
-        if (!language.equals("en") || Resource.L10N_DEBUG) {
+        if (!language.equals("en") || (Resource.L10N_DEBUG && language.equals("en"))) {
             l10nTooltip = l10n(BUNDLE_TOOLTIP, language);
             l10nPagina = l10n(BUNDLE_PAGINA, language);
             l10nWindow = l10n(BUNDLE_WINDOW, language);
@@ -789,6 +789,9 @@ public class Resource implements Serializable {
             l10nFlower = l10n(BUNDLE_FLOWER, language);
             l10nMsg = l10n(BUNDLE_MSG, language);
             l10nLabel = l10n(BUNDLE_LABEL, language);
+            l10nAction = l10n(BUNDLE_ACTION, language);
+            if (!language.equals("en"))
+                L10N_DEBUG = false;
         }
 
         for (Class<?> cl : dolda.jglob.Loader.get(LayerName.class).classes()) {
@@ -922,14 +925,28 @@ public class Resource implements Serializable {
 
             if (L10N_DEBUG) {
                 Resource res = super.getres();
-                Resource.l10nTooltip = Resource.saveStrings(Resource.BUNDLE_TOOLTIP, Resource.l10nTooltip, res.name, text);
+                if (res.name.startsWith("paginae/act") || res.name.startsWith("paginae/bld")
+                        || res.name.startsWith("paginae/craft") || res.name.startsWith("paginae/gov")
+                        || res.name.startsWith("paginae/pose") || res.name.startsWith("paginae/amber")
+                        || res.name.startsWith("paginae/atk/ashoot")) {
+                    Resource.l10nAction = Resource.saveStrings(Resource.BUNDLE_ACTION, Resource.l10nAction, res.name, text);
+                } else {
+                    Resource.l10nTooltip = Resource.saveStrings(Resource.BUNDLE_TOOLTIP, Resource.l10nTooltip, res.name, text);
+                }
             }
 
             Resource res = super.getres();
             if (res != null && l10nTooltip != null) {
                 String locText = l10nTooltip.get(res.name);
                 if (locText != null) {
-                    this.t = locText.equals(text) ? locText : locText + " (" + text + ")";
+                    if (locText.equals(text) || !res.name.startsWith("gfx/invobjs") ||
+                            // exclude meat "conditions" since the tooltip is dynamically generated and it won't be in right order
+                            text.contains("Raw ") || text.contains("Filet of ") || text.contains("Sizzling") ||
+                            text.contains("Roast") || text.contains("Meat") || text.contains("Spitroast")) {
+                        this.t = locText;
+                    } else {
+                        this.t = locText + " (" + text + ")";
+                    }
                     return;
                 }
             }
@@ -1261,7 +1278,19 @@ public class Resource implements Serializable {
                     throw (new LoadException("Illegal resource dependency", e, Resource.this));
                 }
             }
-            name = buf.string();
+
+            String text = buf.string();
+            if (language.equals("en")) {
+                name = text;
+            } else {
+                String locText = null;
+                Resource res = super.getres();
+                if (res != null && l10nAction != null)
+                    locText = l10nAction.get(res.name);
+
+                name = locText != null ? locText : text;
+            }
+
             buf.string(); /* Prerequisite skill */
             hk = (char) buf.uint16();
             ad = new String[buf.uint16()];
