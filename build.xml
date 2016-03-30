@@ -3,7 +3,7 @@
 <project name="hafen" default="deftgt">
   <property name="name" value="Purus Pasta"/>
 	<!-- MUISTA PÄIVITTÄÄ VERSIO -->
-  <property name="version" value="2.12.1"/>
+  <property name="version" value="2.13.0"/>
 
   <target name="build-env">
     <mkdir dir="build" />
@@ -29,8 +29,6 @@
       <classpath>
 	<pathelement path="lib/jogl.jar" />
 	<pathelement path="lib/gluegen-rt.jar" />
-	<pathelement path="lib/jnlp.jar" />
-    <pathelement path="lib/jsoup-1.8.3.jar" />
 	<pathelement path="lib/jglob.jar" />
     <pathelement path="lib/commons-io-2.4.jar" />
     <pathelement path="lib/gson-2.3.1.jar" />
@@ -57,9 +55,6 @@
     <unjar src="lib/jglob.jar" dest="build/classes-lib">
       <patternset excludes="META-INF/**" />
     </unjar>
-    <unjar src="lib/jsoup-1.8.3.jar" dest="build/classes-lib">
-      <patternset excludes="META-INF/**" />
-    </unjar>
   </target>
 
   <target name="jar" depends="hafen-client,buildinfo,lib-classes">
@@ -70,7 +65,7 @@
     	<zipgroupfileset dir="lib" includes="gson-2.3.1.jar"/>
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="lib/jogl.jar lib/gluegen-rt.jar lib/builtin-res.jar lib/hafen-res.jar lib/amber-res.jar lib/pasta-res.jar " />
+	<attribute name="Class-Path" value="lib/jogl.jar lib/gluegen-rt.jar lib/builtin-res.jar lib/hafen-res.jar lib/amber-res.jar lib/pasta-res.jar lib/l10n.jar" />
       </manifest>
     </jar>
     <chmod file="build/hafen.jar" perm="a+x" />
@@ -93,9 +88,15 @@
 	    <jar basedir="build/custom-res" destfile="build/lib/pasta-res.jar"/>
 	    <delete dir="build/custom-res" />
 	  </target>
+	
+  <target name="l10n-jar" depends="build-env">
+    <jar destfile="build/lib/l10n.jar">
+      <fileset dir="." includes="l10n/*.properties" excludes="l10n/*_new.properties"/>
+    </jar>
+  </target>
 
   
-  <target name="jars" depends="build-env, jar, res-jar, custom-jar">
+  <target name="jars" depends="build-env, jar, res-jar, custom-jar, l10n-jar">
     <copy todir="build/lib">
       <fileset dir="lib">
 	<include name="jogl.jar" />
@@ -110,20 +111,21 @@
     </copy>
   	<copy todir="build">
   	<fileset dir="etc">
+  		
   	    		<include name="run.bat" />
   	    		<include name="run_debug.bat" />
   	    	</fileset>
   		</copy>
   </target>
-
- <target name="dist" depends="rebuild">
-    <zip destfile="${basedir}/${name}-${version}.zip" update="false">
-        <fileset dir="${basedir}" includes="README"/>
-    	<fileset dir="build" includes="hafen.jar"/>
-    	<fileset dir="build" includes="lib/*.jar"/>
-        <fileset dir="etc" includes="*.bat"/>
-    </zip>
-  </target>
+	
+	 <target name="dist" depends="rebuild">
+	    <zip destfile="${basedir}/${name}-${version}.zip" update="false">
+	        <fileset dir="${basedir}" includes="README"/>
+	    	<fileset dir="build" includes="hafen.jar"/>
+	    	<fileset dir="build" includes="lib/*.jar"/>
+	        <fileset dir="etc" includes="*.bat"/>
+	    </zip>
+	  </target>
 
   <target name="deftgt" depends="jars" />
 

@@ -26,8 +26,16 @@
 
 package haven;
 
+
+import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 public class OptWnd extends Window {
-    public final Panel main, video, audio, display, map, general, combat, hide, control;
+    public final Panel main, video, audio, display, map, general, combat, hide, control, uis;
     public Panel current;
 
     public void chpanel(Panel p) {
@@ -192,7 +200,7 @@ public class OptWnd extends Window {
                     }
                 }, new Coord(0, y));
                 y += 35;
-                add(new CheckBox("Hide flavor objects (requires logout)") {
+                add(new CheckBox("Hide flavor objects but keep sounds (requires logout)") {
                     {
                         a = Config.hideflovisual;
                     }
@@ -291,6 +299,7 @@ public class OptWnd extends Window {
         combat = add(new Panel());
         hide = add(new Panel());
         control = add(new Panel());
+        uis = add(new Panel());
         
         int y;
 
@@ -300,8 +309,9 @@ public class OptWnd extends Window {
         main.add(new PButton(200, "Map settings", 'm', map), new Coord(0, 90));
         main.add(new PButton(200, "General settings", 'g', general), new Coord(210, 0));
         main.add(new PButton(200, "Combat settings", 'c', combat), new Coord(210, 30));
-        main.add(new PButton(200, "Hide settings", 'h', hide), new Coord(210, 60));
-        main.add(new PButton(200, "Control settings", 'k', control), new Coord(210, 90));
+        main.add(new PButton(200, "Hide settings", 'h', hide), new Coord(0, 120));
+        main.add(new PButton(200, "Control settings", 'k', control), new Coord(210, 60));
+        main.add(new PButton(200, "UI settings", 'u', uis), new Coord(210, 90));
 
         if (gopts) {
             main.add(new Button(200, "Switch character") {
@@ -678,7 +688,31 @@ public class OptWnd extends Window {
                 Utils.setprefd("sfxfirevol", vol);
             }
         }, new Coord(250, y));
+        y += 20;
+        audio.add(new CheckBox("Alarm on trolls") {
+            {
+                a = Config.alarmtroll;
+            }
 
+            public void set(boolean val) {
+                Utils.setprefb("alarmtroll", val);
+                Config.alarmtroll = val;
+                a = val;
+            }
+        }, new Coord(250, y));
+        y += 15;
+        audio.add(new HSlider(200, 0, 1000, 0) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+                val = (int) (Config.alarmtrollvol * 1000);
+            }
+
+            public void changed() {
+                double vol = val / 1000.0;
+                Config.alarmtrollvol = vol;
+                Utils.setprefd("alarmtrollvol", vol);
+            }
+        }, new Coord(250, y));
         audio.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         audio.pack();
 
@@ -811,43 +845,7 @@ public class OptWnd extends Window {
 
         // -------------------------------------------- display 2nd column
         y = 0;
-        display.add(new Label("Chat font size (req. restart): Small"), new Coord(260, y + 1));
-        display.add(new HSlider(40, 0, 3, 0) {
-            protected void attach(UI ui) {
-                super.attach(ui);
-                val = Config.chatfontsize;
-            }
-            public void changed() {
-                Config.chatfontsize = val;
-                Utils.setprefi("chatfontsize", val);
-            }
-        }, new Coord(432, y));
-        display.add(new Label("Large"), new Coord(475, y + 1));
-        y += 35;
-        display.add(new CheckBox("Show quick hand slots") {
-            {
-                a = Config.quickslots;
-            }
-
-            public void set(boolean val) {
-                Utils.setprefb("quickslots", val);
-                Config.quickslots = val;
-                a = val;
-
-                try {
-                    Widget qs = ((GameUI) parent.parent.parent).quickslots;
-                    if (qs != null) {
-                        if (val)
-                            qs.show();
-                        else
-                            qs.hide();
-                    }
-                } catch (ClassCastException e) { // in case we are at the login screen
-                }
-            }
-        }, new Coord(260, y));
-        y += 35;
-        display.add(new CheckBox("Show Attribute/Ability values in craft window") {
+        display.add(new CheckBox("Show attributes & softcap values in craft window") {
             {
                 a = Config.showcraftcap;
             }
@@ -895,7 +893,7 @@ public class OptWnd extends Window {
             }
         }, new Coord(260, y));
         y += 35;
-        display.add(new CheckBox("Show study remaining time (req. restart)") {
+        display.add(new CheckBox("Show study remaining time") {
             {
                 a = Config.showstudylefttime;
             }
@@ -903,18 +901,6 @@ public class OptWnd extends Window {
             public void set(boolean val) {
                 Utils.setprefb("showstudylefttime", val);
                 Config.showstudylefttime = val;
-                a = val;
-            }
-        }, new Coord(260, y));
-        y += 35;
-        display.add(new CheckBox("Show inventory on login") {
-            {
-                a = Config.showinvonlogin;
-            }
-
-            public void set(boolean val) {
-                Utils.setprefb("showinvonlogin", val);
-                Config.showinvonlogin = val;
                 a = val;
             }
         }, new Coord(260, y));
@@ -1070,18 +1056,6 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(520, y));
-        y += 35;
-        display.add(new CheckBox("Hide extensions menu (req. restart)") {
-            {
-                a = Config.hidexmenu;
-            }
-
-            public void set(boolean val) {
-                Utils.setprefb("hidexmenu", val);
-                Config.hidexmenu = val;
-                a = val;
-            }
-        }, new Coord(520, y));
 
         display.add(new Button(220, "Reset Windows (req. logout)") {
             @Override
@@ -1099,8 +1073,12 @@ public class OptWnd extends Window {
                 Utils.delpref("gui-ul-visible");
                 Utils.delpref("gui-ur-visible");
                 Utils.delpref("menu-visible");
+                Utils.delpref("haven.study.position");
+                Utils.delpref("fbelt_c");
+                Utils.delpref("fbelt_vertical");
             }
         }, new Coord(260, 320));
+
         display.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         display.pack();
 
@@ -1471,6 +1449,18 @@ public class OptWnd extends Window {
         y = 0;
         hide.add(new Label("Ctrl + h to toggle hide"), new Coord(0, y));
         y += 35;
+        hide.add(new CheckBox("Disable highlight boxes") {
+            {
+                a = Config.nohidebox;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("nohidebox", val);
+                Config.nohidebox = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
         hide.add(new CheckBox("Hide Everything") {
             {
                 a = Config.hideall;
@@ -1541,6 +1531,18 @@ public class OptWnd extends Window {
                     }
                 }, new Coord(0, y));
                 y += 35;
+                hide.add(new CheckBox("Hide Drying Frames") {
+                    {
+                        a = Config.hidedframes;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidedframes", val);
+                        Config.hidedframes = val;
+                        a = val;
+                    }
+                }, new Coord(0, y));
+                y += 35;
                 hide.add(new CheckBox("Hide Houses (Hides also door)") {
                     {
                         a = Config.hidehouses;
@@ -1552,6 +1554,30 @@ public class OptWnd extends Window {
                         a = val;
                     }
                 }, new Coord(0, y));
+                y = 0;
+                hide.add(new CheckBox("Hide Hearth Fires") {
+                    {
+                        a = Config.hidehfs;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidehfs", val);
+                        Config.hidehfs = val;
+                        a = val;
+                    }
+                	}, new Coord(260, y));
+                y += 35;
+                hide.add(new CheckBox("Hide Dream Catchers") {
+                    {
+                        a = Config.hidedcatchers;
+                    }
+
+                    public void set(boolean val) {
+                        Utils.setprefb("hidedcatchers", val);
+                        Config.hidedcatchers = val;
+                        a = val;
+                    }
+                	}, new Coord(260, y));
                 y = 0;
                 hide.add(new Label("Red"), new Coord(550, y));
                 y += 15;
@@ -1709,11 +1735,235 @@ public class OptWnd extends Window {
                 a = val;
             }
         }, new Coord(0, y));
+        y = 0;
+        control.add(new CheckBox("Transfer items in ascending order instead of descending") {
+            {
+                a = Config.sortascending;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("sortascending", val);
+                Config.sortascending = val;
+                a = val;
+            }
+        }, new Coord(320, y));
 
         control.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
         control.pack();
 
+        // -------------------------------------------- uis
+
+        y = 0;
+        uis.add(new Label("Language (req. restart): "), new Coord(0, y));
+        uis.add(langDropdown(), new Coord(120, y));
+
+        y += 35;
+        uis.add(new CheckBox("Show quick hand slots") {
+            {
+                a = Config.quickslots;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("quickslots", val);
+                Config.quickslots = val;
+                a = val;
+
+                try {
+                    Widget qs = ((GameUI) parent.parent.parent).quickslots;
+                    if (qs != null) {
+                        if (val)
+                            qs.show();
+                        else
+                            qs.hide();
+                    }
+                } catch (ClassCastException e) { // in case we are at the login screen
+                }
+            }
+        }, new Coord(0, y));
+        y += 35;
+        uis.add(new CheckBox("Show F-key toolbar") {
+            {
+                a = Config.fbelt;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("fbelt", val);
+                Config.fbelt = val;
+                a = val;
+                FBelt fbelt = gameui().fbelt;
+                if (fbelt != null) {
+                    if (val)
+                        fbelt.show();
+                    else
+                        fbelt.hide();
+                }
+            }
+        }, new Coord(0, y));
+        y += 35;
+        uis.add(new CheckBox("Hide extensions menu (req. restart)") {
+            {
+                a = Config.hidexmenu;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("hidexmenu", val);
+                Config.hidexmenu = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        uis.add(new CheckBox("Show inventory on login") {
+            {
+                a = Config.showinvonlogin;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("showinvonlogin", val);
+                Config.showinvonlogin = val;
+                a = val;
+            }
+        }, new Coord(0, y));
+        y += 35;
+        uis.add(new Label("Chat font size (req. restart):"), new Coord(0, y + 1));
+        uis.add(chatFntSzDropdown(), new Coord(155, y));
+        y += 35;
+        uis.add(new CheckBox("Hide quests panel") {
+            {
+                a = Config.noquests;
+            }
+
+            public void set(boolean val) {
+                Utils.setprefb("noquests", val);
+                Config.noquests = val;
+                try {
+                    if (val)
+                        gameui().questpanel.hide();
+                    else
+                        gameui().questpanel.show();
+                } catch (NullPointerException npe) { // ignored
+                }
+                a = val;
+            }
+        }, new Coord(0, y));
+
+        uis.add(new Button(220, "Reset Windows (req. logout)") {
+            @Override
+            public void click() {
+                for (String wndcap : Window.persistentwnds)
+                    Utils.delpref(wndcap + "_c");
+                Utils.delpref("mmapc");
+                Utils.delpref("mmapwndsz");
+                Utils.delpref("mmapsz");
+                Utils.delpref("quickslotsc");
+                Utils.delpref("chatsz");
+                Utils.delpref("chatvis");
+                Utils.delpref("gui-bl-visible");
+                Utils.delpref("gui-br-visible");
+                Utils.delpref("gui-ul-visible");
+                Utils.delpref("gui-ur-visible");
+                Utils.delpref("menu-visible");
+                Utils.delpref("fbelt_c");
+                Utils.delpref("fbelt_vertical");
+            }
+        }, new Coord(260, 320));
+
+        uis.add(new PButton(200, "Back", 27, main), new Coord(270, 360));
+        uis.pack();
+
         chpanel(main);
+    }
+
+    private Dropbox<Locale> langDropdown() {
+        List<Locale> languages = enumerateLanguages();
+        Dropbox<Locale> lang = new Dropbox<Locale>(120, 5, 16) {
+            @Override
+            protected Locale listitem(int i) {
+                return languages.get(i);
+            }
+
+            @Override
+            protected int listitems() {
+                return languages.size();
+            }
+
+            @Override
+            protected void drawitem(GOut g, Locale item, int i) {
+                g.text(item.getDisplayName(), Coord.z);
+            }
+
+            @Override
+            public void change(Locale item) {
+                super.change(item);
+                Resource.language = item.toString();
+                Utils.setpref("language", item.toString());
+            }
+        };
+        lang.change(new Locale(Resource.language));
+        return lang;
+    }
+
+    private static final Pair[] chatFntSz = new Pair[]{
+            new Pair<>("0", 0),
+            new Pair<>("1", 1),
+            new Pair<>("2", 2),
+            new Pair<>("3", 3)
+    };
+
+    @SuppressWarnings("unchecked")
+    private Dropbox<Pair<String, Integer>> chatFntSzDropdown() {
+        Dropbox<Pair<String, Integer>> sizes = new Dropbox<Pair<String, Integer>>(80, 4, 16) {
+            @Override
+            protected Pair<String, Integer> listitem(int i) {
+                return chatFntSz[i];
+            }
+
+            @Override
+            protected int listitems() {
+                return chatFntSz.length;
+            }
+
+            @Override
+            protected void drawitem(GOut g, Pair<String, Integer> item, int i) {
+                g.text(item.a, Coord.z);
+            }
+
+            @Override
+            public void change(Pair<String, Integer> item) {
+                super.change(item);
+                Config.chatfontsize = item.b;
+                Utils.setprefi("chatfontsize", item.b);
+            }
+        };
+        sizes.change(new Pair<String, Integer>(Config.chatfontsize + "", Config.chatfontsize));
+        return sizes;
+    }
+
+    private List<Locale> enumerateLanguages() {
+        Set<Locale> languages = new HashSet<>();
+        languages.add(new Locale("en"));
+
+        Enumeration<URL> en;
+        try {
+            en = this.getClass().getClassLoader().getResources("l10n");
+            if (en.hasMoreElements()) {
+                URL url = en.nextElement();
+                JarURLConnection urlcon = (JarURLConnection) (url.openConnection());
+                try (JarFile jar = urlcon.getJarFile()) {
+                    Enumeration<JarEntry> entries = jar.entries();
+                    while (entries.hasMoreElements()) {
+                        String name = entries.nextElement().getName();
+                        // we assume that if tooltip localization exists then the rest exist as well
+                        // up to dev to make sure that it's true
+                        if (name.startsWith("l10n/" + Resource.BUNDLE_TOOLTIP))
+                            languages.add(new Locale(name.substring(13, 15)));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<Locale>(languages);
     }
 
     public OptWnd() {

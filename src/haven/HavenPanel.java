@@ -101,7 +101,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
                     File outputfile = new File(String.format("screenshots/%s.jpg", curtimestamp));
                     outputfile.getParentFile().mkdirs();
                     Screenshot.writeToFile(outputfile, width, height);
-                    ui.root.findchild(GameUI.class).info(String.format("Screenshot has been saved as \"%s\"", outputfile.getName()), Color.WHITE);
+                    ui.root.findchild(GameUI.class).msg(String.format("Screenshot has been saved as \"%s\"", outputfile.getName()), Color.WHITE);
                 } catch (Exception ex) {
                     System.out.println("Unable to take screenshot: " + ex.getMessage());
                 }
@@ -153,7 +153,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
                                 gl.glBlendEquationSeparate(GL.GL_FUNC_ADD, GL2.GL_MAX);
                             if (g.gc.havefsaa()) {
                     /* Apparently, having sample
-					 * buffers in the config enables
+                     * buffers in the config enables
 					 * multisampling by default on
 					 * some systems. */
                                 g.gl.glDisable(GL.GL_MULTISAMPLE);
@@ -414,12 +414,12 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
     }
 
     private static class Frame {
-        BGL buf;
-        CurrentGL on;
+        BufferBGL buf;
         CPUProfile.Frame pf;
+        CurrentGL on;
         long doneat;
 
-        Frame(BGL buf, CurrentGL on) {
+        Frame(BufferBGL buf, CurrentGL on) {
             this.buf = buf;
             this.on = on;
         }
@@ -580,7 +580,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
                     if (curf != null)
                         curf.tick("dsp");
 
-                    BGL buf = new BGL();
+                    BufferBGL buf = new BufferBGL();
                     GLState.Applier state = this.state;
                     rootdraw(state, ui, buf);
                     if (curf != null)

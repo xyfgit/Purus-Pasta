@@ -3,7 +3,7 @@ package haven.automation;
 
 import haven.*;
 
-public class AddCoalToSmelter {
+public class AddCoalToSmelter implements Runnable {
     private GameUI gui;
     private Gob smelter;
     private int count;
@@ -12,10 +12,11 @@ public class AddCoalToSmelter {
 
     public AddCoalToSmelter(GameUI gui, int count) {
         this.gui = gui;
-        this.count = count + 1;
+        this.count = count;
     }
 
-    public void fuel() {
+    @Override
+    public void run() {
         synchronized (gui.map.glob.oc) {
             for (Gob gob : gui.map.glob.oc) {
                 Resource res = gob.getres();
@@ -28,16 +29,19 @@ public class AddCoalToSmelter {
             }
         }
 
-        WItem coal = gui.maininv.getitem("Coal");
-        if (coal == null) {
-            coal = gui.maininv.getitem("Black Coal");
-            if (coal == null) {
-                gui.error("No coal found in the inventory");
-                return;
-            }
+        if (smelter == null) {
+            gui.error("No smelters found");
+            return;
         }
 
-        coal.item.wdgmsg("take", new Coord(coal.item.sz.x / 2, coal.item.sz.y / 2));
+        WItem coalw = gui.maininv.getItemPartial("Coal");
+        if (coalw == null) {
+            gui.error("No coal found in the inventory");
+            return;
+        }
+        GItem coal = coalw.item;
+
+        coal.wdgmsg("take", new Coord(coal.sz.x / 2, coal.sz.y / 2));
         int timeout = 0;
         while (gui.hand.isEmpty()) {
             timeout += HAND_DELAY;
@@ -51,20 +55,23 @@ public class AddCoalToSmelter {
                 return;
             }
         }
+        coal = gui.vhand.item;
 
         for (; count > 0; count--) {
             gui.map.wdgmsg("itemact", Coord.z, smelter.rc, count == 1 ? 0 : 1, 0, (int) smelter.id, smelter.rc, 0, -1);
             timeout = 0;
             while (true) {
                 WItem newcoal = gui.vhand;
-                if (newcoal != coal) {
-                    coal = newcoal;
+                if (newcoal != null && newcoal.item != coal) {
+                    coal = newcoal.item;
                     break;
+                } else if (newcoal == null && count == 1) {
+                    return;
                 }
 
                 timeout += HAND_DELAY;
                 if (timeout >= TIMEOUT) {
-                    gui.error("Not enough coal. Need to add " + count + " more.");
+                    gui.error("Not enough coal. Need to add " + (count - 1) + " more.");
                     return;
                 }
                 try {

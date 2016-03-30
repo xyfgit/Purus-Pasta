@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.automation.ErrorSysMsgCallback;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -84,7 +86,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public static boolean trackon = false;
     private boolean crimeautotgld = false;
     private boolean trackautotgld = false;
-//    public FBelt fbelt;
+    public FBelt fbelt;
+    private ErrorSysMsgCallback errmsgcb;
 
     private int fkey_x = 430;
     public abstract class Belt extends Widget {
@@ -653,6 +656,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
                     destroy();
                 }
             };
+            if (Config.noquests)
+                questpanel.hide();
+
             add(questpanel);
         } else if (place == "misc") {
             miscwnd =  add(child, (Coord) args[1]);
@@ -881,7 +887,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             if (Config.agroclosest && key == 9)
                 return super.globtype(key, ev);
 
-            if ((gkey != -1) && (key == gkey)) {
+            if (key == gkey) {
                 click();
                 return (true);
             }
@@ -1013,10 +1019,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             if (map != null)
                 map.aggroclosest();
             return true;
-        } else if (ev.isControlDown() && ev.getKeyCode() == KeyEvent.VK_I) {
+        } else if (ev.isShiftDown() && ev.getKeyCode() == KeyEvent.VK_I) {
             Config.resinfo = !Config.resinfo;
             Utils.setprefb("resinfo", Config.resinfo);
-            info("Resource info on shift/shift+ctrl is now turned " + (Config.resinfo ? "on" : "off"), Color.WHITE);
+            msg("Resource info on shift/shift+ctrl is now turned " + (Config.resinfo ? "on" : "off"), Color.WHITE);
             return true;
         } else if (ev.isShiftDown() && ev.getKeyCode() == KeyEvent.VK_B) {
             Config.showboundingboxes = !Config.showboundingboxes;
@@ -1024,7 +1030,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             return true;
         } else if (ev.isControlDown() && ev.getKeyCode() == KeyEvent.VK_Z) {
             Config.pf = !Config.pf;
-            info("Pathfinding is now turned " + (Config.pf ? "on" : "off"), Color.WHITE);
+            msg("Pathfinding is now turned " + (Config.pf ? "on" : "off"), Color.WHITE);
             return true;
         }
         return (super.globtype(key, ev));
@@ -1088,6 +1094,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public void msg(String msg, Color color, Color logcol) {
         msgtime = System.currentTimeMillis();
+
+        if (Resource.L10N_DEBUG)
+            Resource.l10nMsg = Resource.saveStrings(Resource.BUNDLE_MSG, Resource.l10nMsg, msg, msg);
+
+        if (!Resource.language.equals("en") || Resource.L10N_DEBUG) {
+            if (Resource.l10nMsg != null && Resource.l10nMsg.containsKey(msg))
+                msg = Resource.l10nMsg.get(msg);
+        }
+
         lastmsg = msgfoundry.render(msg, color);
         syslog.append(msg, logcol);
         if (color == Color.WHITE)
@@ -1104,6 +1119,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public void error(String msg) {
         msg(msg, new Color(192, 0, 0), new Color(255, 0, 0));
         Audio.play(errsfx);
+        if (errmsgcb != null)
+            errmsgcb.notifyErrMsg(msg);
     }
 
     public void errornosfx(String msg) {
@@ -1112,12 +1129,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public void msg(String msg) {
         msg(msg, Color.WHITE, Color.WHITE);
-    }
-
-    public void info(String msg, Color color) {
-        msgtime = System.currentTimeMillis();
-        lastmsg = msgfoundry.render(msg, color);
-        syslog.append(msg, color);
     }
 
     public void act(String... args) {
@@ -1146,12 +1157,32 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         for (Widget w = lchild; w != null; w = w.prev) {
             if (w instanceof Window) {
                 Window wnd = (Window) w;
-                if (wnd.cap != null && cap.equals(wnd.cap.text))
+                if (wnd.cap != null && cap.equals(wnd.origcap))
                     return wnd;
             }
         }
         return null;
     }
+
+
+    private static final int WND_WAIT_SLEEP = 8;
+    public Window waitfForWnd(String cap, int timeout) {
+        int t  = 0;
+        while (t < WND_WAIT_SLEEP) {
+            Window wnd = getwnd(cap);
+            if (wnd != null)
+                return wnd;
+            timeout += WND_WAIT_SLEEP;
+            try {
+                Thread.sleep(WND_WAIT_SLEEP);
+            } catch (InterruptedException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+
 
     public List<IMeter.Meter> getmeters(String name) {
         for (Widget meter : meters) {
@@ -1171,6 +1202,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public IMeter.Meter getmeter(String name, int midx) {
         if (getmeters(name) != null || midx < getmeters(name).size())
             return getmeters(name).get(midx);
+        List<IMeter.Meter> meters = getmeters(name);
+        if (meters != null && midx < meters.size())
+            return meters.get(midx);
         return null;
     }
 
@@ -1466,5 +1500,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public Map<String, Console.Command> findcmds() {
         return (cmdmap);
+    }
+
+    public void registerErrMsg(ErrorSysMsgCallback callback) {
+        this.errmsgcb = callback;
     }
 }

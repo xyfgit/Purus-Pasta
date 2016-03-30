@@ -39,6 +39,24 @@ public class FlowerMenu extends Widget {
     public Petal[] opts;
     private UI.Grab mg, kg;
 
+    public static String flwPick = "Pick";
+    public static String flwHarvest = "Harvest";
+    public static String flwEat = "Eat";
+    public static String flwSplit = "Split";
+
+    static {
+        if (!Resource.language.equals("en")) {
+            if (Resource.l10nFlower.containsKey("Pick"))
+                flwPick = Resource.l10nFlower.get("Pick");
+            if (Resource.l10nFlower.containsKey("Harvest"))
+                flwHarvest = Resource.l10nFlower.get("Harvest");
+            if (Resource.l10nFlower.containsKey("Eat"))
+                flwEat = Resource.l10nFlower.get("Eat");
+            if (Resource.l10nFlower.containsKey("Split"))
+                flwSplit = Resource.l10nFlower.get("Split");
+        }
+    }
+
     @RName("sm")
     public static class $_ implements Factory {
         public Widget create(Widget parent, Object[] args) {
@@ -48,7 +66,7 @@ public class FlowerMenu extends Widget {
             return (new FlowerMenu(opts));
         }
     }
-
+ 
     public class Petal extends Widget {
         public String name;
         public double ta, tr;
@@ -107,13 +125,13 @@ public class FlowerMenu extends Widget {
             for (Petal p : opts) {
                 p.move(p.ta + ((1 - s) * PI), p.tr * s);
                 p.a = s;
-                if (p.name.equals("Pick"))
+                if (p.name.equals(flwPick))
                     pick = p;
-                else if (p.name.equals("Harvest"))
+                else if (p.name.equals(flwHarvest))
                     harvest = p;
-                else if (p.name.equals("Eat"))
+                else if (p.name.equals(flwEat))
                     eat = p;
-                else if (p.name.equals("Split"))
+                else if (p.name.equals(flwSplit))
                     split = p;
                 else if (p.name.equals("Chip stone"))
                     chip = p;
@@ -248,7 +266,18 @@ public class FlowerMenu extends Widget {
         super(Coord.z);
         opts = new Petal[options.length];
         for (int i = 0; i < options.length; i++) {
-            add(opts[i] = new Petal(options[i]));
+            String name = options[i];
+            if (Resource.L10N_DEBUG &&
+                    !name.startsWith("Follow ") && !name.startsWith("Travel along") &&
+                    !name.startsWith("Extend ") && !name.startsWith("Connect "))
+                Resource.l10nFlower = Resource.saveStrings(Resource.BUNDLE_FLOWER, Resource.l10nFlower, name, name);
+
+            String locName = null;
+            if (!Resource.language.equals("en") || Resource.L10N_DEBUG) {
+                if (Resource.l10nFlower != null && Resource.l10nFlower.containsKey(name))
+                    locName = Resource.l10nFlower.get(name);
+            }
+            add(opts[i] = new Petal(locName != null ? locName : name));
             opts[i].num = i;
         }
     }

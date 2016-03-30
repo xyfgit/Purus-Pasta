@@ -267,8 +267,8 @@ public class Widget {
         if (child instanceof Window) {
             try {
                 Window wnd = (Window) child;
-                if (Window.persistentwnds.contains(wnd.cap.text))
-                    child.c = Utils.getprefc(wnd.cap.text + "_c", c);
+                if (Window.persistentwnds.contains(wnd.origcap))
+                    child.c = Utils.getprefc(wnd.origcap + "_c", c);
             } catch (Exception e) {
             }
         }

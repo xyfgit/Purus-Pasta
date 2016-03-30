@@ -28,6 +28,7 @@ package haven;
 
 import static haven.MCache.tilesz;
 import haven.GLProgram.VarID;
+import haven.automation.AutoLeveler;
 import haven.automation.GobSelectCallback;
 import haven.automation.SteelRefueler;
 import haven.pathfinder.*;
@@ -88,9 +89,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     private Pathfinder pf;
     public Thread pfthread;
     public SteelRefueler steelrefueler;
+    public AutoLeveler autoleveler;
 
     private static final Set<String> dangerousanimalrad = new HashSet<String>(Arrays.asList(
-            "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger", "gfx/kritter/moose/moose"));
+
+            "gfx/kritter/bear/bear", "gfx/kritter/boar/boar", "gfx/kritter/lynx/lynx", "gfx/kritter/badger/badger"));
 
     public interface Delayed {
         public void run(GOut g);
@@ -536,18 +539,23 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             for (o.y = -view; o.y <= view; o.y++) {
                 for (o.x = -view; o.x <= view; o.x++) {
                     Coord pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
-                    MapMesh cut = glob.map.getcut(cc.add(o));
-                    rl.add(cut, Location.xlate(new Coord3f(pc.x, -pc.y, 0)));
+                    try {
+                        MapMesh cut = glob.map.getcut(cc.add(o));
+                        rl.add(cut, Location.xlate(new Coord3f(pc.x, -pc.y, 0)));
 
-                    if (!Config.hideflocomplete) {
-                        Collection<Gob> fol;
-                        try {
-                            fol = glob.map.getfo(cc.add(o));
-                        } catch (Loading e) {
-                            fol = Collections.emptyList();
+                        if (!Config.hideflocomplete) {
+                            Collection<Gob> fol;
+                            try {
+                                fol = glob.map.getfo(cc.add(o));
+                            } catch (Loading e) {
+                                fol = Collections.emptyList();
+                            }
+                            for (Gob fo : fol)
+                                addgob(rl, fo);
                         }
-                        for (Gob fo : fol)
-                            addgob(rl, fo);
+                    } catch (Defer.DeferredException e) {
+                        // there seems to be a rare problem with fetching gridcuts when teleporting, not sure why...
+                        // we ignore Defer.DeferredException to prevent the client for crashing
                     }
                 }
             }
@@ -1110,7 +1118,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             if (mc == null)
                 continue;
             double a = screenangle(mc, true);
-            if (a == Double.NaN)
+            if (Double.isNaN(a))
                 continue;
             g.chcolor(m.col);
             drawarrow(g, a);
@@ -1175,7 +1183,8 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
         }
         if (placing != null)
             placing.ctick((int) (dt * 1000));
-        partyHighlight.update();
+        	partyHighlight.update();
+
     }
 
     public void resize(Coord sz) {
@@ -1281,6 +1290,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             placing = null;
         } else if (msg == "move") {
             cc = (Coord) args[0];
+        } else if (msg == "plob") {
+            if (args[0] == null)
+                plgob = -1;
+            else
+                plgob = (Integer) args[0];
         } else if (msg == "flashol") {
             unflashol();
             olflash = (Integer) args[0];
@@ -1509,7 +1523,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             pf = new Pathfinder(this, new Coord(gcx, gcy), action);
             glob.oc.setPathfinder(pf);
             pf.addListener(this);
-            pfthread = new Thread(pf);
+            pfthread = new Thread(pf, "Pathfinder");
             pfthread.start();
         }
     }
@@ -1535,7 +1549,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             pf = new Pathfinder(this, new Coord(gcx, gcy), gob, meshid, clickb, modflags, action);
             glob.oc.setPathfinder(pf);
             pf.addListener(this);
-            pfthread = new Thread(pf);
+            pfthread = new Thread(pf, "Pathfinder");
             pfthread.start();
         }
     }
@@ -1563,6 +1577,10 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
                 if (areamine != null) {
                     areamine.terminate();
                     areamine = null;
+                }
+                if (autoleveler != null && autoleveler.running) {
+                    autoleveler.terminate();
+                    autoleveler = null;
                 }
                 Resource curs = ui.root.getcurs(c);
                 if (curs != null && curs.name.equals("gfx/hud/curs/mine")) {
@@ -2090,5 +2108,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
             areamine.terminate();
         if (steelrefueler != null)
             steelrefueler.terminate();
+        if (autoleveler != null)
+            autoleveler.terminate();
     }
 }

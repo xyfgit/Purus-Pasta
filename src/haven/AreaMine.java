@@ -1,16 +1,14 @@
 package haven;
 
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class AreaMine implements Runnable {
     private MapView mv;
     private Coord a, b, c, d;
     private boolean terminate = false;
-    private static final Set<String> miningtools = new HashSet<String>(Arrays.asList(
-            "Pickaxe", "Stone Axe", "Metal Axe", "Battleaxe of the Twelfth Bay"));
+    private static final String[] miningtools = new String[] {
+            "Pickaxe", "Stone Axe", "Metal Axe", "Battleaxe of the Twelfth Bay"};
 
     public AreaMine(Coord a, Coord b, MapView mv) {
         this.a = a;
@@ -136,6 +134,9 @@ public class AreaMine implements Runnable {
             if (nrj.a < 30)
                 break mine;
 
+            if (terminate)
+                break mine;
+
             // discard mining cursor so we could move
             mv.wdgmsg("click", Coord.z, tc.mul(11).add(5, 5), 3, 0);
 
@@ -147,7 +148,7 @@ public class AreaMine implements Runnable {
                 break mine;
             }
 
-            while (true) {
+            while (!terminate) {
                 if (!Config.dropore && gui.maininv.getFreeSpace() == 0) {
                     if (gui.vhand != null)
                         mv.wdgmsg("drop", Coord.z, gui.map.player().rc, 0);
@@ -179,10 +180,25 @@ public class AreaMine implements Runnable {
                 WItem l = e.quickslots[6];
                 WItem r = e.quickslots[7];
                 boolean notool = true;
-                if (l != null && miningtools.contains(l.item.getname()))
-                    notool = false;
-                if (r != null && miningtools.contains(r.item.getname()))
-                    notool = false;
+
+                if (l != null) {
+                    String lname = l.item.getname();
+                    for (String tool : miningtools) {
+                        if (lname.contains(tool)){
+                            notool = false;
+                            break;
+                        }
+                    }
+                }
+                if (r != null) {
+                    String rname = r.item.getname();
+                    for (String tool : miningtools) {
+                        if (rname.contains(tool)){
+                            notool = false;
+                            break;
+                        }
+                    }
+                }
 
                 if (notool)
                     break mine;

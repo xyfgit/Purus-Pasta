@@ -37,9 +37,6 @@ import haven.resutil.Ridges;
 
 public class LocalMiniMap extends Widget {
     private static final Tex gridred = Resource.loadtex("gfx/hud/mmap/gridred");
-    public static final Coord VIEW_SZ = MCache.sgridsz.mul(9).div(tilesz);// view radius is 9x9 "server" grids
-    public static final Color VIEW_BG_COLOR = new Color(255, 255, 255, 60);
-    public static final Color VIEW_BORDER_COLOR = new Color(0, 0, 0, 128);
     public static final Text.Foundry bushf = new Text.Foundry(Text.sansb, 12);
     private static final Text.Foundry partyf = bushf;
     public final MapView mv;
@@ -51,9 +48,11 @@ public class LocalMiniMap extends Widget {
     private static final Resource playeralarmRed = Resource.local().loadwait("sfx/alarmRed");
     private Coord doff = Coord.z;
     private Coord delta = Coord.z;
+    private Coord off = Coord.z;
 	private static final Resource alarmplayersfx = Resource.local().loadwait("sfx/alarmplayer");
     private static final Resource foragablesfx = Resource.local().loadwait("sfx/awwyeah");
     private static final Resource bearsfx = Resource.local().loadwait("sfx/bear");
+    private static final Resource trollsfx = Resource.local().loadwait("sfx/troll");
 	private final HashSet<Long> sgobs = new HashSet<Long>();
     private final HashMap<Coord, BufferedImage> maptiles = new HashMap<Coord, BufferedImage>(28, 0.75f);
     @SuppressWarnings("serial")
@@ -67,7 +66,7 @@ public class LocalMiniMap extends Widget {
     private Map<Color, Tex> xmap = new HashMap<Color, Tex>(6);
     public static Coord plcrel = null;
 
-    private class MapTile {
+    private static class MapTile {
         public MCache.Grid grid;
         public int seq;
 
@@ -365,6 +364,13 @@ public class LocalMiniMap extends Widget {
                                 }
                             }
                         }
+                    } else if (res.name.equals("gfx/kritter/troll/troll")) {
+                        if (mv.areamine != null)
+                            mv.areamine.terminate();
+                        if (Config.alarmtroll && !sgobs.contains(gob.id)) {
+                            sgobs.add(gob.id);
+                            Audio.play(trollsfx, Config.alarmtrollvol);
+                        }
                     }
                     if (Config.alarmram) {
                     	 try {
@@ -559,37 +565,34 @@ public class LocalMiniMap extends Widget {
                 }
             }
 
-            if (Config.mapshowviewdist) {
-                Gob player = mv.player();
-                Coord rc = new Coord();
-                if (player != null)
-                    rc = p2c(player.rc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz));
-                g.chcolor(VIEW_BG_COLOR);
-                g.frect(rc, VIEW_SZ);
-                g.chcolor(VIEW_BORDER_COLOR);
-                g.rect(rc, VIEW_SZ);
-                g.chcolor();
-            }
-
             try {
                 synchronized (ui.sess.glob.party.memb) {
                     Collection<Party.Member> members = ui.sess.glob.party.memb.values();
                     for (Party.Member m : members) {
-                        Coord ptc;
+                        Coord mc;
                         try {
-                            ptc = m.getc();
+                            mc = m.getc();
                         } catch (MCache.LoadingMap e) {
-                            continue;
+                            mc = null;
                         }
-                        try {
-                            ptc = p2c(ptc);
+                        if(mc == null)
+            			    continue;
+                            Coord ptc = p2c(mc);
                             Tex tex = xmap.get(m.col);
                             if (tex == null) {
                                 tex = Text.renderstroked("\u2716",  m.col, Color.BLACK, partyf).tex();
                                 xmap.put(m.col, tex);
                             }
                             g.image(tex, ptc.add(delta).sub(6, 6));
-                        } catch (NullPointerException npe) { // in case chars are in different words
+                        if (Config.mapshowviewdist && m.gobid == MapView.plgob) {
+                            // view radius is 9x9 "server" grids
+                            Coord rc = p2c(mc.div(MCache.sgridsz).sub(4, 4).mul(MCache.sgridsz)).sub(off);
+                            Coord rs = MCache.sgridsz.mul(9).div(tilesz);
+                            g.chcolor(255, 255, 255, 60);
+                            g.frect(rc, rs);
+                            g.chcolor(0, 0, 0, 128);
+                            g.rect(rc, rs);
+                            g.chcolor();
                         }
                     }
                 }
@@ -601,6 +604,7 @@ public class LocalMiniMap extends Widget {
     Object[] walk_args = { };
     public void center() {
         delta = Coord.z;
+        off = Coord.z;
     }
     private Coord last_mini_target = null;
     private float get_y(float x1, float y1, float x2, float y2, float pianyi){
@@ -663,7 +667,7 @@ public class LocalMiniMap extends Widget {
 //                    ui.root.findchild(GameUI.class).info("not keep walk, so suspend", Color.WHITE);
                     t.suspend();
                 } catch (Exception e) {
-                    ui.root.findchild(GameUI.class).info(e.toString(), Color.RED);
+                    ui.root.findchild(GameUI.class).msg(e.toString(), Color.RED);
                 }
             }
         }
@@ -711,12 +715,12 @@ public class LocalMiniMap extends Widget {
                 dragging = ui.grabmouse(this);
             }
         }
-
         return true;
     }
 
     public void mousemove(Coord c) {
         if (dragging != null) {
+        	 off = off.add(doff.sub(c));
             delta = delta.add(c.sub(doff));
             doff = c;
         }

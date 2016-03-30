@@ -84,7 +84,7 @@ public class  BotUtils {
     }
     
     public void sysMsg(String msg, Color color ) {
-    	ui.root.findchild(GameUI.class).info(msg,color);
+    	ui.root.findchild(GameUI.class).msg(msg,color);
     }
     
     // Sets speed for player

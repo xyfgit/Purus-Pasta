@@ -104,7 +104,7 @@ public class DragonflyCollector {
 	                    window.destroy();
 	                    if(t != null) {
 							Settings.setCancelAuto(true);
-	                    	gameui().info("Dragonfly Collector Cancelled", Color.WHITE);
+	                    	gameui().msg("Dragonfly Collector Cancelled", Color.WHITE);
 	                    	t.stop();
 	                    }
 	                }

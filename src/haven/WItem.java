@@ -335,11 +335,11 @@ public class WItem extends Widget implements DTarget {
     private void drawamountbar(GOut g, double content, boolean isseeds) {
         double capacity;
         String name = item.getname();
-        if (name.equals("Waterskin"))
+        if (name.contains("Waterskin"))
             capacity = 3.0D;
-        else if (name.equals("Bucket"))
+        else if (name.contains("Bucket"))
             capacity = isseeds ? 1000D : 10.0D;
-        else if (name.equals("Waterflask"))
+        else if (name.contains("Waterflask"))
             capacity = 2.0D;
         else
             return;
@@ -403,47 +403,53 @@ public class WItem extends Widget implements DTarget {
     public void destroy() {
         super.destroy();
         Curiosity ci = null;
-        try {
-            ci = ItemInfo.find(Curiosity.class, item.info());
-            if (ci != null && item.meter >= 99) {
-                Resource.Tooltip tt = item.resource().layer(Resource.Tooltip.class);
-                if (tt != null)
-                    gameui().syslog.append(tt.t + " LP: " + ci.exp, Color.LIGHT_GRAY);
 
-                if (Config.autostudy) {
-                    Window invwnd = gameui().getwnd("Inventory");
-                    Window cupboard = gameui().getwnd("Cupboard");
-                    Resource res = item.resource();
-                    if (res != null) {
-                        if (!replacecurio(invwnd, res) && cupboard != null)
-                            replacecurio(cupboard, res);
-                    }
-                }
-            }
-        } catch (Loading l) {
-        }
+        if (parent instanceof Inventory && parent.parent instanceof Tabs.Tab) {
+            try {
+                ci = ItemInfo.find(Curiosity.class, item.info());
+                if (ci != null && item.meter >= 99) {
+                    Resource.Tooltip tt = item.resource().layer(Resource.Tooltip.class);
+                    if (tt != null)
+                        gameui().syslog.append(tt.t + " LP: " + ci.exp, Color.LIGHT_GRAY);
 
-        if (Config.studyalarm && ci != null && item.meter >= 99)
-            Audio.play(studyalarmsfx, Config.studyalarmvol);
-    }
-
-    private boolean replacecurio(Window wnd, Resource res) {
-        for (Widget invwdg = wnd.lchild; invwdg != null; invwdg = invwdg.prev) {
-            if (invwdg instanceof Inventory) {
-                Inventory inv = (Inventory) invwdg;
-                for (Widget witm = inv.lchild; witm != null; witm = witm.prev) {
-                    if (witm instanceof WItem) {
-                        GItem ngitm = ((WItem) witm).item;
-                        Resource nres = ngitm.resource();
-                        if (nres != null && nres.name.equals(res.name)) {
-                            ngitm.wdgmsg("take", witm.c);
-                            ((Inventory) parent).drop(Coord.z, c);
-                            return true;
+                    if (Config.autostudy) {
+                        Window invwnd = gameui().getwnd("Inventory");
+                        Window cupboard = gameui().getwnd("Cupboard");
+                        Resource res = item.resource();
+                        if (res != null) {
+                            if (!replacecurio(invwnd, res) && cupboard != null)
+                                replacecurio(cupboard, res);
                         }
                     }
                 }
-                return false;
+            } catch (Loading l) {
             }
+
+            if (Config.studyalarm && ci != null && item.meter >= 99)
+                Audio.play(studyalarmsfx, Config.studyalarmvol);
+        }
+    }
+
+    private boolean replacecurio(Window wnd, Resource res) {
+        try {
+            for (Widget invwdg = wnd.lchild; invwdg != null; invwdg = invwdg.prev) {
+                if (invwdg instanceof Inventory) {
+                    Inventory inv = (Inventory) invwdg;
+                    for (Widget witm = inv.lchild; witm != null; witm = witm.prev) {
+                        if (witm instanceof WItem) {
+                            GItem ngitm = ((WItem) witm).item;
+                            Resource nres = ngitm.resource();
+                            if (nres != null && nres.name.equals(res.name)) {
+                                ngitm.wdgmsg("take", witm.c);
+                                ((Inventory) parent).drop(Coord.z, c);
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+        } catch (Exception e) { // ignored
         }
         return false;
     }

@@ -216,10 +216,8 @@ public class Map {
         HashMap<Integer, Utils.MinMax> raster = Utils.plotRect(map, ca, cb, cc, cd, CELL_BLK);
 
         // store traversable obstacles candidates
-        if (bboxb.x <= tomaxside && bboxb.y <= tomaxside) {
-            double radius = Math.sqrt(bboxb.x * bboxb.x * 4 + bboxb.y * bboxb.y * 4) / 2;
-            tocandidates.add(new TraversableObstacle(gcx, gcy, wa, wb, wc, wd, clra, clrb, clrc, clrd, (int) radius, raster));
-        }
+        if (bboxb.x <= tomaxside && bboxb.y <= tomaxside)
+            tocandidates.add(new TraversableObstacle(wa, wb, wc, wd, clra, clrb, clrc, clrd, raster));
 
         dbg.rect(ca.x, ca.y, cb.x, cb.y, cc.x, cc.y, cd.x, cd.y, Color.CYAN);
     }
@@ -570,6 +568,25 @@ public class Map {
 
         return path;
     }
+
+    public boolean isOriginBlocked() {
+        return map[origin][origin] == CELL_BLK || map[origin][origin] == CELL_BLK;
+    }
+
+    // 3 pixels away from origin
+    public Pair<Integer, Integer> getFreeLocation() {
+        if (map[origin + 3][origin] == CELL_FREE)
+            return new Pair<Integer, Integer>(origin + 3, origin);
+        else if (map[origin - 3][origin] == CELL_FREE)
+            return new Pair<Integer, Integer>(origin - 3, origin);
+        else if (map[origin][origin + 3] == CELL_FREE)
+            return new Pair<Integer, Integer>(origin, origin + 3);
+        else if (map[origin][origin - 3] == CELL_FREE)
+            return new Pair<Integer, Integer>(origin, origin - 3);
+
+        return null;
+    }
+
 
     public void dbgdump() {
         dbg.save();

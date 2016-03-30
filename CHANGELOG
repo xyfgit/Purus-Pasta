@@ -1,3 +1,57 @@
+Version 1.30.1
+    Fixed:
+        * Temporary BufferBGL fix.
+        * Pathfinder issues.
+        * Auto-leveler issues.
+
+
+Version 1.30.0
+    New:
+        * Russian localization.
+        * Automatic ground leveler.
+        * Party members highlight (from shubla's client) .
+
+    Fixed:
+        * Possible crash when switching characters. 
+        * Pathfinder issues.
+
+    Misc:
+        * Merged vanilla changes.
+        * Misc. code cleanups and improvements to localization support.
+
+
+Version 1.29.2
+    Misc:
+        * Restored alternative minimap controls.
+
+
+Version 1.29.1
+    Misc:
+        * Updated English localization files and added support for labels and system messages 
+          localization.
+        * Changed troll alarm sound.
+        * Reorganized options menu.
+        * Merged vanilla changes.
+
+
+Version 1.29.0
+    New:
+        * Localization support.
+        * Troll alarm.
+        * Task for filling oven with 4 branches.
+        * Option to sort items in ascending order instead of the default descending when transferring.
+
+    Fixed:
+        * Rare crash when teleporting.
+        * Fixed 11/12 coal task occasionally using wrong amount of fuel.
+        * Curio alarm triggered by bat wings drying on a herbalist table.
+        * Assortment of other small issues.
+
+    Misc:
+        * Terminate autominer on troll spawn.
+        * Changed Ctrl+I to Shift+I.
+
+
 Version 1.28.3
     Misc:
         * Updated resources.

@@ -144,13 +144,13 @@ public class MusselPicker {
 								return;
 							}
 
-							gameui().info("Mussel Picker Status: " + curStatus , Color.WHITE);
+							gameui().msg("Mussel Picker Status: " + curStatus , Color.WHITE);
 							if(boat_gob != null&&curStatus != STATUS.BACK_TO_BOAT){
 							curStatus = STATUS.BACK_TO_BOAT;
 							}
 							Settings.setCancelAuto(true);
 						}
-						gameui().info("Mussel Picker Cancelled, handle cancel: " + haven.Settings.getCancelAuto() , Color.WHITE);
+						gameui().msg("Mussel Picker Cancelled, handle cancel: " + haven.Settings.getCancelAuto() , Color.WHITE);
 					}
 				};
 

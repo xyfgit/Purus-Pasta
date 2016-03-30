@@ -38,7 +38,7 @@ import haven.resutil.FoodInfo;
 public class CharWnd extends Window {
     public static final RichText.Foundry ifnd = new RichText.Foundry(Resource.remote(), java.awt.font.TextAttribute.FAMILY, "SansSerif", java.awt.font.TextAttribute.SIZE, 9).aa(true);
     public static final Text.Furnace catf = new BlurFurn(new TexFurn(new Text.Foundry(Text.sans, 20).aa(true), Window.ctex), 2, 2, new Color(96, 48, 0));
-    public static final Text.Foundry attrf = new Text.Foundry(Text.sansb, 14).aa(true);
+    public static final Text.Foundry attrf = new Text.Foundry(Text.sansb, Resource.language.equals("en") ? 14 : 12).aa(true);
     public static final Color debuff = new Color(255, 128, 128);
     public static final Color buff = new Color(128, 255, 128);
     public static final Color tbuff = new Color(128, 128, 255);
@@ -173,7 +173,7 @@ public class CharWnd extends Window {
                     Collections.sort(etr, dcmp);
                     GameUI gui = getparent(GameUI.class);
                     if (gui != null)
-                        gui.msg(String.format("You gained " + Loading.waitfor(trev).layer(Event.class).nm));
+			        gui.msg(String.format("You gained " + Loading.waitfor(trev).layer(Event.class).nm), Color.WHITE);
                     trol = new TexI(mktrol(etr, trev));
                     trtm = System.currentTimeMillis();
                     trev = null;

@@ -43,6 +43,12 @@ import java.util.WeakHashMap;
 
 import haven.Glob.Pagina;
 import haven.Resource.AButton;
+import haven.automation.AddBranchesToOven;
+import haven.automation.AddCoalToSmelter;
+import haven.automation.AutoLeveler;
+import haven.automation.ErrorSysMsgCallback;
+import haven.automation.GobSelectCallback;
+import haven.automation.SteelRefueler;
 import haven.util.ObservableCollection;
 import purus.AutoDrink;
 import purus.CarrotFarmer;
@@ -50,14 +56,6 @@ import purus.DragonflyCollector;
 import purus.FillOven;
 import purus.FillSmelter;
 import purus.MusselPicker;
-import haven.automation.AddCoalToSmelter;
-import haven.Resource.AButton;
-import haven.Glob.Pagina;
-import haven.automation.GobSelectCallback;
-import haven.automation.SteelRefueler;
-
-import java.util.*;
-import java.util.concurrent.Executors;
 
 
 public class MenuGrid extends Widget {
@@ -147,6 +145,7 @@ public class MenuGrid extends Widget {
     	super.attach(ui);
     	Glob glob = ui.sess.glob;
     	ObservableCollection<Pagina> p = glob.paginae;
+
     	// Purus Cor Stuff
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/timer")));
     	p.add(glob.paginafor(Resource.local().load("paginae/custom/study")));
@@ -163,6 +162,7 @@ public class MenuGrid extends Widget {
             p.add(glob.paginafor(Resource.local().load("paginae/amber/coal12")));
             p.add(glob.paginafor(Resource.local().load("paginae/amber/steel")));
         }
+    	//p.add(glob.paginafor(Resource.local().load("paginae/custom/oven")));
     }
 
 
@@ -173,7 +173,7 @@ public class MenuGrid extends Widget {
                 return (-1);
             if ((aa.ad.length > 0) && (ab.ad.length == 0))
                 return (1);
-            return (aa.name.compareTo(ab.name));
+            return (aa.origName.compareTo(ab.origName));
         }
     };
 
@@ -342,9 +342,11 @@ public class MenuGrid extends Widget {
         if (gui == null)
             return;
         if (ad[1].equals("coal")) {
-            Executors.newSingleThreadExecutor().submit(() -> {
-                new AddCoalToSmelter(gui, Integer.parseInt(ad[2])).fuel();
-            });
+            Thread t = new Thread(new AddCoalToSmelter(gui, Integer.parseInt(ad[2])), "AddCoalToSmelter");
+            t.start();
+        } else if (ad[1].equals("branchoven")) {
+            Thread t = new Thread(new AddBranchesToOven(gui, Integer.parseInt(ad[2])), "AddBranchesToOven");
+            t.start();
         } else if (ad[1].equals("steel")) {
             if (gui.getwnd("Steel Refueler") == null) {
                 SteelRefueler sw = new SteelRefueler();
@@ -352,6 +354,18 @@ public class MenuGrid extends Widget {
                 gui.add(sw, new Coord(gui.sz.x / 2 - sw.sz.x / 2, gui.sz.y / 2 - sw.sz.y / 2 - 200));
                 synchronized (GobSelectCallback.class) {
                     gui.map.registerGobSelect(sw);
+                }
+            }
+        } else if (ad[1].equals("level")) {
+            if (gui.getwnd("Auto Leveler") == null) {
+                AutoLeveler lw = new AutoLeveler();
+                gui.map.autoleveler = lw;
+                gui.add(lw, new Coord(gui.sz.x / 2 - lw.sz.x / 2, gui.sz.y / 2 - lw.sz.y / 2 - 200));
+                synchronized (GobSelectCallback.class) {
+                    gui.map.registerGobSelect(lw);
+                }
+                synchronized (ErrorSysMsgCallback.class) {
+                    gui.registerErrMsg(lw);
                 }
             }
         }
