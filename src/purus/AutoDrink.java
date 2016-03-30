@@ -90,7 +90,7 @@ public class AutoDrink {
 	                public void click() {
 	                    window.destroy();
 	                    if(t != null) {
-	                    	gameui().info("Auto Drink Cancelled", Color.WHITE);
+	                    	gameui().msg("Auto Drink Cancelled", Color.WHITE);
 	                    	t.stop();
 	                    }
 	                }

@@ -79,7 +79,7 @@ public class RootWidget extends ConsoleHost {
             }
             else if((code == KeyEvent.VK_G&&alt)) {
                 Settings.setKeepWalk(!Settings.getKeepWalk());
-                ui.root.findchild(GameUI.class).info( "Keep walking: "+Settings.getKeepWalk(), Color.WHITE);
+                ui.root.findchild(GameUI.class).msg( "Keep walking: "+Settings.getKeepWalk(), Color.WHITE);
             }
         }
         return (true);
